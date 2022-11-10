@@ -1,0 +1,132 @@
+html{
+    font-size: 16px;
+}
+body{
+    font-family: 'Noto Sans', sans-serif;
+    background-color: lightgray;
+}
+table a{
+    color: white;
+}
+table a:hover{
+    color: rgb(203, 206, 35);
+}
+.imagem-principal{
+    margin: 2% auto;
+}
+
+
+
+.navbar-brand{
+    border-radius: 5px;
+    padding: 0 0.5% 0 0.5%;
+    font-size: 1.5em;
+    text-transform: uppercase;
+    transition: background 0.5s;
+}
+.menu-button{
+    border-radius: 5px;
+    color:black; 
+    padding: 0.5% auto;
+    font-size:1.5em;
+    transition: background 0.5s;
+}
+.welcome-page .menu-button:hover{
+    background-color: rgba(189, 0, 189, 0.671);
+}
+.welcome-page .navbar-brand:hover{
+    background-color: rgba(189, 0, 189, 0.671);
+}
+.menu-button-form{
+    border-radius: 5px;
+    padding: 0 0.5% 0 0.5%;
+    transition: background 0.5s;
+}
+.form-pages .menu-button-form:hover{
+    background-color: rgba(70, 70, 70, 0.671);
+}
+.form-pages .navbar-brand:hover{
+    background-color: rgba(70, 70, 70, 0.671);
+}
+
+.dropdown-toggle::after {
+    display: none;
+}
+.textos{
+    padding: 1% 10%;
+    animation-name: opacidade;
+    animation-duration: 2s;
+    font-size: 1.5em;
+}
+.exmp-img{
+    margin-top: 2%;
+    padding: 3%;
+    background-color: rgb(69, 0, 78);
+}
+.exmp-img .img2{
+    margin-left: 0%;
+    margin-top: 0%;
+}
+img{
+    border-radius: 1em;
+}
+
+
+
+.newquest{
+    background-color: white;
+    margin: auto 2%;
+    padding: 0 1%;
+    border-radius: 5px;
+    text-decoration: none;
+    color: black;
+    border: 1px solid black;
+}
+.newquest:hover{
+    color: rgb(10, 138, 16);
+}
+.questoes .card ol{
+    list-style-type: upper-alpha;
+    margin-bottom: 1%;
+}
+.questoes{margin: 0 2% 0 2%; border-radius:5px;background-color:white;}
+.dashboard{margin: 0 2% 0 2%; padding-top: 2%; border-radius:5px;background-color:white;}
+
+
+
+a{
+    text-decoration: none;
+    color: black;
+}
+.hideme {display: none;}
+.top-buffer { margin-top:1%; }
+
+
+
+
+@keyframes opacidade {
+    from {opacity: 0; margin-top: -20%;}
+    to {opacity: 1; margin-top: 0%;}
+}
+@keyframes opacidadeleft {
+    from {opacity: 0; margin-left: -80%;}
+    to {opacity: 1; margin-left: 8%;}
+}
+@keyframes opacidadeleft2 {
+    from {opacity: 0; margin-left: -80%;}
+    to {opacity: 1; margin-left: -15%;}
+}
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap');
+@media screen and (min-width: 48em){
+    .exmp-img .img1{
+        margin-left: 8%;
+        animation-name: opacidadeleft;
+        animation-duration: 2s;
+    }
+    .exmp-img .img2{
+        margin-left: -15%;
+        margin-top: 20%;
+        animation-name: opacidadeleft2;
+        animation-duration: 3s;
+    }
+}

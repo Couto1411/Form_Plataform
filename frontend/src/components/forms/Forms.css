@@ -1,0 +1,55 @@
+a{color: rgb(58, 58, 58);}
+a:hover{color: rgb(21, 21, 21)}
+
+.edit{color: rgb(58, 58, 58);}
+.edit:hover{color: rgb(21, 21, 21)}
+
+
+.trashcan{color: rgb(255, 34, 34);}
+.trashcan:hover{color: rgb(180, 0, 0);}
+
+.enunciado{
+    color: rgb(34, 34, 34);
+    font-size: 1.4em;
+}
+
+.numQuestao{
+    color: rgb(34, 34, 34);
+    background-color: #ffffff;
+    box-shadow: none;
+    border: #aeaeae solid 1px;
+}
+
+.numQuestao:disabled{
+    background-color: #e7e7e7;
+    border: #aeaeae solid 1px;
+}
+
+.borda-direita{
+    border: 1px solid rgb(187, 187, 187);
+    border-radius: 0px 5px 5px 0px;
+}
+.borda-esquerda{
+    border: 1px solid rgb(187, 187, 187);
+    border-right: none;
+    border-radius: 5px 0px 0px 5px;
+}
+
+.porcentagem{
+    color: rgb(34, 34, 34);
+    font-size: 1.2em;
+    background-color: #e8e8e8;
+}
+
+.form-check-inline{
+    margin-right: 0.5em;
+}
+
+.saveOption{
+    margin-left: 0;
+}
+
+.list-group-item{
+    padding-right: 1em;
+    padding-left: 1em;
+}

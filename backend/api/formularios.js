@@ -20,7 +20,7 @@ module.exports = app => {
         } else {
             app.db('formularios')
                 .insert(form)
-                .then(_ => res.status(204).send())
+                .then(_ => res.json(_[0]))
                 .catch(err => res.status(500).send(err))
         }
     }
@@ -34,13 +34,40 @@ module.exports = app => {
             .catch(err => res.status(500).send(err))
     }
 
-    const erase = (req,res)=>{
-        app.db('questoes')
+    const erase = async(req,res)=>{
+        console.log("oi")
+        let questoes= await app.db('questoes')
+            .select('id')
+            .where({formId: req.params.formId})
+            .then(_ => JSON.parse(JSON.stringify(_)).map(a=>a.id))
+            .catch(err => res.status(500).send(err))
+        console.log(questoes)
+        for (let i = 0; i < questoes.length; i++) {
+            await app.db('radiobox')
+                .where({questaoId: questoes[i]})
+                .del()
+                .catch(err => res.status(500).send("Faltou id da questão"))
+            console.log(questoes[i])
+            await app.db('text')
+                .where({questaoId: questoes[i]})
+                .del()
+                .catch(err => res.status(500).send("Faltou id da questão"))
+            console.log(questoes[i])
+            await app.db('checkbox')
+                .where({questaoId: questoes[i]})
+                .del()
+                .catch(err => res.status(500).send("Faltou id da questão"))
+            console.log(questoes[i])
+        }
+        await app.db('enviados')
             .where({formId: req.params.formId})
             .del()
-            .then(_ => res.status(204).send())
             .catch(err => res.status(500).send(err))
-        app.db('formularios')
+        await app.db('questoes')
+            .where({formId: req.params.formId})
+            .del()
+            .catch(err => res.status(500).send(err))
+        await app.db('formularios')
             .where({id: req.params.formId})
             .del()
             .then(_ => res.status(204).send())
@@ -55,12 +82,5 @@ module.exports = app => {
             .catch(err => res.status(500).send(err))
     }
 
-    const getInfoById = (req, res) => {
-        app.db('formularios')
-            .where({responsavelId: req.params.id, id: req.params.formId})
-            .first()
-            .then(users => res.json(users))
-            .catch(err => res.status(500).send(err))
-    }
-    return { save, get, getById, erase, getInfoById }
+    return { save, get, getById, erase }
 }

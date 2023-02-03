@@ -1,44 +1,39 @@
 module.exports = app => {
     const { existsOrError, notExistsOrError, equalsOrError } = app.api.validation
 
+    const atualizaEnviados = async (id) =>{
+
+    }
+
     const save = async (req, res) => {
         const retorno = { ...req.body }
         try {
-            existsOrError(retorno.questoes, 'Questões não informadas')
-            existsOrError(retorno.enviados, 'Não enviando para ninguém')
+            existsOrError(retorno.numero, 'Numero da questão não informado')
+            existsOrError(retorno.enunciado, 'Enunciado não informado')
         } catch(msg) {
             return res.status(400).send(msg)
         }
-        retorno.questoes.forEach(element => {
-            element.formId=req.params.formId
-            if(element.id){
-                app.db('questoes')
-                    .update(element)
-                    .where({ id: element.id })
-                    .catch(err => res.status(500).send(err))
-            } else {
-                app.db('questoes')
-                    .insert(element)
-                    .catch(err => res.status(500).send(err))
-            }
-                
-        });
-        retorno.enviados.forEach(element => {
-            const env ={}
-            env.email=element
-            env.formId=req.params.formId
-            if(element.id){
-                app.db('enviados')
-                    .update(env)
-                    .where({ id: element.id })
-                    .catch(err => res.status(500).send(err))
-            }else{
-                app.db('enviados')
-                    .insert(env)
-                    .catch(err => res.status(500).send(err))
-            } 
-        })
+        retorno.formId=req.params.formId
+        if(retorno.id){
+            app.db('questoes')
+                .update(retorno)
+                .where({ id: retorno.id })
+                .catch(err => res.status(500).send(err))
+        } else {
+            app.db('questoes')
+                .insert(retorno)
+                .catch(err => res.status(500).send(err))
+        };
         res.status(204).send()
+    }
+
+    const edit = (req,res) =>{
+        const questao = { ...req.body }
+        app.db('questoes')
+            .update(questao)
+            .where({ id: questao.id })
+            .then(_ => res.status(204).send())
+            .catch(err => res.status(500).send(err))
     }
 
     const get = (req, res) => {
@@ -49,12 +44,34 @@ module.exports = app => {
     }
 
     const erase = (req,res)=>{
-        const quest = { ...req.body }
+        const questao = { ...req.body }
+        switch (questao.type) {
+            case 1:
+                app.db('radiobox')
+                    .where({questaoId: req.params.questaoId})
+                    .del()
+                    .catch(err => res.status(500).send("Radiobox"))
+                break;
+            case 2:
+                app.db('text')
+                    .where({questaoId: req.params.questaoId})
+                    .del()
+                    .catch(err => res.status(500).send("Aberta"))
+                break;
+            case 3:
+                app.db('checkbox')
+                    .where({questaoId: req.params.questaoId})
+                    .del()
+                    .catch(err => res.status(500).send("Checkbox"))
+                break;
+            default:
+                break;
+        }
         app.db('questoes')
-            .where({id: quest.id})
+            .where({id: req.params.questaoId})
             .del()
             .then(_ => res.status(204).send())
-            .catch(err => res.status(500).send("Faltou id da questão"))
+            .catch(err => res.status(500).send("Questoes"))
     }
 
     const getById = (req, res) => {
@@ -66,5 +83,5 @@ module.exports = app => {
             .catch(err => res.status(500).send(err))
     }
 
-    return { save, get, getById, erase }
+    return { save, edit, get, getById, erase }
 }

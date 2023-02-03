@@ -10,32 +10,45 @@ module.exports = app => {
     const save = async (req, res) => {
         const user = { ...req.body }
         if(req.params.id) user.id = req.params.id
-
-        try {
-            console.log(user.nome)
-            existsOrError(user.nome, 'Nome não informado')
-            existsOrError(user.email, 'E-mail não informado')
-            existsOrError(user.universidade, 'Universidade não informada')
-            existsOrError(user.senha, 'Senha não informada')
-            existsOrError(user.confirmaSenha, 'Confirmação de Senha inválida')
-            equalsOrError(user.senha, user.confirmaSenha, 'Senhas não conferem')
-
-            const userFromDB = await app.db('users').where({ email: user.email }).first()
-            if(!user.id) {
-                notExistsOrError(userFromDB, 'Usuário já cadastrado')
-            }
-        } catch(msg) {
-            return res.status(400).send(msg)
-        }
-        user.senha = encryptPassword(user.senha)
-        delete user.confirmaSenha
         if(user.id) {
+            if(user.email) delete user.email
+            try{
+                existsOrError(user.nome, 'Nome não informado')
+                existsOrError(user.universidade, 'Universidade não informada')
+                if (user.senha) {
+                    existsOrError(user.senha, 'Senha não informada')
+                    existsOrError(user.confirmaSenha, 'Confirmação de Senha inválida')
+                    equalsOrError(user.senha, user.confirmaSenha, 'Senhas não conferem')
+                    user.senha = encryptPassword(user.senha)
+                    delete user.confirmaSenha
+                }
+            }catch(msg) {
+                return res.status(400).send(msg)
+            }
             app.db('users')
-                .update(user)
                 .where({ id: user.id })
-                .then(_ => res.status(204).send())
+                .update(user)
                 .catch(err => res.status(500).send(err))
+            res.status(204).send()
         } else {
+            try {
+                existsOrError(user.nome, 'Nome não informado')
+                existsOrError(user.email, 'E-mail não informado')
+                existsOrError(user.universidade, 'Universidade não informada')
+                existsOrError(user.senha, 'Senha não informada')
+                existsOrError(user.confirmaSenha, 'Confirmação de Senha inválida')
+                equalsOrError(user.senha, user.confirmaSenha, 'Senhas não conferem')
+    
+                const userFromDB = await app.db('users').where({ email: user.email }).first()
+                if(!user.id) {
+                    notExistsOrError(userFromDB, 'Usuário já cadastrado')
+                }
+        
+                user.senha = encryptPassword(user.senha)
+                delete user.confirmaSenha
+            } catch(msg) {
+                return res.status(400).send(msg)
+            }
             app.db('users')
                 .insert(user)
                 .then(_ => res.status(204).send())
@@ -60,7 +73,7 @@ module.exports = app => {
 
     const getById = (req, res) => {
         app.db('users')
-            .select('nome', 'universidade', 'email', 'admin')
+            .select('id', 'nome', 'universidade', 'email')
             .where({ id: req.params.id})
             .first()
             .then(users => res.json(users))
@@ -68,9 +81,8 @@ module.exports = app => {
     }
 
     const teste = (req, res) =>{
-        const corpo = {...req.body}
-        corpo.formId= req.params.formId
-        res.json(corpo)
+        console.log("oiiii")
+        res.json("aaaaaa")
     }
     return { save, get, erase, getById, teste }
 }

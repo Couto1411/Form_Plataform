@@ -1,0 +1,15 @@
+.centralize{
+    margin: 0em 1em;
+}
+
+@media(min-width: 768px){
+    .centralize{
+        margin: 0em 3em;
+    }
+}
+
+@media(min-width: 1024px){
+    .centralize{
+        margin: 0em 10em;
+    }
+}

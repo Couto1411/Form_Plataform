@@ -20,12 +20,7 @@ export default function FormularioResposta(){
 
     useEffect(() => {
         async function carregaQuestoes(){
-            let res = await axios.get(baseUrl+"/"+formId,{
-                headers: {
-                    'Content-Type' : 'application/json',
-                    'Authorization': 'bearer ' + sessionStorage.getItem("token")
-                }
-            })
+            let res = await axios.get(baseUrl+"/questoes/"+formId)
             .catch((error) => {console.log(error)})
             res.data.sort((a,b) => a.numero - b.numero);
             setQuestoes(res.data)
@@ -106,8 +101,7 @@ export default function FormularioResposta(){
 
     async function checkUser(email){
         await axios.get(baseUrl+"/resposta/"+formId+"/email/"+email,)
-            .then(resp=>{
-                resp.data?setEmailChecker(false):document.getElementById("email").classList.add('is-invalid')})
+            .then(resp=>{resp.data?setEmailChecker(false):document.getElementById("email").classList.add('is-invalid')})
             .catch((error) => {console.log(error)})
     }
 
@@ -173,15 +167,10 @@ export default function FormularioResposta(){
         })
         if(enviar){
             document.getElementById("desabilita").disabled=true
-            await axios.post(baseUrl+"/"+formId,
+            await axios.post(baseUrl+"/enviados/"+formId,
                 {
                     email:user,
                     respostas: respostas
-                },
-                {
-                    headers: {
-                        'Authorization': 'bearer ' + sessionStorage.getItem("token")
-                    }
                 })
         }
 

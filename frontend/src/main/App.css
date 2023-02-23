@@ -9,6 +9,9 @@ a{
     text-decoration: none;
     white-space: nowrap;
 }
+i:hover{
+    cursor: pointer;
+}
 main{
     margin-bottom: 5em;
 }

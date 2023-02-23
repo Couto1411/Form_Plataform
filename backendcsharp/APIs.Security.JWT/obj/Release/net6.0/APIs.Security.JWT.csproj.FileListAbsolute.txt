@@ -1,0 +1,12 @@
+D:\Pessoal\CEFET\Form_Plataform\backendcsharp\APIs.Security.JWT\bin\Release\net6.0\APIs.Security.JWT.deps.json
+D:\Pessoal\CEFET\Form_Plataform\backendcsharp\APIs.Security.JWT\bin\Release\net6.0\APIs.Security.JWT.dll
+D:\Pessoal\CEFET\Form_Plataform\backendcsharp\APIs.Security.JWT\bin\Release\net6.0\APIs.Security.JWT.pdb
+D:\Pessoal\CEFET\Form_Plataform\backendcsharp\APIs.Security.JWT\obj\Release\net6.0\APIs.Security.JWT.csproj.AssemblyReference.cache
+D:\Pessoal\CEFET\Form_Plataform\backendcsharp\APIs.Security.JWT\obj\Release\net6.0\APIs.Security.JWT.GeneratedMSBuildEditorConfig.editorconfig
+D:\Pessoal\CEFET\Form_Plataform\backendcsharp\APIs.Security.JWT\obj\Release\net6.0\APIs.Security.JWT.AssemblyInfoInputs.cache
+D:\Pessoal\CEFET\Form_Plataform\backendcsharp\APIs.Security.JWT\obj\Release\net6.0\APIs.Security.JWT.AssemblyInfo.cs
+D:\Pessoal\CEFET\Form_Plataform\backendcsharp\APIs.Security.JWT\obj\Release\net6.0\APIs.Security.JWT.csproj.CoreCompileInputs.cache
+D:\Pessoal\CEFET\Form_Plataform\backendcsharp\APIs.Security.JWT\obj\Release\net6.0\APIs.Security.JWT.dll
+D:\Pessoal\CEFET\Form_Plataform\backendcsharp\APIs.Security.JWT\obj\Release\net6.0\refint\APIs.Security.JWT.dll
+D:\Pessoal\CEFET\Form_Plataform\backendcsharp\APIs.Security.JWT\obj\Release\net6.0\APIs.Security.JWT.pdb
+D:\Pessoal\CEFET\Form_Plataform\backendcsharp\APIs.Security.JWT\obj\Release\net6.0\ref\APIs.Security.JWT.dll

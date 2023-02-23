@@ -33,40 +33,25 @@ export default function PaginaUsuario(){
         change.value=element.titulo
         change.classList.remove("is-invalid");
     };
-
+    
+    async function carregaForms(){
+        let res = await axios.get(baseUrl+"/users/"+sessionStorage.getItem("userId")+"/forms",{
+            headers: {
+                'Content-Type' : 'application/json',
+                'Authorization': 'bearer ' + sessionStorage.getItem("token")
+            }
+        })
+        .catch((error) => {
+            if (error.response.status===401) {
+                navigate('/login')
+                console.warn("Faça o login")
+            }else{ console.log(error)}
+        })
+        setforms(res.data)
+    }
 
     useEffect(() => {
-        async function validate(){
-            const valor = await axios.post(baseUrl+"/validateToken",{
-                "token": sessionStorage.getItem("token")
-            })
-            .then((response) => {
-                if(!response){
-                    navigate('/login')
-                    console.warn("Faça o login")
-                }
-            })
-            .catch((error) => {
-                if (error.response.status==401) {
-                    navigate('/login')
-                    console.warn("Faça o login")
-                }else{
-                    console.log(error)
-                }
-            })
-        }
-        async function carregaForms(){
-            let res = await axios.get(baseUrl+"/users/"+sessionStorage.getItem("userId")+"/forms",{
-                headers: {
-                    'Content-Type' : 'application/json',
-                    'Authorization': 'bearer ' + sessionStorage.getItem("token")
-                }
-            })
-            .catch((error) => {console.log(error)})
-            setforms(res.data)
-        }
         if (sessionStorage.getItem("token")){
-            validate()
             carregaForms()
         }
         else{
@@ -93,7 +78,12 @@ export default function PaginaUsuario(){
                         {id: response.data, titulo: change.value}
                     ])
                 })
-                .catch((error) => {console.log(error.request)})
+                .catch((error) => {
+                    if (error.response.status===401) {
+                        navigate('/login')
+                        console.warn("Faça o login")
+                    }else{ console.log(error)}
+                })
             }
             else{
                 change.classList.add("is-invalid");
@@ -112,7 +102,12 @@ export default function PaginaUsuario(){
                 .then((response)=>{
                     forms[forms.map(object => object.id).indexOf(form.id)].titulo=change.value
                 })
-                .catch((error) => {console.log(error.request)})
+                .catch((error) => {
+                    if (error.response.status===401) {
+                        navigate('/login')
+                        console.warn("Faça o login")
+                    }else{ console.log(error)}
+                })
             }
         }
         toggleShow({id: null, titulo:null});
@@ -127,7 +122,12 @@ export default function PaginaUsuario(){
         .then((response)=>{
             setforms(forms.filter(a=> a.id !== id))
         })
-        .catch((error) => {console.log(error.request)})
+        .catch((error) => {
+            if (error.response.status===401) {
+                navigate('/login')
+                console.warn("Faça o login")
+            }else{ console.log(error)}
+        })
         setUsure(false)
     }
 
@@ -171,7 +171,7 @@ export default function PaginaUsuario(){
     }
 
     const secaoForms=<main className='mt-3 principal'>
-        {Title("Formularios")}
+        {Title("Formularios",carregaForms)}
         
         <MDBListGroup small numbered className='mt-3 rounded-3 bg-light' >
             {renderizaForms()}

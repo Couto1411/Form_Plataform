@@ -87,7 +87,7 @@ module.exports = app => {
     }
 
     const getByEnviadoId = async (req, res) => {
-        let response = []
+        let response = {respostas: []}
         let questoes = await app.db('questoes')
             .select('*')
             .where({formId:req.params.formId})
@@ -99,23 +99,23 @@ module.exports = app => {
                 case 1:
                     const radio = {}
                     if(element.opcao1){
-                        radio.resposta=await app.db('radiobox')
+                        radio.radio=await app.db('radiobox')
                             .select('radio')
                             .where({questaoId: element.id, respostaId: req.params.enviadoId})
                             .first()
                             .then((result)=>result.radio)
                             .catch(err => res.status(500).send(err))
-                        radio.resposta=eval('element.opcao'+radio.resposta)
+                        radio.radio=eval('element.opcao'+radio.radio)
                     }
-                        radio.enunciado=element.enunciado
-                        radio.id=element.id
-                        radio.type=element.type
-                        radio.numero=element.numero
-                        response.push(radio)
+                    radio.enunciado=element.enunciado
+                    radio.id=element.id
+                    radio.type=element.type
+                    radio.numero=element.numero
+                    response.respostas.push(radio)
                     break;
                 case 2:
                     const text = {}
-                    text.resposta=await app.db('text')
+                    text.texto=await app.db('text')
                         .select('texto')
                         .where({questaoId: element.id, respostaId: req.params.enviadoId})
                         .first()
@@ -125,28 +125,28 @@ module.exports = app => {
                     text.id=element.id
                     text.type=element.type
                     text.numero=element.numero
-                    response.push(text)
+                    response.respostas.push(text)
                     break;
                 case 3:
                     const check = {}
                     if (element.opcao1) {
-                        check.resposta=await app.db('checkbox')
+                        check.opcoes=await app.db('checkbox')
                             .select('opcao1','opcao2','opcao3','opcao4','opcao5','opcao6','opcao7','opcao8','opcao9','opcao10')
                             .first()
                             .where({questaoId: element.id, respostaId: req.params.enviadoId})
                             .then((result)=>JSON.parse(JSON.stringify(result)))
                             .catch(err => res.status(500).send(err))
-                        check.resposta=Object.values(check.resposta)
-                        for (let index = 0; index < check.resposta.length; index++){
-                            check.resposta[index]?check.resposta[index]=eval('element.opcao'+(index+1)):check.resposta[index]=null
+                        check.opcoes=Object.values(check.opcoes)
+                        for (let index = 0; index < check.opcoes.length; index++){
+                            check.opcoes[index]?check.opcoes[index]=eval('element.opcao'+(index+1)):check.opcoes[index]=null
                         }
-                        check.resposta=check.resposta.filter(n=>n!=null)
+                        check.opcoes=check.opcoes.filter(n=>n!=null)
                     }
                         check.enunciado=element.enunciado
                         check.id=element.id
                         check.type=element.type
                         check.numero=element.numero
-                        response.push(check)
+                        response.respostas.push(check)
                     break;
                 default:
                     break;

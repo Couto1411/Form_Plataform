@@ -53,8 +53,10 @@ module.exports = app => {
         .all(app.config.passport.authenticate())
         .get(app.api.respostas.getByEnviadoId)
 
-    app.route('/:formId')
+    app.route('enviados/:formId')
         .post(app.api.respostas.save)
+
+    app.route('questoes/:formId')
         .get(app.api.questoes.getById)
 
     app.route('/resposta/:formId/email/:email')

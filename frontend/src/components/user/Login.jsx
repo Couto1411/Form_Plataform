@@ -29,7 +29,7 @@ export default function Login (props) {
                     var v = document.getElementById("Email");
                     v.classList.add("is-invalid");
                 }else{
-
+                    console.log(error)
                 }
             }
         })

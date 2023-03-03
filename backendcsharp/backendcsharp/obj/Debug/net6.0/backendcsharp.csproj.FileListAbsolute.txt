@@ -293,5 +293,3 @@ D:\Pessoal\CEFET\Form_Plataform\backendcsharp\backendcsharp\obj\Debug\net6.0\ref
 D:\Pessoal\CEFET\Form_Plataform\backendcsharp\backendcsharp\obj\Debug\net6.0\backendcsharp.pdb
 D:\Pessoal\CEFET\Form_Plataform\backendcsharp\backendcsharp\obj\Debug\net6.0\backendcsharp.genruntimeconfig.cache
 D:\Pessoal\CEFET\Form_Plataform\backendcsharp\backendcsharp\obj\Debug\net6.0\ref\backendcsharp.dll
-D:\Pessoal\CEFET\Form_Plataform\backendcsharp\backendcsharp\bin\Debug\net6.0\AWSSDK.Core.dll
-D:\Pessoal\CEFET\Form_Plataform\backendcsharp\backendcsharp\bin\Debug\net6.0\AWSSDK.SimpleEmail.dll

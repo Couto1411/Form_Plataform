@@ -17,6 +17,8 @@ public partial class Users
 
     public bool Admin { get; set; }
 
+    public string AppPassword { get; set; } = null!;
+
     public virtual ICollection<Formulario> Formularios { get; } = new List<Formulario>();
     public virtual ICollection<Cursos> Cursos { get; } = new List<Cursos>();
     public virtual ICollection<TiposCursos> TiposCursos { get; } = new List<TiposCursos>();

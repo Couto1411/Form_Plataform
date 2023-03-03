@@ -7,10 +7,16 @@ public partial class FormularioDTO
     public string? titulo { get; set; } = null!;
 
     public uint? responsavelId { get; set; } = null!;
+    public uint? derivadoDeId { get; set; } = null!;
+    public DateTime? dataEnviado { get; set; } = null!;
+
+    public virtual ICollection<FormularioDTO> derivados { get; set; } = new List<FormularioDTO>();
 
     public virtual ICollection<EnviadoDTO> enviados { get; } = new List<EnviadoDTO>();
 
     public virtual ICollection<QuestoesDTO> questoes { get; } = new List<QuestoesDTO>();
+
+    public virtual FormularioDTO? formularioOrig { get; set; } = null!;
 
     public virtual UsersDTO? responsavel { get; set; } = null!;
 }

@@ -4,7 +4,10 @@ import baseUrl from "../../config/api"
 import Title from "../template/Title"
 import axios from "axios"
 import { useState } from "react"
-import { MDBInput, MDBBtn,MDBContainer, MDBInputGroup} from 'mdb-react-ui-kit'
+import { 
+    MDBInput, MDBBtn,MDBContainer, MDBInputGroup,
+    MDBModal, MDBModalDialog, MDBModalContent, MDBModalBody
+} from 'mdb-react-ui-kit'
 import { useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 
@@ -19,6 +22,7 @@ export default function UserSection(main,secao,props){
     const [cursos,setCursos]= useState([])
     const [tipoCursos,setTipoCursos]= useState([])
     const [count,setCount]= useState(0)
+    const [modalAjuda,setModalAjuda]= useState(false)
 
     async function carregaUsuario(){
         let res = await axios.get(baseUrl+"/users/"+sessionStorage.getItem("userId"),{
@@ -27,14 +31,16 @@ export default function UserSection(main,secao,props){
                 'Authorization': 'bearer ' + sessionStorage.getItem("token")
             }
         })
+        .then(response => {
+            setNome(response.data.nome)
+            setUser(response.data)
+        })
         .catch((error) => {
             if (error.response.status===401) {
                 navigate('/login')
                 console.warn("Faça o login")
             }else{ console.log(error)}
         })
-        setNome(res.data.nome)
-        setUser(res.data)
     }
     
     async function carregaCursos(){
@@ -64,33 +70,38 @@ export default function UserSection(main,secao,props){
         let univ=document.getElementById('univUsuario')
         let senha=document.getElementById('senha')
         let confsenha=document.getElementById('ConfirmaSenha')
+        let appPassword=document.getElementById('appPassword')
         if(nomeUser.value){
+            user.nomeUser=nomeUser.value
             if (univ.value) {
-                if (senha.value) {
-                    if (senha.value==confsenha.value) {
-                        user.senha=senha.value
-                        user.confirmaSenha=confsenha.value
-                    }else{
-                        confsenha.classList.add('is-invalid')
-                        senha.classList.add('is-invalid')
+                user.universidade=univ.value
+                if(appPassword.value){
+                    user.appPassword = appPassword.value
+                    if (senha.value) {
+                        if (senha.value==confsenha.value) {
+                            user.senha=senha.value
+                        }else{
+                            confsenha.classList.add('is-invalid')
+                            senha.classList.add('is-invalid')
+                        }
                     }
-                }
-                await axios.put(baseUrl+"/users/"+sessionStorage.getItem("userId"),user,{
-                    headers: {
-                        'Content-Type' : 'application/json',
-                        'Authorization': 'bearer ' + sessionStorage.getItem("token")
-                    }
-                })
-                .then((_)=>{ 
-                    senha.value=''
-                    confsenha.value=''
-                })
-                .catch((error) => {
-                    if (error.response.status===401) {
-                        navigate('/login')
-                        console.warn("Faça o login")
-                    }else{ console.log(error)}
-                })
+                    await axios.put(baseUrl+"/users/"+sessionStorage.getItem("userId"),user,{
+                        headers: {
+                            'Content-Type' : 'application/json',
+                            'Authorization': 'bearer ' + sessionStorage.getItem("token")
+                        }
+                    })
+                    .then((_)=>{ 
+                        senha.value=''
+                        confsenha.value=''
+                    })
+                    .catch((error) => {
+                        if (error.response.status===401) {
+                            navigate('/login')
+                            console.warn("Faça o login")
+                        }else{ console.log(error)}
+                    })
+                }else appPassword.classList.add('is-invalid')
             }else univ.classList.add('is-invalid')
         }
         else nomeUser.classList.add('is-invalid')
@@ -106,7 +117,6 @@ export default function UserSection(main,secao,props){
                 let objeto ={}
                 objeto.listaCursos = cursos
                 objeto.listaTipoCursos = tipoCursos
-                console.log(objeto)
                 await axios.post(baseUrl+"/users/"+sessionStorage.getItem("userId")+"/cursos",objeto,{
                     headers: {
                         'Authorization': 'bearer ' + sessionStorage.getItem("token")
@@ -206,18 +216,42 @@ export default function UserSection(main,secao,props){
             return(
                 <main className='mt-3 principal'>
                     {Title(nome)}
+
+                    <MDBModal tabIndex='-1'  show={modalAjuda} setShow={setModalAjuda}>
+                        <MDBModalDialog size="lg" scrollable>
+                            <MDBModalContent>
+                                <MDBModalBody>
+                                    Este campo é reservado para a senha de aplicativo do Gmail. <br/>
+                                    Esta senha é utilizada para permitir que a plataforma possa enviar os emails aos destinatários. <br/>
+                                    Caso não possua uma senha ou tenha perdido a informação siga os passos ou acesse: <a className="realLink" target="_blank" href="https://support.google.com/accounts/answer/185833?hl=pt-BR">Senha de aplicativo do Gmail</a><br/><br/>
+                                    1. Acesse a aba <b>Gerenciar sua conta do Google</b> da sua conta do gmail:<br/><br/>
+                                    <div className="d-flex justify-content-center"><img src={require('./../imgs/settings.png')} className='img-fluid shadow-4'></img></div><br/><br/>
+                                    2. Encontre a aba de <b>Segurança</b>, ative a verificação em duas etapas e clique em <b>Senhas de apps</b>:<br/><br/>
+                                    <div className="d-flex justify-content-center"><img src={require('./../imgs/seesettings.png')} className='img-fluid shadow-4'></img></div><br/><br/>
+                                    3. Clique na seção <b>Selecionar app</b>:<br/><br/>
+                                    <div className="d-flex justify-content-center"><img src={require('./../imgs/senha.png')} className='img-fluid shadow-4'></img></div><br/><br/>
+                                    4. Escolha a opção <b>Outro (nome personalizado)</b>, digite um nome para o acesso à plataforma e clique em <b>Gerar</b>:<br/><br/>
+                                    <div className="d-flex justify-content-center"><img src={require('./../imgs/outro.png')} className='img-fluid shadow-4'></img></div><br/><br/>
+                                    5. Selecione a chave gerada na área amarela:<br/><br/>
+                                    <div className="d-flex justify-content-center"><img src={require('./../imgs/seleciona.png')} className='img-fluid shadow-4'></img></div><br/><br/>
+                                    6. Cole o texto selecionado neste campo.
+                                </MDBModalBody>
+                            </MDBModalContent>
+                        </MDBModalDialog>
+                    </MDBModal>
+
                     <MDBContainer fluid className="bg-light mt-3 rounded-3 p-3">
                         <h4>Usuário</h4>
                         <hr className='mt-0 mb-3'></hr>
                         <div className='row g-3'>
                             <div className="col-12">
-                                <MDBInput onKeyDown={e=>{limit(e.target,250)}} onKeyUp={e=>{limit(e.target,250)}} id='nomeUsuario' value={user?.nome} onChange={e=>setUser({...user,nome: e.target.value})} name='fname' required label='Nome'/>
+                                <MDBInput onKeyDown={e=>{limit(e.target,250)}} onKeyUp={e=>{limit(e.target,250)}} id='nomeUsuario' defaultValue={user?.nome} name='fname' required label='Nome'/>
                             </div>
                             <div className="col-md-6">
                                 <MDBInput  id='emailUsuario' readOnly type='email' value={user?.email} name='femail' required label='Email'/>
                             </div>
                             <div className="col-md-6"> 
-                                <MDBInput onKeyDown={e=>{limit(e.target,250)}} onKeyUp={e=>{limit(e.target,250)}} id='univUsuario' value={user?.universidade} onChange={e=>setUser({...user,universidade: e.target.value})} name='funiv' required label='Universidade'/>
+                                <MDBInput onKeyDown={e=>{limit(e.target,250)}} onKeyUp={e=>{limit(e.target,250)}} id='univUsuario' defaultValue={user?.universidade} name='funiv' required label='Universidade'/>
                             </div>
                             <div className="col-md-6" >
                                 <MDBInput onKeyDown={e=>{limit(e.target,20)}} onKeyUp={e=>{limit(e.target,20)}} id='senha' type='password' onChange={e=>{
@@ -230,6 +264,14 @@ export default function UserSection(main,secao,props){
                                 <MDBInput onKeyDown={e=>{limit(e.target,20)}} onKeyUp={e=>{limit(e.target,20)}} id='ConfirmaSenha' readOnly type='password' onChange={e=>{
                                     e.target.classList.remove('is-invalid')
                                 }} name='fconfsenha' label='Confirmar nova senha'/>
+                            </div>
+                            <div className="col-12">
+                            <MDBInputGroup className='col-12' 
+                                                textBefore="Senha de Aplicativo do Gmail"
+                                                textAfter={ <div onClick={e=>{setModalAjuda(true)}}><i className="fas fa-solid fa-circle-question"></i></div>}>
+                                                <input onKeyDown={e=>{limit(e.target,250)}} onKeyUp={e=>{limit(e.target,250)}}
+                                                    id={"appPassword"} defaultValue={user?.appPassword} className='form-control' type='text' />
+                                            </MDBInputGroup>
                             </div>
                             <div className='col-12 d-flex'>
                                 <MDBBtn onClick={e=>handleSave()} className="ms-auto">Salvar</MDBBtn>

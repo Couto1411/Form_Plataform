@@ -58,7 +58,7 @@ a:hover{color: rgb(21, 21, 21)}
     background-color: #aeaeae;
 }
 
-.novoEnviadoForm{
+.novoContatoForm{
     color: rgb(34, 34, 34);
     background-color: #ffffff;
     box-shadow: none;
@@ -78,22 +78,22 @@ a:hover{color: rgb(21, 21, 21)}
 }
 
 @media screen and (min-width:280px) {
-    .novoEnviadoCurso{width: 70%;}
-    .novoEnviadoSexo{width: 75%;}
-    .novoEnviadoTipoCurso{width: 45%;}
+    .novoContatoCurso{width: 70%;}
+    .novoContatoSexo{width: 75%;}
+    .novoContatoTipoCurso{width: 45%;}
 }
 @media screen and (min-width:400px) {
-    .novoEnviadoCurso{width: 82%;}
-    .novoEnviadoSexo{width: 85%;}
-    .novoEnviadoTipoCurso{width: 66%;}
+    .novoContatoCurso{width: 82%;}
+    .novoContatoSexo{width: 85%;}
+    .novoContatoTipoCurso{width: 66%;}
 }
 @media screen and (min-width:600px) {
-    .novoEnviadoCurso{width: 89%;}
-    .novoEnviadoSexo{width: 90%;}
-    .novoEnviadoTipoCurso{width: 79%;}
+    .novoContatoCurso{width: 89%;}
+    .novoContatoSexo{width: 90%;}
+    .novoContatoTipoCurso{width: 79%;}
 }
 @media screen and (min-width:768px) {
-    .novoEnviadoCurso{width: 83%;}
-    .novoEnviadoSexo{width: 85%;}
-    .novoEnviadoTipoCurso{width: 68%;}
+    .novoContatoCurso{width: 83%;}
+    .novoContatoSexo{width: 85%;}
+    .novoContatoTipoCurso{width: 68%;}
 }

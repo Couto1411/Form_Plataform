@@ -4,6 +4,7 @@ using backendcsharp.Handles;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace backendcsharp.Controllers
 {
@@ -77,12 +78,20 @@ namespace backendcsharp.Controllers
         {
             try
             {
+                HashSet<string> cursosDB = new HashSet<string>(await ProjetoDbContext.Cursos.Where(s => s.ResponsavelId == Id).Select(c=>c.Curso).ToListAsync());
+                HashSet<string> cursos = new HashSet<string>();
+                HashSet<string> tipoCursosDB = new HashSet<string>(await ProjetoDbContext.TiposCursos.Where(s => s.ResponsavelId == Id).Select(c => c.TipoCurso).ToListAsync());
+                HashSet<string> tiposCursos = new HashSet<string>();
+                Handlers.ExistsOrError(Id.ToString(), "Id do usuário não informado");
+                Handlers.IdNegative(Id, "Id do usuário inválido");
                 Handlers.ExistsOrError(FormId.ToString(), "Id do formulário não informado");
                 Handlers.IdNegative(FormId, "Id do formulário inválido");
                 if (Envio is not null)
                 {
                     foreach (var item in Envio)
-                    {
+                    {   
+                        if (item.curso is not null) cursos.Add(item.curso);
+                        if (item.modalidade is not null) tiposCursos.Add(item.modalidade);
                         var entity = new Enviado()
                         {
                             Respondido = false,
@@ -98,6 +107,30 @@ namespace backendcsharp.Controllers
                             Cpf = item.cpf
                         };
                         ProjetoDbContext.Enviados.Add(entity);
+                    }
+                    foreach (var item in cursos)
+                    {
+                        var entity = new Cursos()
+                        {
+                            Curso = item is not null ? item : throw new Exception("Um dos itens não possui nome do curso"),
+                            ResponsavelId = (uint)Id
+                        };
+                        if (!cursosDB.Contains(entity.Curso))
+                        {
+                            ProjetoDbContext.Cursos.Add(entity);
+                        }
+                    }
+                    foreach (var item in tiposCursos)
+                    {
+                        var entity = new TiposCursos()
+                        {
+                            TipoCurso = item is not null ? item : throw new Exception("Um dos itens não possui nome do tipo do curso"),
+                            ResponsavelId = (uint)Id
+                        };
+                        if (!tipoCursosDB.Contains(entity.TipoCurso))
+                        {
+                            ProjetoDbContext.TiposCursos.Add(entity);
+                        }
                     }
                     await ProjetoDbContext.SaveChangesAsync();
                     return StatusCode(204);

@@ -142,16 +142,22 @@ public partial class ProjetoDbContext : DbContext
             entity.ToTable("formularios");
 
             entity.HasIndex(e => e.ResponsavelId, "formularios_responsavelid_foreign");
+            entity.HasIndex(e => e.DerivadoDeId, "formularios_derivadodeid_foreign");
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.ResponsavelId).HasColumnName("responsavelId");
             entity.Property(e => e.Titulo)
                 .HasMaxLength(255)
                 .HasColumnName("titulo");
+            entity.Property(e => e.DataEnviado).HasColumnName("dataEnviado");
 
             entity.HasOne(d => d.Responsavel).WithMany(p => p.Formularios)
                 .HasForeignKey(d => d.ResponsavelId)
                 .HasConstraintName("formularios_responsavelid_foreign");
+
+            entity.HasOne(d => d.FormularioOrig).WithMany(p => p.Derivados)
+                .HasForeignKey(d => d.DerivadoDeId)
+                .HasConstraintName("formularios_derivadodeid_foreign");
         });
 
         modelBuilder.Entity<Questoes>(entity =>
@@ -288,6 +294,9 @@ public partial class ProjetoDbContext : DbContext
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Admin).HasColumnName("admin");
+            entity.Property(e => e.AppPassword)
+                .HasMaxLength(255)
+                .HasColumnName("apppassword");
             entity.Property(e => e.Email).HasColumnName("email");
             entity.Property(e => e.Nome)
                 .HasMaxLength(255)

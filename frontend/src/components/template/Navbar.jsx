@@ -5,12 +5,12 @@ import {
     MDBContainer, MDBNavbarBrand} from 'mdb-react-ui-kit';
 
 
-export default function Navbar(updateField,props){
+export default function Navbar(ShowSidebar,props){
     return(
         <nav id="main-navbar" className="navbar navbar-expand-lg navbar-light sticky-top bg-dark">
             <MDBContainer fluid>
                 {/* Toggle button */}
-                {!props?<button className="navbar-toggler" onClick={e=>{updateField('sidebarMenu')}}>
+                {!props?<button className="navbar-toggler" onClick={e=>{ShowSidebar('sidebarMenu')}}>
                     <i className="fas fa-bars"></i>
                 </button>:<></>}
 

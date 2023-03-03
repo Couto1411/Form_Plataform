@@ -15,7 +15,6 @@ export default function Resposta(){
 
     const [respostas,setRespostas] = useState([{}])
 
-    const [user, setUser] = useState({})
     const [secao, setsecao] = useState(1)
     const [appearing, setAppearing] = useState(false)
 
@@ -42,13 +41,13 @@ export default function Resposta(){
     function renderizaRepostas(){
         return respostas?.map(element => {
             return(
-                <MDBListGroupItem key={"r"+element.id} className='mt-3 rounded-3'>
+                <>{element.type!==4?<MDBListGroupItem key={"r"+element.id} className='mt-3 rounded-3'>
                     <div className='enunciado'>{element.numero}) {element.enunciado}</div>
                     <hr className='mt-0 mb-2'></hr>
-                    <div id={"enviado"+element.id} className='mx-2'>
+                    <div className='mx-2'>
                         {element?makeResp(element):<></>}
                     </div>
-                </MDBListGroupItem>
+                </MDBListGroupItem>:<></>}</>
             )
         })
     }
@@ -58,27 +57,38 @@ export default function Resposta(){
             case 1:
                 return(
                     <div className='my-1'>
-                        <MDBInputGroup className='mb-2'>
-                            <MDBBtn disabled color='secondary' className='numQuestao py-0 px-3'><MDBRadio defaultChecked={true} className='m-0 p-0' name='radioNoLabel' value='' inline disabled/></MDBBtn>
-                            <input className='form-control' type='text' value={element.radio} disabled/>
-                        </MDBInputGroup>
+                        {element.radio?
+                            <MDBInputGroup className='mb-2'>
+                                <MDBBtn disabled color='secondary' className='numQuestao py-0 px-3'><MDBRadio defaultChecked={true} className='m-0 p-0' name='radioNoLabel' value='' inline disabled/></MDBBtn>
+                                <input className='form-control' type='text' value={element.radio} disabled/>
+                            </MDBInputGroup>:
+                            <>Não respondeu</>}
                     </div>
                 )
             case 2:
                 return(
                     <div className='my-1'>
-                        <MDBTextArea rows={4} label='Resposta' value={element.texto} readOnly className='mb-2'/>
+                        {element.texto?
+                            <MDBTextArea rows={4} label='Resposta' value={element.texto} readOnly className='mb-2'/>:
+                            <div>Não respondeu</div>}
+                        
                     </div>
                 )
             case 3:
-                return element.opcoes?.map((item,index)=>{
-                    return(
-                        <MDBInputGroup key={element.id+index} className='mb-2'>
-                            <MDBBtn disabled color='secondary' className='numQuestao py-0 px-3'><MDBCheckbox defaultChecked={true} className='m-0 p-0' name='radioNoLabel' value='' inline disabled/></MDBBtn>
-                            <input className='form-control' type='text' value={item} disabled/>
-                        </MDBInputGroup>
-                    )
-                })
+                if(element.opcoes.length){
+                    return element.opcoes?.map((item,index)=>{
+                        return(
+                            <MDBInputGroup key={element.id+index} className='mb-2'>
+                                <MDBBtn disabled color='secondary' className='numQuestao py-0 px-3'><MDBCheckbox defaultChecked={true} className='m-0 p-0' name='radioNoLabel' value='' inline disabled/></MDBBtn>
+                                <input className='form-control' type='text' value={item} disabled/>
+                            </MDBInputGroup>
+                        )
+                    })
+                }
+                else{
+                    return (<>Não respondeu</>)
+                }
+                
             default:
                 break;
         }
@@ -93,7 +103,7 @@ export default function Resposta(){
     // Secao Respostas
 
     
-    function updateField(id){
+    function ShowSidebar(id){
         var v = document.getElementById(id);
         if (appearing) {
             v.classList.remove("d-block")
@@ -114,7 +124,7 @@ export default function Resposta(){
     return(
         <section>
             {Sidebar(setMain,'resposta',setsecao)}
-            {Navbar(updateField)}
+            {Navbar(ShowSidebar)}
 
             {makeSecao()}
         </section>

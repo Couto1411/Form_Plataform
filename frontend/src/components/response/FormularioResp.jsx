@@ -91,6 +91,12 @@ export default function FormularioResposta(){
                             </div>
                         </MDBListGroupItem>
                     )
+                case 4:
+                    return(
+                        <MDBListGroupItem noBorders key={element.id} className='rounded-3 mb-3'>
+                            <MDBTextArea rows={4} id={'questao'+element.id} defaultValue={element.enunciado} label='Resposta' readOnly className='mb-2'/>
+                        </MDBListGroupItem>
+                    )
                 default:
                     return(
                         <div className='mb-1'></div>

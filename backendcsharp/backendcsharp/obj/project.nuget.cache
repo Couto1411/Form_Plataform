@@ -1,11 +1,9 @@
 {
   "version": 2,
-  "dgSpecHash": "cum3PzweRQmzvZBFfQIZWnD93KZnL83kCxiMhxaXZWHceWESAuF9hz94nw9d92P0m0xg2+ZS/hYQZT3kkc5WNQ==",
+  "dgSpecHash": "5NBswIQBNsI2EChlNEcn8+MWES051A1nRMpWDJ6YVr4bFYQ9YHa1WjDM5FKYvZG5aKPoOyeLYbkS9wHI4ExMCw==",
   "success": true,
   "projectFilePath": "D:\\Pessoal\\CEFET\\Form_Plataform\\backendcsharp\\backendcsharp\\backendcsharp.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\gabri\\.nuget\\packages\\awssdk.core\\3.7.105.6\\awssdk.core.3.7.105.6.nupkg.sha512",
-    "C:\\Users\\gabri\\.nuget\\packages\\awssdk.simpleemail\\3.7.100.77\\awssdk.simpleemail.3.7.100.77.nupkg.sha512",
     "C:\\Users\\gabri\\.nuget\\packages\\bcrypt.net-next\\4.0.3\\bcrypt.net-next.4.0.3.nupkg.sha512",
     "C:\\Users\\gabri\\.nuget\\packages\\google.protobuf\\3.21.9\\google.protobuf.3.21.9.nupkg.sha512",
     "C:\\Users\\gabri\\.nuget\\packages\\humanizer.core\\2.8.26\\humanizer.core.2.8.26.nupkg.sha512",

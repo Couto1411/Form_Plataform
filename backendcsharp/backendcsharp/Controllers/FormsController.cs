@@ -4,6 +4,7 @@ using backendcsharp.Handles;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using NuGet.Packaging;
 
 namespace backendcsharp.Controllers
 {
@@ -33,9 +34,34 @@ namespace backendcsharp.Controllers
                     var entity = new Formulario()
                     {
                         Titulo = Form.titulo,
-                        ResponsavelId = (uint) Id
+                        ResponsavelId = (uint) Id,
+                        DerivadoDeId= Form.derivadoDeId
                     };
                     ProjetoDbContext.Formularios.Add(entity);
+                    await ProjetoDbContext.SaveChangesAsync();
+                    if (entity.DerivadoDeId is not null)
+                    {
+                        var EnviadosOrig = await ProjetoDbContext.Enviados.Where(s => s.FormId == entity.DerivadoDeId).ToListAsync();
+                        foreach (var item in EnviadosOrig)
+                        {
+                            var envio = new Enviado()
+                            {
+                                Respondido = false,
+                                FormId = entity.Id,
+                                Nome = item.Nome,
+                                Email = item.Email,
+                                Matricula = item.Matricula,
+                                Curso = item.Curso,
+                                DataColacao = item.DataColacao,
+                                TipoDeCurso = item.TipoDeCurso,
+                                Telefone1 = item.Telefone1,
+                                Telefone2 = item.Telefone2,
+                                Sexo = item.Sexo,
+                                Cpf = item.Cpf
+                            };
+                            ProjetoDbContext.Enviados.Add(envio);
+                        }
+                    }
                     await ProjetoDbContext.SaveChangesAsync();
                     return entity.Id;
                 } else throw new Exception("Id do formulário já existe");
@@ -67,6 +93,7 @@ namespace backendcsharp.Controllers
                     {
                         entity.Titulo = Form.titulo;
                         entity.ResponsavelId = Form.responsavelId;
+                        entity.DataEnviado = Form.dataEnviado;
                         await ProjetoDbContext.SaveChangesAsync();
                         return StatusCode(204);
                     }
@@ -82,22 +109,40 @@ namespace backendcsharp.Controllers
 
         // Selecionar todos os formulários
         // ADMIN----------------------------------
-        [HttpGet("forms")]
-        public async Task<ActionResult<List<FormularioDTO>>> GetForms()
+        [HttpGet("forms/admin/{Id}")]
+        [Authorize("Bearer")]
+        public async Task<ActionResult<List<FormularioDTO>>> GetForms([FromRoute] int Id)
         {
             try
             {
-                var List = await ProjetoDbContext.Formularios.Select(
-                    s => new FormularioDTO
-                    {
-                        id = s.Id,
-                        responsavelId = s.ResponsavelId,
-                        titulo = s.Titulo,
-                    }
-                ).ToListAsync();
+                Handlers.ExistsOrError(Id.ToString(), "Id do responsável não informado");
+                Handlers.IdNegative(Id, "Id do responsável inválido");
+                var Admin = await ProjetoDbContext.Users.Select(s => new UsersDTO
+                {
+                    id = s.Id,
+                    nome = s.Nome,
+                    email = s.Email,
+                    admin = s.Admin,
+                    appPassword = s.AppPassword,
+                    universidade = s.Universidade
+                }).FirstOrDefaultAsync(s => s.id == Id);
+                if (Admin is null) return NotFound();
+                if (Admin.admin)
+                {
+                    var List = await ProjetoDbContext.Formularios.Select(
+                        s => new FormularioDTO
+                        {
+                            id = s.Id,
+                            responsavelId = s.ResponsavelId,
+                            dataEnviado = s.DataEnviado,
+                            titulo = s.Titulo,
+                        }
+                    ).ToListAsync();
 
-                if (List.Count < 0) return NotFound(); 
-                else return List;
+                    if (List.Count < 0) return NotFound();
+                    else return List;
+                }
+                else return StatusCode(401);
             }
             catch (Exception ex)
             {
@@ -119,10 +164,27 @@ namespace backendcsharp.Controllers
                     {
                         id = s.Id,
                         titulo = s.Titulo,
+                        derivadoDeId = s.DerivadoDeId,
+                        dataEnviado = s.DataEnviado,
                         responsavelId = s.ResponsavelId
                     })
-                    .Where(s => s.responsavelId == Id)
+                    .Where(s => s.responsavelId == Id && s.derivadoDeId == null)
                     .ToListAsync();
+                foreach (var item in Forms)
+                {
+                    var FormsDerivados = await ProjetoDbContext.Formularios
+                        .Select(s => new FormularioDTO
+                        {
+                            id = s.Id,
+                            titulo = s.Titulo,
+                            derivadoDeId = s.DerivadoDeId,
+                            dataEnviado = s.DataEnviado,
+                            responsavelId = s.ResponsavelId
+                        })
+                        .Where(s => s.derivadoDeId == item.id && s.derivadoDeId != null)
+                        .ToListAsync();
+                    item.derivados.AddRange(FormsDerivados);
+                }
                 if (Forms.Count < 0) return NotFound();
                 else return Forms;
             }
@@ -139,6 +201,19 @@ namespace backendcsharp.Controllers
         {
             try
             {
+                var forms = await ProjetoDbContext.Formularios.Where(s => s.DerivadoDeId == FormId).ToListAsync();
+                foreach (var item in forms)
+                {
+                    var envios = await ProjetoDbContext.Enviados.Where(s => s.FormId == item.Id).ToListAsync();
+                    foreach (var envio in envios)
+                    {
+                        ProjetoDbContext.Radioboxes.RemoveRange(ProjetoDbContext.Radioboxes.Where(s => s.RespostaId == envio.Id));
+                        ProjetoDbContext.Texts.RemoveRange(ProjetoDbContext.Texts.Where(s => s.RespostaId == envio.Id));
+                        ProjetoDbContext.Checkboxes.RemoveRange(ProjetoDbContext.Checkboxes.Where(s => s.RespostaId == envio.Id));
+                    }
+                    ProjetoDbContext.Enviados.RemoveRange(ProjetoDbContext.Enviados.Where(s => s.FormId == item.Id));
+                    ProjetoDbContext.Formularios.Remove(item);
+                }
                 Handlers.ExistsOrError(FormId.ToString(), "Id do formulário não informado");
                 Handlers.IdNegative(FormId, "Id do formulário inválido");
                 var questoes = await ProjetoDbContext.Questoes

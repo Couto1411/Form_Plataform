@@ -12,6 +12,7 @@
         public string? confirmaSenha { get; set; } = null!;
 
         public string? universidade { get; set; } = null!;
+        public string? appPassword { get; set; } = null!;
 
         public bool admin { get; set; } = false!;
 

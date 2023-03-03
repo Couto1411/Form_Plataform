@@ -4,6 +4,7 @@ using backendcsharp.DTO;
 using Microsoft.AspNetCore.Authorization;
 using backendcsharp.Handles;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace backendcsharp.Controllers
 {
@@ -32,6 +33,10 @@ namespace backendcsharp.Controllers
             {
                 Handlers.ExistsOrError(Id.ToString(), "Id do usuário não informado");
                 Handlers.IdNegative(Id, "Id do usuário inválido");
+
+                HashSet<string> cursosDB = new HashSet<string>(await ProjetoDbContext.Cursos.Where(s=>s.ResponsavelId==Id).Select(c=>c.Curso).ToListAsync());
+                HashSet<string> tipoCursosDB = new HashSet<string>(await ProjetoDbContext.TiposCursos.Where(s => s.ResponsavelId == Id).Select(c => c.TipoCurso).ToListAsync());
+
                 foreach (var item in ListaCurso.listaCursos)
                 {
                     var entity = new Cursos()
@@ -39,7 +44,10 @@ namespace backendcsharp.Controllers
                         Curso = item.curso is not null ? item.curso: throw new Exception("Um dos itens não possui nome do curso"),
                         ResponsavelId = (uint)Id
                     };
-                    ProjetoDbContext.Cursos.Add(entity);
+                    if (!cursosDB.Contains(entity.Curso))
+                    {
+                        ProjetoDbContext.Cursos.Add(entity);
+                    }
                 }
                 foreach (var item in ListaCurso.listaTipoCursos)
                 {
@@ -48,7 +56,10 @@ namespace backendcsharp.Controllers
                         TipoCurso = item.tipoCurso is not null ? item.tipoCurso : throw new Exception("Um dos itens não possui nome do tipo do curso"),
                         ResponsavelId = (uint)Id
                     };
-                    ProjetoDbContext.TiposCursos.Add(entity);
+                    if (!tipoCursosDB.Contains(entity.TipoCurso))
+                    {
+                        ProjetoDbContext.TiposCursos.Add(entity);
+                    }
                 }
                 await ProjetoDbContext.SaveChangesAsync();
                 return StatusCode(204);

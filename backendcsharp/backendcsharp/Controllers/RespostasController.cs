@@ -41,6 +41,16 @@ namespace backendcsharp.Controllers
             try
             {
                 Handlers.ExistsOrError(Resp.email, "Email da resposta não informado");
+                Handlers.ExistsOrError(FormId.ToString(), "Id do formulário não informado");
+                Handlers.IdNegative(FormId, "Id do formulário inválido");
+                var Form = await ProjetoDbContext.Formularios
+                    .Select(s => new FormularioDTO
+                    {
+                        id = s.Id,
+                        derivadoDeId = s.DerivadoDeId,
+                    })
+                    .Where(s => s.id == FormId)
+                    .FirstOrDefaultAsync();
                 var enviado = await ProjetoDbContext.Enviados
                     .Select(s => new EnviadoDTO
                     {
@@ -52,6 +62,7 @@ namespace backendcsharp.Controllers
                     .Where(s => (s.formId == FormId && s.email == Resp.email && s.respondido == false))
                     .FirstOrDefaultAsync();
                 if (enviado is not null) {
+                    FormId = Form.derivadoDeId is not null? (int)Form.derivadoDeId:FormId;
                     foreach (var item in Resp.respostas)
                     {
                         var questao = await ProjetoDbContext.Questoes
@@ -228,7 +239,6 @@ namespace backendcsharp.Controllers
                                             break;
                                     }
                                 }
-                                else throw new Exception("Resposta não encontrada (RadioBox)");
                             }
 
                             // Informações gerais
@@ -255,8 +265,11 @@ namespace backendcsharp.Controllers
                                 .FirstOrDefaultAsync();
 
                             // Coloca o texto respondido na estrutura "TipoResposta"
-                            texto.texto = textDB is not null ? textDB.texto : throw new Exception("Resposta não encontrada (Text)");
-                            
+                            if (textDB is not null)
+                            {
+                                texto.texto = textDB.texto;
+                            }
+
                             // Informações gerais
                             texto.enunciado = item.enunciado;
                             texto.id = item.id != null ? (uint)item.id : throw new Exception("Id da questão não encontrado");
@@ -303,7 +316,6 @@ namespace backendcsharp.Controllers
                                     if (item.opcao9 is not null && checkBoxDB.opcao9 == true) check.opcoes.Add(item.opcao9);
                                     if (item.opcao10 is not null && checkBoxDB.opcao10 == true) check.opcoes.Add(item.opcao10);
                                 }
-                                else throw new Exception("Resposta não encontrada (RadioBox)");
                             }
 
                             // Informações gerais
@@ -312,6 +324,14 @@ namespace backendcsharp.Controllers
                             check.type = item.type;
                             check.numero = item.numero;
                             response.Add(check);
+                            break;
+                        case 4:
+                            TipoResposta descricao = new TipoResposta();
+                            descricao.enunciado = item.enunciado;
+                            descricao.id = item.id != null ? (uint)item.id : throw new Exception("Id da questão não encontrado");
+                            descricao.type = item.type;
+                            descricao.numero = item.numero;
+                            response.Add(descricao);
                             break;
                         default:
                             throw new Exception("Tipo da questão não existe");
@@ -464,6 +484,7 @@ namespace backendcsharp.Controllers
                                 response.Add(check);
                             }
                             break;
+                        case 4:
                         case 2:
                             break;
                         default:

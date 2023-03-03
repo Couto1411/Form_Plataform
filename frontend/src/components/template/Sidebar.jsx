@@ -30,7 +30,7 @@ export default function Sidebar(setMain,area,setAdicional){
             return(
                 <MDBListGroup className="mx-3 mt-4" id='sidebar'>
                     <MDBRipple><MDBListGroupItem role='button' id='Questoes' className='px-3 sidebarItem zoom rounded-top border-bottom-0' onClick={e=>{updateSelected(e.target.id);setAdicional(1);setMain(1)}}>Questoes</MDBListGroupItem></MDBRipple>
-                    <MDBRipple><MDBListGroupItem role='button' id='Enviados' className='px-3 sidebarItem zoom border-bottom-0' onClick={e=>{updateSelected(e.target.id);setAdicional(2);setMain(1)}}>Enviados</MDBListGroupItem></MDBRipple>
+                    <MDBRipple><MDBListGroupItem role='button' id='Contatos' className='px-3 sidebarItem zoom border-bottom-0' onClick={e=>{updateSelected(e.target.id);setAdicional(2);setMain(1)}}>Contatos</MDBListGroupItem></MDBRipple>
                     <MDBRipple><MDBListGroupItem role='button' id='Respostas' className='px-3 sidebarItem zoom border-bottom-0' onClick={e=>{updateSelected(e.target.id);setAdicional(3);setMain(1)}}>Respostas</MDBListGroupItem></MDBRipple>
                     <MDBRipple><MDBListGroupItem role='button' id='Item3' className='px-3 sidebarItem zoom rounded-bottom' onClick={e=>{navigate('/user')}}>Voltar</MDBListGroupItem></MDBRipple>
                 </MDBListGroup>

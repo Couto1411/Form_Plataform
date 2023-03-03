@@ -1,8 +1,13 @@
 a{color: rgb(58, 58, 58);}
 a:hover{color: rgb(21, 21, 21)}
 
-.edit{color: rgb(58, 58, 58);}
+.edit{color: #3a3a3a;}
 .edit:hover{color: rgb(21, 21, 21)}
 
 .trashcan{color: rgb(255, 34, 34);}
 .trashcan:hover{color: rgb(180, 0, 0);}
+
+.formsDuplicates{
+    color: rgb(26, 26, 26);
+    background-color: #75a7ff;
+}

@@ -3,6 +3,19 @@
     margin-left: 1em;
 }
 
+.realLink{
+    text-decoration: underline;
+    color: rgb(73, 73, 255);
+}
+
+.realLink:hover{
+    color: rgb(12, 12, 255);
+}
+
+.realLink:visited{
+    color: rgb(101, 10, 150);
+}
+
 @media (min-width: 991.98px) {
     .principal {
         margin-left: 16em;

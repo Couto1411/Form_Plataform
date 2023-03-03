@@ -10,10 +10,16 @@ public partial class Formulario
     public string Titulo { get; set; } = null!;
 
     public uint? ResponsavelId { get; set; }
+    public uint? DerivadoDeId { get; set; } = null!;
+    public DateTime? DataEnviado { get; set; } = null!;
+
+    public virtual ICollection<Formulario> Derivados { get; } = new List<Formulario>();
 
     public virtual ICollection<Enviado> Enviados { get; } = new List<Enviado>();
 
     public virtual ICollection<Questoes> Questoes { get; } = new List<Questoes>();
+
+    public virtual Formulario? FormularioOrig { get; set; }
 
     public virtual Users? Responsavel { get; set; }
 }

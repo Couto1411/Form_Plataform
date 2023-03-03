@@ -5,7 +5,6 @@ using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using MySql.EntityFrameworkCore.Extensions;
 using APIs.Security.JWT;
-using Microsoft.AspNetCore.Cors.Infrastructure;
 
 var webApplicationOptions = new WebApplicationOptions
 {
@@ -69,6 +68,7 @@ builder.Services.AddCors(options =>
 builder.Services.AddEntityFrameworkMySQL().AddDbContext<ProjetoDbContext>(options => {
     options.UseMySQL(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
+builder.Services.AddScoped<DbContext, ProjetoDbContext>();
 
 var tokenConfigurations = new TokenConfigurations();
 new ConfigureFromConfigurationOptions<TokenConfigurations>(

@@ -114,43 +114,6 @@ namespace backendcsharp.Controllers
             }
         }
 
-        // Selecionar todos os formulários
-        // ADMIN----------------------------------
-        [HttpGet("questoes")]
-        public async Task<ActionResult<List<QuestoesDTO>>> Get()
-        {
-            try
-            {
-                var List = await ProjetoDbContext.Questoes.Select(
-                    s => new QuestoesDTO
-                    {
-                        id = s.Id,
-                        numero = s.Numero,
-                        type = s.Type,
-                        formId = s.FormId,
-                        enunciado = s.Enunciado,
-                        opcao1 = s.Opcao1,
-                        opcao2 = s.Opcao2,
-                        opcao3 = s.Opcao3,
-                        opcao4 = s.Opcao4,
-                        opcao5 = s.Opcao5,
-                        opcao6 = s.Opcao6,
-                        opcao7 = s.Opcao7,
-                        opcao8 = s.Opcao8,
-                        opcao9 = s.Opcao9,
-                        opcao10 = s.Opcao10
-                    }
-                ).ToListAsync();
-
-                if (List.Count < 0) return NotFound();
-                else return List;
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
-        }
-
         // Selecionar questões por ID do formulário
         [HttpGet("questoes/{FormId}")]
         public async Task<ActionResult<List<QuestoesDTO>>> GetQuestaoByFormId([FromRoute] int FormId)
@@ -159,6 +122,15 @@ namespace backendcsharp.Controllers
             {
                 Handlers.ExistsOrError(FormId.ToString(), "Id do formulário não informado");
                 Handlers.IdNegative(FormId, "Id do formulário inválido");
+                var Form = await ProjetoDbContext.Formularios
+                    .Select(s => new FormularioDTO
+                    {
+                        id = s.Id,
+                        derivadoDeId = s.DerivadoDeId,
+                    })
+                    .Where(s => s.id == FormId)
+                    .FirstOrDefaultAsync();
+                FormId = Form.derivadoDeId is not null? (int)Form.derivadoDeId:FormId;
                 var Questoes = await ProjetoDbContext.Questoes
                     .Select(s => new QuestoesDTO
                     {
@@ -208,6 +180,8 @@ namespace backendcsharp.Controllers
                         break;
                     case 3:
                         ProjetoDbContext.Checkboxes.RemoveRange(ProjetoDbContext.Checkboxes.Where(s => s.QuestaoId == QuestaoId));
+                        break;
+                    case 4:
                         break;
                     default:
                         throw new Exception("Tipo da questão inválido");

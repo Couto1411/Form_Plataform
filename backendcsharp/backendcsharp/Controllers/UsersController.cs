@@ -9,6 +9,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Immutable;
 using System.Net;
+using System.Net.Mail;
 
 namespace backendcsharp.Controllers
 {
@@ -24,24 +25,41 @@ namespace backendcsharp.Controllers
 
         // Selecionar todos os usuários
         // ADMIN----------------------------------
-        [HttpGet("users")]
-        public async Task<ActionResult<List<UsersDTO>>> GetUser()
+        [HttpGet("users/admin/{id}")]
+        [Authorize("Bearer")]
+        public async Task<ActionResult<List<UsersDTO>>> GetUser([FromRoute] int Id)
         {
-            try {
-                var List = await ProjetoDbContext.Users.Select(
-                    s => new UsersDTO
-                    {
-                        id = s.Id,
-                        nome = s.Nome,
-                        email = s.Email,
-                        admin = s.Admin,
-                        senha = s.Senha,
-                        universidade = s.Universidade
-                    }
-                ).ToListAsync();
-
-                if (List.Count < 0) return NotFound();
-                else return List;
+            try
+            {
+                Handlers.ExistsOrError(Id.ToString(), "Id do responsável não informado");
+                Handlers.IdNegative(Id, "Id do responsável inválido");
+                var Admin = await ProjetoDbContext.Users.Select(s => new UsersDTO
+                {
+                    id = s.Id,
+                    nome = s.Nome,
+                    email = s.Email,
+                    admin = s.Admin,
+                    appPassword = s.AppPassword,
+                    universidade = s.Universidade
+                }).FirstOrDefaultAsync(s => s.id == Id);
+                if (Admin is null) return NotFound();
+                if (Admin.admin)
+                {
+                    var List = await ProjetoDbContext.Users.Select(
+                        s => new UsersDTO
+                        {
+                            id = s.Id,
+                            nome = s.Nome,
+                            email = s.Email,
+                            appPassword = s.AppPassword,
+                            admin = s.Admin,
+                            senha = s.Senha,
+                            universidade = s.Universidade
+                        }
+                    ).ToListAsync();
+                    if (List.Count < 0) return NotFound();
+                    else return List;
+                }else return StatusCode(401);
             }
             catch (Exception ex)
             {
@@ -58,13 +76,13 @@ namespace backendcsharp.Controllers
             {
                 Handlers.ExistsOrError(Id.ToString(), "Id do responsável não informado");
                 Handlers.IdNegative(Id, "Id do responsável inválido");
-                UsersDTO User = await ProjetoDbContext.Users.Select(s => new UsersDTO
+                var User = await ProjetoDbContext.Users.Select(s => new UsersDTO
                 {
                     id = s.Id,
                     nome = s.Nome,
                     email = s.Email,
                     admin = s.Admin,
-                    senha = s.Senha,
+                    appPassword = s.AppPassword,
                     universidade = s.Universidade
                 }).FirstOrDefaultAsync(s => s.id == Id);
                 if (User == null)
@@ -83,37 +101,56 @@ namespace backendcsharp.Controllers
 
         // Adicionar Usuário
         // ADMIN----------------------------------
-        [HttpPost("users")]
-        public async Task<ActionResult<UsersDTO>> InsertUser([FromBody] UsersDTO User)
+        [HttpPost("users/{id}")]
+        [Authorize("Bearer")]
+        public async Task<ActionResult<UsersDTO>> InsertUser([FromBody] UsersDTO User, [FromRoute] int Id)
         {
             try
             {
-                if (User.id is not null) throw new Exception("Usuário já existente");
-                else 
+                Handlers.ExistsOrError(Id.ToString(), "Id do responsável não informado");
+                Handlers.IdNegative(Id, "Id do responsável inválido");
+                var Admin = await ProjetoDbContext.Users.Select(s => new UsersDTO
                 {
-                    Handlers.ExistsOrError(User.nome, "Nome não informado");
-                    Handlers.ExistsOrError(User.email, "Email não informado");
-                    Handlers.ExistsOrError(User.universidade, "Universidade não informada");
-                    Handlers.ExistsOrError(User.senha, "Senha não informada");
-                    if (User.confirmaSenha is null || User.senha != User.confirmaSenha) throw new Exception("Senhas não conferem");
+                    id = s.Id,
+                    nome = s.Nome,
+                    email = s.Email,
+                    admin = s.Admin,
+                    appPassword = s.AppPassword,
+                    universidade = s.Universidade
+                }).FirstOrDefaultAsync(s => s.id == Id);
+                if (Admin is null) return NotFound();
+                if (Admin.admin)
+                {
+                    if (User.id is not null) throw new Exception("Usuário já existente");
                     else
                     {
-                        // Salva usuário no banco MySQL
-                        var entity = new Users()
+                        Handlers.ExistsOrError(User.nome, "Nome não informado");
+                        if (!Handlers.IsValidGmail(User.email)) throw new Exception("Formato inválido de email");
+                        Handlers.ExistsOrError(User.appPassword, "Senha não informado");
+                        Handlers.ExistsOrError(User.universidade, "Universidade não informada");
+                        Handlers.ExistsOrError(User.senha, "Senha não informada");
+                        if (User.confirmaSenha is null || User.senha != User.confirmaSenha) throw new Exception("Senhas não conferem");
+                        else
                         {
-                            Nome = User.nome,
-                            Email = User.email,
-                            Universidade = User.universidade,
-                            Senha = BCrypt.Net.BCrypt.HashPassword(User.senha),
-                            Admin = User.admin,
-                        };
-                        ProjetoDbContext.Users.Add(entity);
-                        await ProjetoDbContext.SaveChangesAsync();
+                            // Salva usuário no banco MySQL
+                            var entity = new Users()
+                            {
+                                Nome = User.nome,
+                                Email = User.email,
+                                Universidade = User.universidade,
+                                AppPassword = User.appPassword,
+                                Senha = BCrypt.Net.BCrypt.HashPassword(User.senha),
+                                Admin = User.admin,
+                            };
+                            ProjetoDbContext.Users.Add(entity);
+                            await ProjetoDbContext.SaveChangesAsync();
 
-                        return StatusCode(204);
+                            return StatusCode(204);
+                        }
                     }
-                }
-            }catch(Exception ex)
+                }else return StatusCode(401);
+            }
+            catch(Exception ex)
             {
                 return StatusCode(500, ex.Message);
             }
@@ -132,6 +169,9 @@ namespace backendcsharp.Controllers
                 if (entity != null)
                 {
                     entity.Nome = User.nome != null ? User.nome : throw new Exception("Nome não informado");
+                    entity.Universidade = User.universidade != null ? User.universidade : throw new Exception("Universidade não informada");
+                    if (User.senha is not null) entity.Senha = BCrypt.Net.BCrypt.HashPassword(User.senha);
+                    entity.AppPassword = User.appPassword != null ? User.appPassword : throw new Exception("Senha do gmail não informada não informada");
                     await ProjetoDbContext.SaveChangesAsync();
                     return StatusCode(204);
                 }
@@ -146,23 +186,74 @@ namespace backendcsharp.Controllers
         // Deleta usuário
         // ADMIN----------------------------------
         [HttpDelete("users/{Id}")]
-        public async Task<HttpStatusCode> DeleteUser(int Id)
+        [Authorize("Bearer")]
+        public async Task<ActionResult> DeleteUser([FromBody] int AdminId,[FromRoute] int Id)
         {
             try
             {
                 Handlers.ExistsOrError(Id.ToString(), "Id do responsável não informado");
-                Handlers.IdNegative(Id, "Id do usuário inválido");
-                var entity = new Users()
+                Handlers.IdNegative(Id, "Id do responsável inválido");
+                Handlers.ExistsOrError(AdminId.ToString(), "Id do responsável não informado");
+                Handlers.IdNegative(AdminId, "Id do responsável inválido");
+                var Admin = await ProjetoDbContext.Users.Select(s => new UsersDTO
                 {
-                    Id = ((uint)Id)
-                };
-                ProjetoDbContext.Users.Attach(entity);
-                ProjetoDbContext.Users.Remove(entity);
-                await ProjetoDbContext.SaveChangesAsync();
-                return HttpStatusCode.OK;
+                    id = s.Id,
+                    nome = s.Nome,
+                    email = s.Email,
+                    admin = s.Admin,
+                    appPassword = s.AppPassword,
+                    universidade = s.Universidade
+                }).FirstOrDefaultAsync(s => s.id == AdminId);
+                if (Admin is null) return NotFound();
+                if (Admin.admin)
+                {
+                    var FormsOrig = await ProjetoDbContext.Formularios.Where(s => s.ResponsavelId == Id && s.DerivadoDeId == null).ToListAsync();
+                    foreach (var form in FormsOrig)
+                    {
+                        var FormsDeriv = await ProjetoDbContext.Formularios.Where(s => s.DerivadoDeId == form.Id).ToListAsync();
+                        foreach (var item in FormsDeriv)
+                        {
+                            var envios = await ProjetoDbContext.Enviados.Where(s => s.FormId == item.Id).ToListAsync();
+                            foreach (var envio in envios)
+                            {
+                                ProjetoDbContext.Radioboxes.RemoveRange(ProjetoDbContext.Radioboxes.Where(s => s.RespostaId == envio.Id));
+                                ProjetoDbContext.Texts.RemoveRange(ProjetoDbContext.Texts.Where(s => s.RespostaId == envio.Id));
+                                ProjetoDbContext.Checkboxes.RemoveRange(ProjetoDbContext.Checkboxes.Where(s => s.RespostaId == envio.Id));
+                            }
+                            ProjetoDbContext.Enviados.RemoveRange(ProjetoDbContext.Enviados.Where(s => s.FormId == item.Id));
+                            ProjetoDbContext.Formularios.Remove(item);
+                        }
+                        var questoes = await ProjetoDbContext.Questoes
+                            .Select(s => new QuestoesDTO
+                            {
+                                id = s.Id,
+                                formId = s.FormId
+                            })
+                            .Where(s => s.formId == form.Id)
+                            .ToListAsync();
+                        foreach (var item in questoes)
+                        {
+                            ProjetoDbContext.Radioboxes.RemoveRange(ProjetoDbContext.Radioboxes.Where(s => s.QuestaoId == item.id));
+                            ProjetoDbContext.Texts.RemoveRange(ProjetoDbContext.Texts.Where(s => s.QuestaoId == item.id));
+                            ProjetoDbContext.Checkboxes.RemoveRange(ProjetoDbContext.Checkboxes.Where(s => s.QuestaoId == item.id));
+                        }
+                        ProjetoDbContext.Enviados.RemoveRange(ProjetoDbContext.Enviados.Where(s => s.FormId == form.Id));
+                        ProjetoDbContext.Questoes.RemoveRange(ProjetoDbContext.Questoes.Where(s => s.FormId == form.Id));
+                        ProjetoDbContext.Formularios.Remove(form);
+                    }
+
+                    var UsuarioDeleta = new Users()
+                    {
+                        Id = ((uint)Id)
+                    };
+                    ProjetoDbContext.Users.Remove(UsuarioDeleta);
+                    await ProjetoDbContext.SaveChangesAsync();
+                    return StatusCode(204);
+                }
+                else return StatusCode(401);
             }catch(Exception ex)
             {
-                return HttpStatusCode.InternalServerError;
+                return StatusCode(500,ex.Message);
             }
         }
 
@@ -188,7 +279,10 @@ namespace backendcsharp.Controllers
                         senha = s.Senha
                     }
                 ).Where(s => s.email == usuario.email).FirstOrDefaultAsync();
-                usuario.id = Usuario is not null ? (int)Usuario.id : throw new Exception("Usuário não encontrado");
+                if (Usuario is not null)
+                {
+                    usuario.id = (int)Usuario.id;
+                }else return StatusCode(400);
                 if (BCrypt.Net.BCrypt.Verify(usuario.senha,Usuario.senha))
                 {
                     logger.LogInformation($"Sucesso na autenticação do usuário: {usuario.email}");
@@ -197,21 +291,14 @@ namespace backendcsharp.Controllers
                 else
                 {
                     logger.LogError($"Falha na autenticação do usuário: {usuario?.email}");
-                    return new UnauthorizedResult();
+                    return StatusCode(401);
                 }
             }
             else
             {
                 logger.LogError($"Falha na autenticação do usuário: {usuario?.email}");
-                return new UnauthorizedResult();
+                return StatusCode(400);
             }
-        }
-
-        [HttpPost("validateToken")]
-        [Authorize("Bearer")]
-        public ActionResult<HttpStatusCode> ValidaToken()
-        {
-            return HttpStatusCode.OK;
         }
 
     }

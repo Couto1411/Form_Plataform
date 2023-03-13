@@ -80,20 +80,20 @@ a:hover{color: rgb(21, 21, 21)}
 @media screen and (min-width:280px) {
     .novoContatoCurso{width: 70%;}
     .novoContatoSexo{width: 75%;}
-    .novoContatoTipoCurso{width: 45%;}
+    .novoContatoModalidade{width: 45%;}
 }
 @media screen and (min-width:400px) {
     .novoContatoCurso{width: 82%;}
     .novoContatoSexo{width: 85%;}
-    .novoContatoTipoCurso{width: 66%;}
+    .novoContatoModalidade{width: 66%;}
 }
 @media screen and (min-width:600px) {
     .novoContatoCurso{width: 89%;}
     .novoContatoSexo{width: 90%;}
-    .novoContatoTipoCurso{width: 79%;}
+    .novoContatoModalidade{width: 79%;}
 }
 @media screen and (min-width:768px) {
     .novoContatoCurso{width: 83%;}
     .novoContatoSexo{width: 85%;}
-    .novoContatoTipoCurso{width: 68%;}
+    .novoContatoModalidade{width: 68%;}
 }

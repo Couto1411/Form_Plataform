@@ -60,9 +60,13 @@ export default function UserSection(main,secao,props){
         setTipoCursos(res.data.listaTipoCursos)
     }
 
-    useEffect(() => {
+    async function load(){
         carregaUsuario()
         carregaCursos()
+    }
+
+    useEffect(() => {
+        load()
     }, []);
 
     async function handleSave(){
@@ -200,6 +204,16 @@ export default function UserSection(main,secao,props){
         }
     }
 
+    function admin(){
+        if(sessionStorage.getItem("admin")==='true'){
+            let pathArray = window.location.pathname.split('/');
+            if(pathArray.slice(-1)[0]==='admin')
+                return(<MDBBtn className="mx-2" color="dark" onClick={e => {navigate('/user')}}>USUÁRIO</MDBBtn>)
+            else
+                return(<MDBBtn className="mx-2" color="dark" onClick={e => {navigate('/admin')}}>ADMIN</MDBBtn>)
+        }
+    }
+
     function limit(element,tamanho)
     {
         var max_chars = tamanho;
@@ -215,8 +229,9 @@ export default function UserSection(main,secao,props){
         case 2:
             return(
                 <main className='mt-3 principal'>
-                    {Title(nome)}
+                    {Title(nome,load)}
 
+                    {/* Modal de instrução da senha de aplicativo do GMAIL */}
                     <MDBModal tabIndex='-1'  show={modalAjuda} setShow={setModalAjuda}>
                         <MDBModalDialog size="lg" scrollable>
                             <MDBModalContent>
@@ -240,6 +255,7 @@ export default function UserSection(main,secao,props){
                         </MDBModalDialog>
                     </MDBModal>
 
+                    {/* Informações do usuários */}
                     <MDBContainer fluid className="bg-light mt-3 rounded-3 p-3">
                         <h4>Usuário</h4>
                         <hr className='mt-0 mb-3'></hr>
@@ -279,6 +295,7 @@ export default function UserSection(main,secao,props){
                         </div>
                     </MDBContainer>
 
+                    {/* Informações dos cursos e modalidades */}
                     <MDBContainer fluid className="bg-light mt-3 rounded-3 p-3">
                         <h4 >Curso</h4>
                         <hr className='mt-0 mb-3'></hr>
@@ -312,12 +329,12 @@ export default function UserSection(main,secao,props){
                             <i role='button' className="addQuestao mx-1 edit fas fa-regular fa-plus" onClick={e=>document.getElementById("novoCurso").style.display='inline-block'} ></i>
                         </div>
 
-                        <h6 id="labelTipoCurso" className="mt-2">Tipo de Cursos:</h6>
+                        <h6 id="labelTipoCurso" className="mt-2">Modalidades dos Cursos:</h6>
                         <div className='row g-3'>
                             {tipoCursos?.map(item =>{
                                 if(item.novo){
                                     return <div key={item.name} className='col-12'>
-                                                <MDBInput value={item?.tipoCurso} disabled label='Tipo dos cursos'/>
+                                                <MDBInput value={item?.tipoCurso} disabled label='Modalidade dos cursos'/>
                                             </div>
                                 }else{
                                     return (<MDBInputGroup key={"tipocurso"+item.id} className='col-12'
@@ -351,7 +368,13 @@ export default function UserSection(main,secao,props){
                             <MDBBtn onClick={e=>addCursos()}>Salvar</MDBBtn>
                         </div>
                     </MDBContainer>
-                    <div className="d-flex mt-2"><MDBBtn className="ms-auto" color="danger" onClick={e => {navigate('/login')}}>Logout</MDBBtn></div>
+
+                    {/* Botões de perfil administrador e logout */}
+                    <div className="d-flex mt-2">
+                        <div className="ms-auto">{admin()}</div>
+                        <MDBBtn color="danger" onClick={e => {navigate('/login')}}>Logout</MDBBtn>
+                    </div>
+                    
                 </main>
             )
         default:

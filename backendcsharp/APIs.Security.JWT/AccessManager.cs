@@ -48,6 +48,7 @@ public class AccessManager
         return new()
         {
             Id = user.id,
+            Admin = user.admin,
             Authenticated = true,
             Created = dataCriacao.ToString("yyyy-MM-dd HH:mm:ss"),
             Expiration = dataExpiracao.ToString("yyyy-MM-dd HH:mm:ss"),

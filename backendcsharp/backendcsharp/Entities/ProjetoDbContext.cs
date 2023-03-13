@@ -97,6 +97,7 @@ public partial class ProjetoDbContext : DbContext
             entity.ToTable("enviados");
 
             entity.HasIndex(e => e.FormId, "enviados_formid_foreign");
+            entity.HasIndex(e => new { e.Email,e.FormId,e.Matricula}, "email_UNIQUE").IsUnique();
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Nome)
@@ -170,7 +171,7 @@ public partial class ProjetoDbContext : DbContext
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Enunciado)
-                .HasMaxLength(255)
+                .HasColumnType("longtext")
                 .HasColumnName("enunciado");
             entity.Property(e => e.FormId).HasColumnName("formId");
             entity.Property(e => e.Numero).HasColumnName("numero");

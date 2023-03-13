@@ -9,33 +9,33 @@ build_property.EnforceExtendedAnalyzerRules =
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = backendcsharp
 build_property.RootNamespace = backendcsharp
-build_property.ProjectDir = d:\Pessoal\CEFET\Form_Plataform\backendcsharp\backendcsharp\
+build_property.ProjectDir = D:\Pessoal\CEFET\Form_Plataform\backendcsharp\backendcsharp\
 build_property.RazorLangVersion = 6.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = d:\Pessoal\CEFET\Form_Plataform\backendcsharp\backendcsharp
+build_property.MSBuildProjectDirectory = D:\Pessoal\CEFET\Form_Plataform\backendcsharp\backendcsharp
 build_property._RazorSourceGeneratorDebug = 
 
-[d:/Pessoal/CEFET/Form_Plataform/backendcsharp/backendcsharp/Views/Shared/_ValidationScriptsPartial.cshtml]
+[D:/Pessoal/CEFET/Form_Plataform/backendcsharp/backendcsharp/Views/Shared/_ValidationScriptsPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[d:/Pessoal/CEFET/Form_Plataform/backendcsharp/backendcsharp/Views/UsersDTO/Create.cshtml]
+[D:/Pessoal/CEFET/Form_Plataform/backendcsharp/backendcsharp/Views/UsersDTO/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXNlcnNEVE9cQ3JlYXRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[d:/Pessoal/CEFET/Form_Plataform/backendcsharp/backendcsharp/Views/UsersDTO/Delete.cshtml]
+[D:/Pessoal/CEFET/Form_Plataform/backendcsharp/backendcsharp/Views/UsersDTO/Delete.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXNlcnNEVE9cRGVsZXRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[d:/Pessoal/CEFET/Form_Plataform/backendcsharp/backendcsharp/Views/UsersDTO/Details.cshtml]
+[D:/Pessoal/CEFET/Form_Plataform/backendcsharp/backendcsharp/Views/UsersDTO/Details.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXNlcnNEVE9cRGV0YWlscy5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[d:/Pessoal/CEFET/Form_Plataform/backendcsharp/backendcsharp/Views/UsersDTO/Edit.cshtml]
+[D:/Pessoal/CEFET/Form_Plataform/backendcsharp/backendcsharp/Views/UsersDTO/Edit.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXNlcnNEVE9cRWRpdC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[d:/Pessoal/CEFET/Form_Plataform/backendcsharp/backendcsharp/Views/UsersDTO/Index.cshtml]
+[D:/Pessoal/CEFET/Form_Plataform/backendcsharp/backendcsharp/Views/UsersDTO/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXNlcnNEVE9cSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 

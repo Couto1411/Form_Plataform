@@ -78,7 +78,7 @@ namespace backendcsharp.Controllers
                         foreach (var item in Envios)
                         {
                             if (!item.respondido) { 
-                                if(Handlers.IsValidEmail(item.email)) email.To.Add(item.email);
+                                if(Handlers.IsValidEmail(item.email)) email.Bcc.Add(item.email);
                             }
                         }
                         //email.To.Add("gabriel.couto14@hotmail.com");

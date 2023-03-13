@@ -17,10 +17,10 @@ namespace backendcsharp.Controllers
             this.ProjetoDbContext = ProjetoDbContext;
         }
 
-        // Adicionar Email a ser enviado
+        // Adicionar contato a ser enviado
         [HttpPost("users/{Id}/forms/{FormId}/enviados")]
         [Authorize("Bearer")]
-        public async Task<ActionResult<EnviadoDTO>> InsertEnvio([FromBody] EnviadoDTO Envio, [FromRoute] int Id, [FromRoute] int FormId)
+        public async Task<ActionResult<uint>> InsertContato([FromBody] EnviadoDTO Envio, [FromRoute] int Id, [FromRoute] int FormId)
         {
             try
             {
@@ -29,6 +29,14 @@ namespace backendcsharp.Controllers
                 Handlers.ExistsOrError(Envio.email, "Email não informado");
                 if (Envio.id is null)
                 {
+                    Envio.nome=String.IsNullOrEmpty(Envio.nome) ? null : Envio.nome;
+                    Envio.matricula = String.IsNullOrEmpty(Envio.matricula) ? null : Envio.matricula;
+                    Envio.telefone1 = String.IsNullOrEmpty(Envio.telefone1) ? null : Envio.telefone1;
+                    Envio.telefone2 = String.IsNullOrEmpty(Envio.telefone2) ? null : Envio.telefone2;
+                    Envio.curso = String.IsNullOrEmpty(Envio.curso) ? null : Envio.curso;
+                    Envio.tipoDeCurso = String.IsNullOrEmpty(Envio.tipoDeCurso) ? null : Envio.tipoDeCurso;
+                    Envio.cpf = String.IsNullOrEmpty(Envio.cpf) ? null : Envio.cpf;
+                    // Adiciona contato no form original
                     var entity = new Enviado()
                     {
                         Respondido = Envio.respondido,
@@ -45,9 +53,40 @@ namespace backendcsharp.Controllers
                         Cpf = Envio.cpf
                     };
                     ProjetoDbContext.Enviados.Add(entity);
+
+                    // Adiciona contato nos forms derivados
+                    var FormsDerivados = await ProjetoDbContext.Formularios
+                        .Select(s => new FormularioDTO
+                        {
+                            id = s.Id,
+                            derivadoDeId = s.DerivadoDeId,
+                        })
+                        .Where(s => s.derivadoDeId == FormId && s.derivadoDeId != null)
+                        .ToListAsync();
+                    foreach (var item in FormsDerivados)
+                    {
+                        var entityDerivado = new Enviado()
+                        {
+                            Respondido = Envio.respondido,
+                            FormId = ((uint)item.id),
+                            Nome = Envio.nome,
+                            Email = Envio.email,
+                            Matricula = Envio.matricula,
+                            Curso = Envio.curso,
+                            TipoDeCurso = Envio.tipoDeCurso,
+                            DataColacao = Envio.dataColacao,
+                            Telefone1 = Envio.telefone1,
+                            Telefone2 = Envio.telefone2,
+                            Sexo = Envio.sexo,
+                            Cpf = Envio.cpf
+                        };
+                        ProjetoDbContext.Enviados.Add(entityDerivado);
+                    }
+
+                    // Salva no banco
                     await ProjetoDbContext.SaveChangesAsync();
 
-                    return StatusCode(204);
+                    return entity.Id;
                 }
                 else throw new Exception("Id do email já existe");
             }
@@ -89,7 +128,9 @@ namespace backendcsharp.Controllers
                 if (Envio is not null)
                 {
                     foreach (var item in Envio)
-                    {   
+                    {
+                        item.email = item.email == "NULL" || item.email == "null" ? null : item.email;
+                        item.telefone = item.telefone == "NULL" || item.telefone == "null" ? null : item.telefone;
                         if (item.curso is not null) cursos.Add(item.curso);
                         if (item.modalidade is not null) tiposCursos.Add(item.modalidade);
                         var entity = new Enviado()
@@ -143,10 +184,10 @@ namespace backendcsharp.Controllers
             }
         }
 
-        // Modificar Email a ser enviado
+        // Modificar contato a ser enviado
         [HttpPut("users/{Id}/forms/{FormId}/enviados/{EnviadoId}")]
         [Authorize("Bearer")]
-        public async Task<ActionResult<EnviadoDTO>> UpdateEnvio([FromBody] EnviadoDTO Envio,[FromRoute] int FormId, [FromRoute] int EnviadoId)
+        public async Task<ActionResult<EnviadoDTO>> UpdateContato([FromBody] EnviadoDTO Envio,[FromRoute] int FormId, [FromRoute] int EnviadoId)
         {
             try
             {
@@ -159,30 +200,61 @@ namespace backendcsharp.Controllers
                 Envio.formId = ((uint)FormId);
                 if (Envio.id is not null)
                 {
-                    var entity = await ProjetoDbContext.Enviados.FirstOrDefaultAsync(s => s.Id == EnviadoId);
-                    if (entity != null)
+                    var Form = await ProjetoDbContext.Formularios.FirstOrDefaultAsync(s => s.Id == FormId);
+                    if (Form is not null && Form.DerivadoDeId==null)
                     {
-                        if (!entity.Respondido)
+                        var Contato = await ProjetoDbContext.Enviados.FirstOrDefaultAsync(s => s.Id == EnviadoId);
+                        if (Contato != null)
                         {
-                            entity.FormId = Envio.formId;
-                            entity.Email = Envio.email;
-                            entity.Nome = Envio.nome;
-                            entity.Matricula = Envio.matricula;
-                            entity.Curso = Envio.curso;
-                            entity.TipoDeCurso = Envio.tipoDeCurso;
-                            entity.DataColacao = Envio.dataColacao;
-                            entity.Telefone1 = Envio.telefone1;
-                            entity.Telefone2 = Envio.telefone2;
-                            entity.Sexo = Envio.sexo;
-                            entity.Cpf = Envio.cpf;
+                            // Modifica contato nos forms derivados
+                            var FormsDerivados = await ProjetoDbContext.Formularios.Where(s => s.DerivadoDeId == FormId && s.DerivadoDeId != null).ToListAsync();
+                            foreach (var item in FormsDerivados)
+                            {
+                                var ContatoDerivado = await ProjetoDbContext.Enviados.FirstOrDefaultAsync(s => s.FormId == item.Id && s.Email == Contato.Email);
+                                if (ContatoDerivado != null)
+                                {
+                                    if (!ContatoDerivado.Respondido)
+                                    {
+                                        ContatoDerivado.Email = Envio.email;
+                                        ContatoDerivado.Nome = Envio.nome;
+                                        ContatoDerivado.Matricula = Envio.matricula;
+                                        ContatoDerivado.Curso = Envio.curso;
+                                        ContatoDerivado.TipoDeCurso = Envio.tipoDeCurso;
+                                        ContatoDerivado.DataColacao = Envio.dataColacao;
+                                        ContatoDerivado.Telefone1 = Envio.telefone1;
+                                        ContatoDerivado.Telefone2 = Envio.telefone2;
+                                        ContatoDerivado.Sexo = Envio.sexo;
+                                        ContatoDerivado.Cpf = Envio.cpf;
+                                    }
+                                    else return StatusCode(402);
+                                }
+                                else throw new Exception("Email não presente nos formulários derivados");
+                            }
+
+                            // Modifica contato no form original
+                            if (!Contato.Respondido)
+                            {
+                                Contato.Email = Envio.email;
+                                Contato.Nome = Envio.nome;
+                                Contato.Matricula = Envio.matricula;
+                                Contato.Curso = Envio.curso;
+                                Contato.TipoDeCurso = Envio.tipoDeCurso;
+                                Contato.DataColacao = Envio.dataColacao;
+                                Contato.Telefone1 = Envio.telefone1;
+                                Contato.Telefone2 = Envio.telefone2;
+                                Contato.Sexo = Envio.sexo;
+                                Contato.Cpf = Envio.cpf;
+                            }
+                            else return StatusCode(402);
                             await ProjetoDbContext.SaveChangesAsync();
                             return StatusCode(204);
+
                         }
-                        else throw new Exception("Email já respondeu");
+                        else throw new Exception("Id não encontrado (UpdateEnvio)");
                     }
-                    else throw new Exception("Id não encontrado (UpdateEnvio)");
+                    else throw new Exception("Formulário ñão é original");
                 }
-                else throw new Exception("Email de envio já existente");
+                else throw new Exception("Email de envio não existe");
             }
             catch (Exception ex)
             {
@@ -190,10 +262,10 @@ namespace backendcsharp.Controllers
             }
         }
 
-        // Selecionar emails a responder por ID do formulário
+        // Selecionar contatos a responder por ID do formulário
         [HttpGet("users/{Id}/forms/{FormId}/enviados")]
         [Authorize("Bearer")]
-        public async Task<ActionResult<List<EnviadoDTO>>> GetEnviosById([FromRoute] int FormId)
+        public async Task<ActionResult<List<EnviadoDTO>>> GetContatosById([FromRoute] int FormId)
         {
             try
             {
@@ -227,10 +299,10 @@ namespace backendcsharp.Controllers
             }
         }
 
-        // Deleta Emails enviados (E todas as respostas) ou apenas as repostas
+        // Deleta contatos enviados (E todas as respostas) ou apenas as repostas
         [HttpDelete("users/{Id}/forms/{FormId}/enviados/{RespostaId}")]
         [Authorize("Bearer")]
-        public async Task<ActionResult> DeleteEnvio([FromRoute] int RespostaId, [FromQuery] string deleta)
+        public async Task<ActionResult> DeleteContato([FromRoute] int RespostaId, [FromRoute] int FormId, [FromQuery] string deleta)
         {
             try
             {
@@ -240,33 +312,42 @@ namespace backendcsharp.Controllers
                 ProjetoDbContext.Radioboxes.RemoveRange(ProjetoDbContext.Radioboxes.Where(s => s.RespostaId == RespostaId));
                 ProjetoDbContext.Texts.RemoveRange(ProjetoDbContext.Texts.Where(s => s.RespostaId == RespostaId));
                 ProjetoDbContext.Checkboxes.RemoveRange(ProjetoDbContext.Checkboxes.Where(s => s.RespostaId == RespostaId));
-                // Deleta envio
-                if (deleta == "true")
+                var Contato = await ProjetoDbContext.Enviados.FirstOrDefaultAsync(s => s.Id == RespostaId);
+                if (Contato != null)
                 {
-                    var entity = new Enviado()
+                    // Deleta envio
+                    if (deleta == "true")
                     {
-                        Id = ((uint)RespostaId)
-                    };
-                    ProjetoDbContext.Enviados.Remove(entity);
-                    await ProjetoDbContext.SaveChangesAsync();
-                    return StatusCode(204);
-                }
-                // Deleta resposta e torna envio possível
-                else
-                {
-                    var entity = await ProjetoDbContext.Enviados.FirstOrDefaultAsync(s => s.Id == RespostaId);
-                    if (entity != null)
-                    {
-                        if (entity.Respondido)
+                        var FormsDerivados = await ProjetoDbContext.Formularios
+                            .Select(s => new FormularioDTO
+                            {
+                                id = s.Id,
+                                derivadoDeId = s.DerivadoDeId,
+                            })
+                            .Where(s => s.derivadoDeId == FormId && s.derivadoDeId != null)
+                            .ToListAsync();
+                        foreach (var item in FormsDerivados)
                         {
-                            entity.Respondido = false;
+                            var ContatoDerivado = await ProjetoDbContext.Enviados.FirstOrDefaultAsync(s => s.FormId == item.id && s.Email==Contato.Email);
+                            if(ContatoDerivado is not null) ProjetoDbContext.Enviados.Remove(ContatoDerivado);
+                        }
+                        ProjetoDbContext.Enviados.Remove(Contato);
+                        await ProjetoDbContext.SaveChangesAsync();
+                        return StatusCode(204);
+                    }
+                    // Deleta resposta e torna envio possível
+                    else
+                    {
+                        if (Contato.Respondido)
+                        {
+                            Contato.Respondido = false;
                             await ProjetoDbContext.SaveChangesAsync();
                             return StatusCode(204);
                         }
                         else throw new Exception("Email não respondeu");
                     }
-                    else throw new Exception("Id não encontrado (DeletaEnvio)");
                 }
+                else throw new Exception("Id não encontrado (DeletaEnvio)");
             }
             catch (Exception ex)
             {
@@ -274,7 +355,7 @@ namespace backendcsharp.Controllers
             }
         }
 
-        // Selecionar emails a responder por ID do formulário
+        // Ver se email pode ter acesso às questões
         [HttpGet("resposta/{FormId}/email/{Email}")]
         public async Task<ActionResult<EnviadoDTO>> CheckUser([FromRoute] int FormId, [FromRoute] string Email)
         {

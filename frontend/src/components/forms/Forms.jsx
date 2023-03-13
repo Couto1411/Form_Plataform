@@ -18,8 +18,8 @@ import {
 export default function Forms(){
     const navigate = useNavigate();
 
-    // Utilizado para não existirem questões e usuarios com a mesma chave
-    const [count, setCount] = useState(0);
+    // Alert de contato respondido em form derivado
+    const [respondidoDerivado, setRespondidoDerivado] = useState(false);
     // Conta cliques para excluir email a ser enviado
     const [click, setClick] = useState([{id:''}]);
     
@@ -42,6 +42,7 @@ export default function Forms(){
 
     // Modifia visibilidade da area de novo envio
     const [newContato, setNewContato] = useState(<></>);
+
     // Modifia visibilidade da area de nova questao - 1 parte tipo questao
     const [typeQuestion, setTypeQuestion] = useState(<></>);
     // Modifia visibilidade da area de nova questao - 2 parte enunciado e opcao da questao
@@ -78,13 +79,14 @@ export default function Forms(){
     }
 
     async function carregaEnvios(){
+        console.log("oi")
         let reponse = await axios.get(baseUrl+"/users/"+sessionStorage.getItem("userId")+"/forms/"+sessionStorage.getItem("formId")+"/enviados",{
             headers: {
                 'Content-Type' : 'application/json',
                 'Authorization': 'bearer ' + sessionStorage.getItem("token")
             }
         })
-        .then((response)=>{setContatos(response.data);setContatosDB(response.data)})
+        .then((response)=>{console.log(response.data);setContatos(response.data);setContatosDB(response.data)})
         .catch((error) => {
             if (error.response.status===401) {
                 navigate('/login')
@@ -170,6 +172,7 @@ export default function Forms(){
     function renderizaQuestoes(){
         return questoes?.map(element => {
             switch (element.type) {
+                // Radiobox
                 case 1:
                     return(
                         <MDBListGroupItem noBorders key={element.id} className='rounded-3 mb-3'>
@@ -203,6 +206,7 @@ export default function Forms(){
                             </div>
                         </MDBListGroupItem>
                     )
+                // Text
                 case 2:
                     return(
                         <MDBListGroupItem noBorders key={element.id} className='rounded-3 mb-3'>
@@ -224,6 +228,7 @@ export default function Forms(){
                             </div>
                         </MDBListGroupItem>
                     )
+                // Checkbox
                 case 3:
                     return(
                         <MDBListGroupItem noBorders key={element.id} className='rounded-3 mb-3'>
@@ -257,6 +262,7 @@ export default function Forms(){
                             </div>
                         </MDBListGroupItem>
                     )
+                // Description
                 case 4:
                     return(
                         <MDBListGroupItem noBorders key={element.id} className='rounded-3 mb-3'>
@@ -272,56 +278,6 @@ export default function Forms(){
                             <div className='d-flex'>
                                 <MDBBtn onClick={e=>{excluiQuestao(element)}} color='danger' className={'ms-auto me-2 exclui-salva'+element.id} style={{display:'none'}}>Excluir</MDBBtn>
                                 <MDBBtn onClick={e=>{editaQuestao(element.id)}} className={'exclui-salva'+element.id} style={{display: 'none'}}>Salvar</MDBBtn>
-                            </div>
-                        </MDBListGroupItem>
-                    )
-                case 6:
-                    return(
-                        <MDBListGroupItem noBorders key={element.id} className='rounded-3 mb-3'>
-                            <div className='enunciado mt-1'>
-                                <MDBInputGroup className='mb-2'>
-                                    <MDBBtn color='secondary' className='numQuestao'>{element.numero}</MDBBtn>
-                                    <input className='form-control' type='text' id={'questao'+element.id} defaultValue={element.enunciado} disabled/>
-                                </MDBInputGroup>
-                            </div>
-                            <div id={"opcoes"+element.id} className='mx-2'>
-                                {element.opcao1?<div className='d-flex'>{element.opcao1}</div>:<></>}
-                                {element.opcao2?<div className='d-flex'>{element.opcao2}</div>:<></>}
-                                {element.opcao3?<div className='d-flex'>{element.opcao3}</div>:<></>}
-                                {element.opcao4?<div className='d-flex'>{element.opcao4}</div>:<></>}
-                                {element.opcao5?<div className='d-flex'>{element.opcao5}</div>:<></>}
-                                {element.opcao6?<div className='d-flex'>{element.opcao6}</div>:<></>}
-                                {element.opcao7?<div className='d-flex'>{element.opcao7}</div>:<></>}
-                                {element.opcao8?<div className='d-flex'>{element.opcao8}</div>:<></>}
-                                {element.opcao9?<div className='d-flex'>{element.opcao9}</div>:<></>}
-                                {element.opcao10?<div className='d-flex'>{element.opcao10}</div>:<></>}
-                            </div>
-                            <div className='d-flex'>
-                                <div color='danger' className='ms-auto me-2'>Questões poderão ser editadas após recarregar</div>
-                            </div>
-                        </MDBListGroupItem>
-                    )
-                case 5:
-                    return(
-                        <MDBListGroupItem noBorders key={element.id} className='rounded-3 mb-3'>
-                            <div className='enunciado mt-1'>
-                                <MDBInputGroup className='mb-2'>
-                                    <MDBBtn color='secondary' className='numQuestao'>{element.numero}</MDBBtn>
-                                    <input className='form-control' type='text' id={'questao'+element.id} defaultValue={element.enunciado} disabled/>
-                                </MDBInputGroup>
-                            </div>
-                            <MDBTextArea rows={4} label='Resposta' readOnly className='mb-2'/>
-                            <div className='d-flex'>
-                                <div color='danger' className='ms-auto me-2'>Questões poderão ser editadas após recarregar</div>
-                            </div>
-                        </MDBListGroupItem>
-                    )
-                case 7:
-                    return(
-                        <MDBListGroupItem noBorders key={element.id} className='rounded-3 mb-3'>
-                            <MDBTextArea rows={4} id={'questao'+element.id} defaultValue={element.enunciado} label='Descrição' readOnly className='mb-2'/>
-                            <div className='d-flex'>
-                                <div color='danger' className='ms-auto me-2'>Questões poderão ser editadas após recarregar</div>
                             </div>
                         </MDBListGroupItem>
                     )
@@ -353,23 +309,22 @@ export default function Forms(){
                     'Authorization': 'bearer ' + sessionStorage.getItem("token")
                 }
             })
+            .then(resposta=>{
+                console.log(resposta)
+                novaQuestao.id=resposta.data
+                setQuestoes([
+                    ...questoes,
+                    novaQuestao
+                ])
+                setNovaQuestao({})
+                setNewQuestion(<></>)
+            })
             .catch((error) => {
                 if (error.response.status===401) {
                     navigate('/login')
                     console.warn("Faça o login")
                 }else{ console.log(error)}
             })
-            setCount(count+1)
-            novaQuestao.id="new"+count
-            if(novaQuestao.type===1||novaQuestao.type===3) novaQuestao.type=6
-            else if(novaQuestao.type===2) novaQuestao.type=5
-            else novaQuestao.type=7
-            setQuestoes([
-                ...questoes,
-                novaQuestao
-            ])
-            setNovaQuestao({})
-            setNewQuestion(<></>)
         }else{
             document.getElementById("novaQuestaoEnunciado").classList.add("is-invalid")
         }
@@ -544,7 +499,7 @@ export default function Forms(){
                 <div className='d-flex justify-content-around align-items-center'>
                     <div className='enunciado'>Tipo da Questão:</div>
                     <MDBRadio onClick={e=>{novaQuestao.type=3}} inline name='tipoQuestao' label='Múltipla Escolha'></MDBRadio>
-                    <MDBRadio onClick={e=>{novaQuestao.type=1}} inline name='tipoQuestao' label='Única Escolha'></MDBRadio>
+                    <MDBRadio onClick={e=>{novaQuestao.type=1}} inline name='tipoQuestao' label='Caixa de seleção'></MDBRadio>
                     <MDBRadio onClick={e=>{novaQuestao.type=2}} inline name='tipoQuestao' label='Aberta'></MDBRadio>
                     <MDBRadio onClick={e=>{novaQuestao.type=4}} inline name='tipoQuestao' label='Descrição'></MDBRadio>
                 </div>
@@ -579,13 +534,7 @@ export default function Forms(){
     // Contatos
     function renderizaContatos(){
         return contatos?.slice((contatosPage-1)*15,((contatosPage-1)*15)+15).map(element => {
-                if (element.novo===true) {
-                    return(
-                        <MDBListGroupItem className='py-2 px-2' key={element.id}>
-                            <MDBInput label='Emails poderão ser editados após recarregar' className='form-control' type='text' value={element.email} disabled/>
-                        </MDBListGroupItem>
-                    )
-                }else if(element.respondido===true){
+                if(element.respondido===true){
                     return(
                         <MDBListGroupItem className='py-2 px-2' key={element.id}>
                             <MDBInputGroup>
@@ -607,31 +556,31 @@ export default function Forms(){
                             </MDBInputGroup>
                             <MDBContainer fluid className='mt-2' id={'contatoForm'+element.id} style={{display: 'none'}}>
                                 <div className='enunciado row'>
-                                    <div className="col-md-6 pt-md-2 pt-sm-1">
+                                    <div className="col-md-6 pt-md-2 pt-1">
                                         <MDBInputGroup>
                                             <MDBBtn color='secondary' className='novoContatoForm px-2'>Nome</MDBBtn>
                                             <input onKeyDown={e=>{limit(e.target)}} onKeyUp={e=>{limit(e.target)}} defaultValue={element.nome} onChange={e=>{contatos[contatos.map(object => object.id).indexOf(element.id)].nome=e.target.value}} className='form-control' type='text'/>
                                         </MDBInputGroup>
                                     </div>
-                                    <div className="col-md-6 pt-md-2 pt-sm-1">
+                                    <div className="col-md-6 pt-md-2 pt-1">
                                         <MDBInputGroup>
                                             <MDBBtn color='secondary' className='novoContatoForm px-2'>Matrícula</MDBBtn>
                                             <input onKeyDown={e=>{limit(e.target)}} onKeyUp={e=>{limit(e.target)}} defaultValue={element.matricula} onChange={e=>{contatos[contatos.map(object => object.id).indexOf(element.id)].matricula=e.target.value}} className='form-control' type='text'/>
                                         </MDBInputGroup>
                                     </div>
-                                    <div className="col-md-6 pt-md-2 pt-sm-1">
+                                    <div className="col-md-6 pt-md-2 pt-1">
                                         <MDBInputGroup>
                                             <MDBBtn color='secondary' onChange={e=>{contatos[contatos.map(object => object.id).indexOf(element.id)].telefone1=e.target.value}} className='novoContatoForm px-2'>Telefone 1</MDBBtn>
                                             <InputMask mask='(99) 99999-9999' className='form-control' type='text' id={'contatoTelefone1'+element.id}/>
                                         </MDBInputGroup>
                                     </div>
-                                    <div className="col-md-6 pt-md-2 pt-sm-1">
+                                    <div className="col-md-6 pt-md-2 pt-1">
                                         <MDBInputGroup>
                                             <MDBBtn color='secondary' onChange={e=>{contatos[contatos.map(object => object.id).indexOf(element.id)].telefone2=e.target.value}} className='novoContatoForm px-2'>Telefone 2</MDBBtn>
                                             <InputMask mask='(99) 99999-9999' className='form-control' type='text' id={'contatoTelefone2'+element.id}/>
                                         </MDBInputGroup>
                                     </div>
-                                    <div className="col-md-6 pt-md-2 pt-sm-1">
+                                    <div className="col-md-6 pt-md-2 pt-1">
                                         <MDBInputGroup>
                                             <MDBBtn color='secondary' className='novoContatoForm px-2'>Curso</MDBBtn>
                                             <select defaultValue={element.curso} onChange={e=>{contatos[contatos.map(object => object.id).indexOf(element.id)].curso=e.target.value}} className='selectCurso novoContatoCurso'>
@@ -643,7 +592,7 @@ export default function Forms(){
                                     </div>
                                     <div className="col-md-6 pt-md-2 pt-sm-1">
                                         <MDBInputGroup>
-                                            <MDBBtn color='secondary' className='novoContatoForm px-2'>Tipo do Curso</MDBBtn>
+                                            <MDBBtn color='secondary' className='novoContatoForm px-2'>Modalidade do Curso</MDBBtn>
                                             <select defaultValue={element.tipoDeCurso} onChange={e=>{contatos[contatos.map(object => object.id).indexOf(element.id)].tipoDeCurso=e.target.value}} className='selectCurso novoContatoTipoCurso'>
                                                 {cursos?.listaTipoCursos?.map(item => {
                                                     return <option key={element.id+"opcaotipo"+item.id} value={item.tipoCurso}>{item.tipoCurso}</option>
@@ -714,20 +663,20 @@ export default function Forms(){
                     'Authorization': 'bearer ' + sessionStorage.getItem("token")
                 }
             })
+            .then(resposta=>{
+                novocontato.id=resposta.data
+                setContatos([
+                    ...contatos,
+                    novocontato
+                ])
+                setNewContato(<></>)
+            })
             .catch((error) => {
                 if (error.response.status===401) {
                     navigate('/login')
                     console.warn("Faça o login")
                 }else{ console.log(error)}
             })
-            novocontato.novo=true
-            novocontato.id="new"+count
-            setCount(count+1)
-            setContatos([
-                ...contatos,
-                novocontato
-            ])
-            setNewContato(<></>)
         }else{
             document.getElementById("novoContatoEmail").classList.add("is-invalid")
         }
@@ -740,15 +689,35 @@ export default function Forms(){
                 'Authorization': 'bearer ' + sessionStorage.getItem("token")
             }
         })
+        .then(resposta =>{
+            document.getElementById("contatoEmail"+id).disabled=true
+            document.getElementById("edit"+id).style.display='none'
+            document.getElementById("contatoForm"+id).style.display='none'
+            let erase=document.getElementById("erase"+id)
+            erase.style.display==='none'?erase.style.display='block':erase.style.display='none'
+            let send=document.getElementById("send"+id)
+            if(send.lastChild.nodeName=='SPAN'){
+                send.removeChild(send.lastChild)
+            }else{
+                let spanBlock = document.createElement('span')
+                spanBlock.className = 'input-group-text'
+                let sendSymbol = document.createElement('i')
+                sendSymbol.title ='Enviar formulário para este email'
+                sendSymbol.onclick = function (e) {sendOneEmail(id)}
+                sendSymbol.className = 'edit fas fa-light fa-paper-plane fa-sm'
+                send.appendChild(spanBlock)
+                send.lastChild.appendChild(sendSymbol)
+            }
+        })
         .catch((error) => {
             if (error.response.status===401) {
                 navigate('/login')
                 console.warn("Faça o login")
-            }else{ console.log(error)}
+            }else if(error.response.status===402){
+                setRespondidoDerivado(true)
+            }
+            else{ console.log(error)}
         })
-        document.getElementById("contatoEmail"+id).disabled=true
-        document.getElementById("edit"+id).style.display='none'
-        document.getElementById("contatoForm"+id).style.display='none'
     } 
 
     async function excluiContato(id){
@@ -798,31 +767,31 @@ export default function Forms(){
                                 <MDBBtn color='secondary' className='numQuestao'>@</MDBBtn>
                                 <input onKeyDown={e=>{limit(e.target)}} onKeyUp={e=>{limit(e.target)}} className='form-control' type='text' id={'novoContatoEmail'}/>
                             </MDBInputGroup>
-                        </div>
+                        </div> {/* Email */}
                         <div className="col-md-6 pt-md-2 pt-sm-1">
                             <MDBInputGroup>
                                 <MDBBtn color='secondary' className='novoContatoForm px-2'>Nome</MDBBtn>
                                 <input onKeyDown={e=>{limit(e.target)}} onKeyUp={e=>{limit(e.target)}} className='form-control' type='text' id={'novoContatoNome'}/>
                             </MDBInputGroup>
-                        </div>
+                        </div> {/* Nome */}
                         <div className="col-md-6 pt-md-2 pt-sm-1">
                             <MDBInputGroup>
                                 <MDBBtn color='secondary' className='novoContatoForm px-2'>Matrícula</MDBBtn>
                                 <input onKeyDown={e=>{limit(e.target)}} onKeyUp={e=>{limit(e.target)}} className='form-control' type='text' id={'novoContatoMatricula'}/>
                             </MDBInputGroup>
-                        </div>
+                        </div> {/* Matrícula */}
                         <div className="col-md-6 pt-md-2 pt-sm-1">
                             <MDBInputGroup>
                                 <MDBBtn color='secondary' className='novoContatoForm px-2'>Telefone 1</MDBBtn>
                                 <InputMask mask='(99) 99999-9999' className='form-control' type='text' id={'novoContatoTelefone1'}/>
                             </MDBInputGroup>
-                        </div>
+                        </div> {/* Tel1 */}
                         <div className="col-md-6 pt-md-2 pt-sm-1">
                             <MDBInputGroup>
                                 <MDBBtn color='secondary' className='novoContatoForm px-2'>Telefone 2</MDBBtn>
                                 <InputMask mask='(99) 99999-9999' className='form-control' type='text' id={'novoContatoTelefone2'}/>
                             </MDBInputGroup>
-                        </div>
+                        </div> {/* Tel2 */}
                         <div className="col-md-6 pt-md-2 pt-sm-1">
                             <MDBInputGroup>
                                 <MDBBtn color='secondary' className='novoContatoForm px-2'>Curso</MDBBtn>
@@ -832,23 +801,23 @@ export default function Forms(){
                                     })}
                                 </select>
                             </MDBInputGroup>
-                        </div>
+                        </div> {/* Curso */}
                         <div className="col-md-6 pt-md-2 pt-sm-1">
                             <MDBInputGroup>
-                                <MDBBtn color='secondary' className='novoContatoForm px-2'>Tipo do Curso</MDBBtn>
+                                <MDBBtn color='secondary' className='novoContatoForm px-2'>Modalidade do Curso</MDBBtn>
                                 <select id="novoContatoTipoCurso" className='selectCurso novoContatoTipoCurso'>
                                     {cursos?.listaTipoCursos?.map(item => {
                                         return <option key={"newopcaotipo"+item.id} value={item.tipoCurso}>{item.tipoCurso}</option>
                                     })}
                                 </select>
                             </MDBInputGroup>
-                        </div>
+                        </div> {/* Modalidade */}
                         <div className="col-md-6 pt-md-2 pt-sm-1">
                             <MDBInputGroup>
                                 <MDBBtn color='secondary' className='novoContatoForm px-2'>CPF</MDBBtn>
                                 <InputMask mask='999.999.999-99'  className='form-control' type='text' id={'novoContatoCpf'}/>
                             </MDBInputGroup>
-                        </div>
+                        </div> {/* CPF */}
                         <div className="col-md-6 pt-md-2 pt-sm-1">
                             <MDBInputGroup>
                                 <MDBBtn color='secondary' className='novoContatoForm px-2'>Sexo</MDBBtn>
@@ -858,13 +827,13 @@ export default function Forms(){
                                     <option value="N">Não informar</option>
                                 </select>
                             </MDBInputGroup>
-                        </div>
+                        </div> {/* Sexo */}
                         <div className="col-md-12 pt-md-2 pt-sm-1">
                             <MDBInputGroup>
                                 <MDBBtn color='secondary' className='novoContatoForm px-2'>Data de colação</MDBBtn>
                                 <input className='selectCurso' type="date" id='novoContatoData'/>
                             </MDBInputGroup>
-                        </div>
+                        </div> {/* Data Colação */}
                     </div>
                     <div className='d-flex'>
                         <MDBBtn onClick={e=>{setNewContato(<></>)}} color='danger' className='ms-auto me-2'>Excluir</MDBBtn>
@@ -982,6 +951,7 @@ export default function Forms(){
     const secaoContatos = <main className='mt-3 principal'> 
         {Title("Contatos",carregaEnvios)}
 
+        {/* Barra de busca */}
         <MDBContainer fluid className='mt-3 p-3 rounded-3 bg-light'>
             <MDBRadio name='buscaContato' label='Buscar por email' onClick={e=>{setNomeEmail(true)}} inline />
             <MDBRadio name='buscaContato' label='Buscar por nome' onClick={e=>{setNomeEmail(false)}} inline />
@@ -997,31 +967,47 @@ export default function Forms(){
             {renderizaContatos()}
         </MDBListGroup>
 
-        {/* Novo envio Form */}
+        {/* Novo Contato Form */}
         {newContato}
-        
-        {/* Add envios */}
+
+        {/* Botões de adição e envio de contatos */}
         <div className='d-flex mt-2'>
-            <MDBModal tabIndex='-1' show={importModal} setShow={setImportModal}>
-                <MDBModalDialog centered>
-                    <MDBModalContent>
-                        <MDBModalHeader className='py-2'>
-                            Importar envios de arquivo (csv, xsl, xslx)
-                        </MDBModalHeader>
-                        <MDBModalBody>
-                            <MDBFile label='Insira seu arquivo' size='lg' id='formFile' />
-                        </MDBModalBody>
-                        <MDBModalFooter>
-                            <MDBBtn color='secondary' onClick={e=>{setImportModal(false)}}> Cancelar </MDBBtn>
-                            <MDBBtn onClick={e=>{importEmails()}}>Importar</MDBBtn>
-                        </MDBModalFooter>
-                    </MDBModalContent>
-                </MDBModalDialog>
-            </MDBModal>
             <MDBBtn onClick={e=>{handleNewContato()}} color='success'><i title='Adicionar novo email a enviar' className="edit fas fa-regular fa-plus fa-2x"></i></MDBBtn>
             <MDBBtn onClick={e=>{setImportModal(true)}} color='secondary' className='ms-auto mx-2'><i title='Importar emails de modelo CEFET-MG' className="edit fas fa-regular fa-file-import"></i></MDBBtn>
             <MDBBtn onClick={e=>{sendEmails()}} color='secondary'><i title='Enviar à todos os emails da lista' className="edit fas fa-light fa-paper-plane"></i></MDBBtn>
         </div>
+        
+        {/* Modal para adicionar contatos no modelo Cefet */}
+        <MDBModal tabIndex='-1' show={importModal} setShow={setImportModal}>
+            <MDBModalDialog centered>
+                <MDBModalContent>
+                    <MDBModalHeader className='py-2'>
+                        Importar envios de arquivo (csv, xsl, xslx)
+                    </MDBModalHeader>
+                    <MDBModalBody>
+                        <MDBFile label='Insira seu arquivo' size='lg' id='formFile' />
+                    </MDBModalBody>
+                    <MDBModalFooter>
+                        <MDBBtn color='secondary' onClick={e=>{setImportModal(false)}}> Cancelar </MDBBtn>
+                        <MDBBtn onClick={e=>{importEmails()}}>Importar</MDBBtn>
+                    </MDBModalFooter>
+                </MDBModalContent>
+            </MDBModalDialog>
+        </MDBModal>
+
+        {/* Modal de alerta de resposta presente em outro form */}
+        <MDBModal tabIndex='-1' show={respondidoDerivado} setShow={setRespondidoDerivado}>
+            <MDBModalDialog centered>
+                <MDBModalContent>
+                    <MDBModalHeader className='py-2'>
+                        Formulário derivado possui resposta, exclua primeiro a resposta dele.
+                    </MDBModalHeader>
+                    <MDBModalFooter>
+                        <MDBBtn color='secondary' onClick={e=>{setRespondidoDerivado(false)}}> Fechar </MDBBtn>
+                    </MDBModalFooter>
+                </MDBModalContent>
+            </MDBModalDialog>
+        </MDBModal>
 
         {/* Pagination */}
         {contatos.length>0
@@ -1108,6 +1094,15 @@ export default function Forms(){
         }
     }  
 
+    function limit(element)
+    {
+        var max_chars = 250;
+            
+        if(element.value.length > max_chars) {
+            element.value = element.value.substr(0, max_chars);
+        }
+    }
+
     function makeSecao() {
         if(secao===1){
             return(UserSection(main,secaoQuestoes))
@@ -1115,15 +1110,6 @@ export default function Forms(){
             return(UserSection(main,secaoContatos))
         }else if(secao===3){
             return(UserSection(main,secaoRespostas))
-        }
-    }
-
-    function limit(element)
-    {
-        var max_chars = 250;
-            
-        if(element.value.length > max_chars) {
-            element.value = element.value.substr(0, max_chars);
         }
     }
 

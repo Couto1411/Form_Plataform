@@ -17,6 +17,7 @@ export default function Login (props) {
         })
         .then((response) => {
             sessionStorage.setItem("userId",response.data.id)
+            sessionStorage.setItem("admin",response.data.admin)
             sessionStorage.setItem("token",response.data.token)
             navigate('/user')
         })

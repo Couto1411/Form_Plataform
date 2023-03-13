@@ -3,6 +3,7 @@
 public class User
 {
     public int? id { get; set; }
+    public bool admin { get; set; }
     public string? email { get; set; }
     public string? senha { get; set; }
 }
@@ -18,6 +19,7 @@ public class TokenConfigurations
 public class AccessToken
 {
     public int? Id { get; set; }
+    public bool Admin { get; set; } = false;
     public bool Authenticated { get; set; }
     public string? Created { get; set; }
     public string? Expiration { get; set; }

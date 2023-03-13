@@ -1,0 +1,22 @@
+.borda-direita{
+    border-radius: 0px 5px 5px 0px;
+}
+
+.novoUsuarioForm{
+    color: rgb(34, 34, 34);
+    background-color: #ffffff;
+    box-shadow: none;
+    border: #aeaeae solid 1px;
+}
+
+.admin{
+    margin-right: 1em;
+}
+
+.minfont{
+    font-size: 0.8em;
+}
+
+.form-check{
+    margin-right: 0.5em;
+}

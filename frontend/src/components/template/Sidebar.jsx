@@ -21,9 +21,9 @@ export default function Sidebar(setMain,area,setAdicional){
         if (area==='forms') {
             return(
                 <MDBListGroup className="mx-3 mt-4" id='sidebar'>
-                    <MDBRipple><MDBListGroupItem role='button' id='Forms' noBorders className='px-3 rounded-top sidebarItem zoom' onClick={e=>{updateSelected(e.target.id);setMain(1)}}>Forms</MDBListGroupItem></MDBRipple>
-                    <MDBRipple><MDBListGroupItem role='button' id='Dashboard' className='px-3 borda sidebarItem zoom' onClick={e=>{updateSelected(e.target.id)}}>Dashboard</MDBListGroupItem></MDBRipple>
-                    <MDBRipple><MDBListGroupItem role='button' id='Item3' noBorders className='px-3 rounded-bottom sidebarItem zoom' onClick={e=>{updateSelected(e.target.id)}}>...</MDBListGroupItem></MDBRipple>
+                    <MDBRipple><MDBListGroupItem role='button' id='Forms' className='px-3 border-bottom-0 rounded-top sidebarItem zoom' onClick={e=>{updateSelected(e.target.id);setMain(1)}}>Forms</MDBListGroupItem></MDBRipple>
+                    <MDBRipple><MDBListGroupItem role='button' id='Dashboard' className='px-3 sidebarItem zoom border-bottom-0' onClick={e=>{updateSelected(e.target.id)}}>Dashboard</MDBListGroupItem></MDBRipple>
+                    <MDBRipple><MDBListGroupItem role='button' id='VoltarForms'  className='px-3 rounded-bottom sidebarItem zoom' onClick={e=>{updateSelected(e.target.id)}}>...</MDBListGroupItem></MDBRipple>
                 </MDBListGroup>
             )
         }else if(area==='questoes'){
@@ -32,13 +32,20 @@ export default function Sidebar(setMain,area,setAdicional){
                     <MDBRipple><MDBListGroupItem role='button' id='Questoes' className='px-3 sidebarItem zoom rounded-top border-bottom-0' onClick={e=>{updateSelected(e.target.id);setAdicional(1);setMain(1)}}>Questoes</MDBListGroupItem></MDBRipple>
                     <MDBRipple><MDBListGroupItem role='button' id='Contatos' className='px-3 sidebarItem zoom border-bottom-0' onClick={e=>{updateSelected(e.target.id);setAdicional(2);setMain(1)}}>Contatos</MDBListGroupItem></MDBRipple>
                     <MDBRipple><MDBListGroupItem role='button' id='Respostas' className='px-3 sidebarItem zoom border-bottom-0' onClick={e=>{updateSelected(e.target.id);setAdicional(3);setMain(1)}}>Respostas</MDBListGroupItem></MDBRipple>
-                    <MDBRipple><MDBListGroupItem role='button' id='Item3' className='px-3 sidebarItem zoom rounded-bottom' onClick={e=>{navigate('/user')}}>Voltar</MDBListGroupItem></MDBRipple>
+                    <MDBRipple><MDBListGroupItem role='button' id='Voltar' className='px-3 sidebarItem zoom rounded-bottom' onClick={e=>{navigate('/user')}}>Voltar</MDBListGroupItem></MDBRipple>
                 </MDBListGroup>
             )
         }else if(area==='resposta'){
             return(
                 <MDBListGroup className="mx-3 mt-4" id='sidebar'>
-                    <MDBRipple><MDBListGroupItem role='button' id='Item3' noBorders className='px-3 rounded-3 sidebarItem zoom' onClick={e=>{navigate('/forms')}}>Voltar</MDBListGroupItem></MDBRipple>
+                    <MDBRipple><MDBListGroupItem role='button' id='VoltarResp' noBorders className='px-3 rounded-3 sidebarItem zoom' onClick={e=>{navigate('/forms')}}>Voltar</MDBListGroupItem></MDBRipple>
+                </MDBListGroup>
+            )
+        }else if(area==='admin'){
+            return(
+                <MDBListGroup className="mx-3 mt-4" id='sidebar'>
+                    <MDBRipple><MDBListGroupItem role='button' id='Usuarios' className='px-3 sidebarItem zoom rounded-top border-bottom-0' onClick={e=>{updateSelected(e.target.id);setAdicional(1);setMain(1)}}>Usuários</MDBListGroupItem></MDBRipple>
+                    <MDBRipple><MDBListGroupItem role='button' id='Formularios' className='px-3 sidebarItem zoom rounded-bottom' onClick={e=>{updateSelected(e.target.id);setAdicional(2);setMain(1)}}>Formulários</MDBListGroupItem></MDBRipple>
                 </MDBListGroup>
             )
         }

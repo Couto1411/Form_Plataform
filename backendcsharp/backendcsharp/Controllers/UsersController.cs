@@ -53,7 +53,6 @@ namespace backendcsharp.Controllers
                             email = s.Email,
                             appPassword = s.AppPassword,
                             admin = s.Admin,
-                            senha = s.Senha,
                             universidade = s.Universidade
                         }
                     ).ToListAsync();
@@ -125,28 +124,24 @@ namespace backendcsharp.Controllers
                     else
                     {
                         Handlers.ExistsOrError(User.nome, "Nome não informado");
-                        if (!Handlers.IsValidGmail(User.email)) throw new Exception("Formato inválido de email");
+                        if (!Handlers.IsValidGmail(User.email)) return StatusCode(501);
                         Handlers.ExistsOrError(User.appPassword, "Senha não informado");
                         Handlers.ExistsOrError(User.universidade, "Universidade não informada");
                         Handlers.ExistsOrError(User.senha, "Senha não informada");
-                        if (User.confirmaSenha is null || User.senha != User.confirmaSenha) throw new Exception("Senhas não conferem");
-                        else
+                        // Salva usuário no banco MySQL
+                        var entity = new Users()
                         {
-                            // Salva usuário no banco MySQL
-                            var entity = new Users()
-                            {
-                                Nome = User.nome,
-                                Email = User.email,
-                                Universidade = User.universidade,
-                                AppPassword = User.appPassword,
-                                Senha = BCrypt.Net.BCrypt.HashPassword(User.senha),
-                                Admin = User.admin,
-                            };
-                            ProjetoDbContext.Users.Add(entity);
-                            await ProjetoDbContext.SaveChangesAsync();
+                            Nome = User.nome,
+                            Email = User.email,
+                            Universidade = User.universidade,
+                            AppPassword = User.appPassword,
+                            Senha = BCrypt.Net.BCrypt.HashPassword(User.senha),
+                            Admin = User.admin,
+                        };
+                        ProjetoDbContext.Users.Add(entity);
+                        await ProjetoDbContext.SaveChangesAsync();
 
-                            return StatusCode(204);
-                        }
+                        return StatusCode(204);
                     }
                 }else return StatusCode(401);
             }
@@ -155,6 +150,52 @@ namespace backendcsharp.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
+        // Modificar Usuário
+        // ADMIN----------------------------------
+        [HttpPut("users/admin/{Id}")]
+        [Authorize("Bearer")]
+        public async Task<ActionResult<UsersDTO>> UpdateUserAdmin([FromBody] UsersDTO User, [FromRoute] int Id)
+        {
+            try
+            {
+                Handlers.ExistsOrError(Id.ToString(), "Id do responsável não informado");
+                Handlers.IdNegative(Id, "Id do responsável inválido");
+                var Admin = await ProjetoDbContext.Users.Select(s => new UsersDTO
+                {
+                    id = s.Id,
+                    nome = s.Nome,
+                    email = s.Email,
+                    admin = s.Admin,
+                    appPassword = s.AppPassword,
+                    universidade = s.Universidade
+                }).FirstOrDefaultAsync(s => s.id == Id);
+                if (Admin is null) return NotFound();
+                if (Admin.admin)
+                {
+                    Handlers.ExistsOrError(User.id.ToString(), "Id do responsável não informado");
+                    Handlers.IdNegative((int)User.id, "Id do usuário inválido");
+                    var entity = await ProjetoDbContext.Users.FirstOrDefaultAsync(s => s.Id == User.id);
+                    if (entity != null)
+                    {
+                        entity.Nome = User.nome != null ? User.nome : entity.Nome;
+                        entity.Universidade = User.universidade != null ? User.universidade : entity.Universidade;
+                        entity.Email = User.email != null ? User.email : entity.Email;
+                        entity.Admin = User.admin;
+                        if (User.senha is not null) entity.Senha = BCrypt.Net.BCrypt.HashPassword(User.senha);
+                        entity.AppPassword = User.appPassword != null ? User.appPassword : throw new Exception("Senha do gmail não informada não informada");
+                        await ProjetoDbContext.SaveChangesAsync();
+                        return StatusCode(204);
+                    }
+                    else throw new Exception("Id não encontrado");
+                } else return StatusCode(401);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
 
         // Modificar Usuário
         [HttpPut("users/{Id}")]
@@ -185,9 +226,9 @@ namespace backendcsharp.Controllers
 
         // Deleta usuário
         // ADMIN----------------------------------
-        [HttpDelete("users/{Id}")]
+        [HttpDelete("users/{Id}/admin/{AdminId}")]
         [Authorize("Bearer")]
-        public async Task<ActionResult> DeleteUser([FromBody] int AdminId,[FromRoute] int Id)
+        public async Task<ActionResult> DeleteUser([FromRoute] int AdminId,[FromRoute] int Id)
         {
             try
             {
@@ -241,6 +282,8 @@ namespace backendcsharp.Controllers
                         ProjetoDbContext.Questoes.RemoveRange(ProjetoDbContext.Questoes.Where(s => s.FormId == form.Id));
                         ProjetoDbContext.Formularios.Remove(form);
                     }
+                    ProjetoDbContext.Cursos.RemoveRange(ProjetoDbContext.Cursos.Where(s => s.ResponsavelId == Id));
+                    ProjetoDbContext.TiposCursos.RemoveRange(ProjetoDbContext.TiposCursos.Where(s => s.ResponsavelId == Id));
 
                     var UsuarioDeleta = new Users()
                     {
@@ -276,12 +319,14 @@ namespace backendcsharp.Controllers
                     {
                         id = s.Id,
                         email = s.Email,
-                        senha = s.Senha
+                        senha = s.Senha,
+                        admin = s.Admin
                     }
                 ).Where(s => s.email == usuario.email).FirstOrDefaultAsync();
                 if (Usuario is not null)
                 {
                     usuario.id = (int)Usuario.id;
+                    usuario.admin = Usuario.admin;
                 }else return StatusCode(400);
                 if (BCrypt.Net.BCrypt.Verify(usuario.senha,Usuario.senha))
                 {

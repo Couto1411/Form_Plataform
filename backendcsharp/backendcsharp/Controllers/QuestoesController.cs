@@ -20,7 +20,7 @@ namespace backendcsharp.Controllers
         // Adicionar Questao
         [HttpPost("users/{Id}/forms/{FormId}")]
         [Authorize("Bearer")]
-        public async Task<ActionResult<QuestoesDTO>> InsertQuestao([FromBody] QuestoesDTO Quest, [FromRoute] int Id, [FromRoute] int FormId)
+        public async Task<ActionResult<uint>> InsertQuestao([FromBody] QuestoesDTO Quest, [FromRoute] int Id, [FromRoute] int FormId)
         {
             try
             {
@@ -54,7 +54,7 @@ namespace backendcsharp.Controllers
                     ProjetoDbContext.Questoes.Add(entity);
                     await ProjetoDbContext.SaveChangesAsync();
 
-                    return StatusCode(204);
+                    return entity.Id;
                 }
                 else throw new Exception("Id da questão já existe");
             }

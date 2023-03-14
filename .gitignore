@@ -10,8 +10,8 @@ frontend/coverage
 
 # production
 frontend/build
-backendcsharp\backendcsharp\bin
-backendcsharp\backendcsharp\obj
+backendcsharp/backendcsharp/bin
+backendcsharp/backendcsharp/obj
 
 # misc
 frontend/.DS_Store

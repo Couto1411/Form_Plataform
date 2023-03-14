@@ -918,6 +918,7 @@ export default function Forms(){
     async function importEmails(){
         let selectedFiles = document.getElementById('formFile').files;
         if (selectedFiles.length>0) { 
+            document.getElementById('cancelmodalimports').disabled=true
             var i,f;
             for (i = 0, f = selectedFiles[i]; i != selectedFiles.length; ++i) {
                 let reader = new FileReader();
@@ -934,6 +935,11 @@ export default function Forms(){
                         headers: {
                             'Authorization': 'bearer ' + sessionStorage.getItem("token")
                         }
+                    })
+                    .then(responsta=>{
+                        document.getElementById('cancelmodalimports').disabled=false
+                        carregaEnvios()
+                        setImportModal(false)
                     })
                     .catch((error) => {
                         if (error.response.status===401) {
@@ -978,7 +984,7 @@ export default function Forms(){
         </div>
         
         {/* Modal para adicionar contatos no modelo Cefet */}
-        <MDBModal tabIndex='-1' show={importModal} setShow={setImportModal}>
+        <MDBModal staticBackdrop tabIndex='-1' show={importModal} setShow={setImportModal}>
             <MDBModalDialog centered>
                 <MDBModalContent>
                     <MDBModalHeader className='py-2'>
@@ -988,7 +994,7 @@ export default function Forms(){
                         <MDBFile label='Insira seu arquivo' size='lg' id='formFile' />
                     </MDBModalBody>
                     <MDBModalFooter>
-                        <MDBBtn color='secondary' onClick={e=>{setImportModal(false)}}> Cancelar </MDBBtn>
+                        <MDBBtn id="cancelmodalimports" color='secondary' onClick={e=>{setImportModal(false)}}> Cancelar </MDBBtn>
                         <MDBBtn onClick={e=>{importEmails()}}>Importar</MDBBtn>
                     </MDBModalFooter>
                 </MDBModalContent>
@@ -1019,11 +1025,11 @@ export default function Forms(){
                 {Math.ceil(contatos.length/15)>2?<MDBListGroupItem className='pages' onClick={e=>{setContatosPage(3)}}>3</MDBListGroupItem>:<></>}
                 {Math.ceil(contatos.length/15)>3?<MDBListGroupItem className='pages' onClick={e=>{setContatosPage(4)}}>4</MDBListGroupItem>:<></>}
                 {Math.ceil(contatos.length/15)>4?<MDBListGroupItem className='pages' onClick={e=>{setContatosPage(5)}}>5</MDBListGroupItem>:<></>}
-                {Math.ceil(contatos.length/15)>5?<MDBListGroupItem className='pages'>...</MDBListGroupItem>:<></>}
+                {Math.ceil(contatos.length/15)>5?<MDBListGroupItem className='pages' onClick={e=>{setContatosPage(Math.ceil(contatos.length/15))}}>...</MDBListGroupItem>:<></>}
             </MDBListGroup>
             :contatosPage>((Math.ceil(contatos.length/15))-3)?
             <MDBListGroup horizontal>
-                {Math.ceil(contatos.length/15)-5>0?<MDBListGroupItem className='pages'>...</MDBListGroupItem>:<></>}
+                {Math.ceil(contatos.length/15)-5>0?<MDBListGroupItem className='pages' onClick={e=>{setContatosPage(1)}} >...</MDBListGroupItem>:<></>}
                 {Math.ceil(contatos.length/15)-4>0?<MDBListGroupItem className='pages' onClick={e=>{setContatosPage(Math.ceil(contatos.length/15)-4)}}>{Math.ceil(contatos.length/15)-4}</MDBListGroupItem>:<></>}
                 {Math.ceil(contatos.length/15)-3>0?<MDBListGroupItem className='pages' onClick={e=>{setContatosPage(Math.ceil(contatos.length/15)-3)}}>{Math.ceil(contatos.length/15)-3}</MDBListGroupItem>:<></>}
                 <MDBListGroupItem className='pages' onClick={e=>{setContatosPage(Math.ceil(contatos.length/15)-2)}}>{Math.ceil(contatos.length/15)-2}</MDBListGroupItem>
@@ -1032,13 +1038,13 @@ export default function Forms(){
             </MDBListGroup>
             :contatosPage>3?
             <MDBListGroup horizontal>
-                <MDBListGroupItem className='pages'>...</MDBListGroupItem>
+                <MDBListGroupItem className='pages' onClick={e=>{setContatosPage(1)}}>...</MDBListGroupItem>
                 <MDBListGroupItem className='pages' onClick={e=>{setContatosPage(contatosPage-2)}}>{contatosPage-2}</MDBListGroupItem>
                 <MDBListGroupItem className='pages' onClick={e=>{setContatosPage(contatosPage-1)}}>{contatosPage-1}</MDBListGroupItem>
                 <MDBListGroupItem className='pages' onClick={e=>{setContatosPage(contatosPage)}}>{contatosPage}</MDBListGroupItem>
                 <MDBListGroupItem className='pages' onClick={e=>{setContatosPage(contatosPage+1)}}>{contatosPage+1}</MDBListGroupItem>
                 <MDBListGroupItem className='pages' onClick={e=>{setContatosPage(contatosPage+2)}}>{contatosPage+2}</MDBListGroupItem>
-                <MDBListGroupItem className='pages'>...</MDBListGroupItem>
+                <MDBListGroupItem className='pages' onClick={e=>{setContatosPage(Math.ceil(contatos.length/15))}}>...</MDBListGroupItem>
             </MDBListGroup>
             :<></>}
         </div>:<></>}

@@ -12,6 +12,8 @@ frontend/coverage
 frontend/build
 backendcsharp/backendcsharp/bin
 backendcsharp/backendcsharp/obj
+backendcsharp/APIs.Security.JWT/bin
+backendcsharp/APIs.Security.JWT/obj
 
 # misc
 frontend/.DS_Store
@@ -19,6 +21,12 @@ frontend/.env.local
 frontend/.env.development.local
 frontend/.env.test.local
 frontend/.env.production.local
+
+#vs/vscode
+.vs
+.vscode
+backendcsharp/.vs
+
 
 npm-debug.log*
 yarn-debug.log*

@@ -277,7 +277,7 @@ export default function PaginaUsuario(){
         <MDBBtn onClick={e=>{
             setAddForm(true)
             toggleShow({id: 'novo', titulo:null})
-            }} color='success' className='mt-2'><i className="edit fas fa-light fa-plus fa-2x"></i></MDBBtn>
+            }} outline color='dark' className='border-1 bg-light contatoBotoes mt-3'><i className="edit fas fa-light fa-plus fa-2x"></i></MDBBtn>
     </main>
 
     return(

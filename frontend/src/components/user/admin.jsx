@@ -112,7 +112,7 @@ export default function PaginaUsuario(){
                                 
                             </MDBInputGroup>
                             <MDBContainer fluid className='mt-2' id={'userInfo'+element.id} style={{display: 'none'}}>
-                                <div className='enunciado row'>
+                                <div className='row'>
                                     <div className="col-md-6 pt-md-2 pt-1">
                                         <MDBInputGroup>
                                             <MDBBtn color='secondary' className='novoUsuarioForm px-2'>Email</MDBBtn>
@@ -216,6 +216,25 @@ export default function PaginaUsuario(){
         document.getElementById("erase"+id).style.display='block'
     }
 
+    async function deleteUser(){
+        // Form a ser deletado é original
+        await axios.delete(baseUrl+"/users/"+userIdToDelete+"/admin/"+sessionStorage.getItem('userId'),{
+            headers: {
+                'Authorization': 'bearer ' + sessionStorage.getItem("token")
+            }
+        })
+        .then((response)=>{
+            setUsers(users.filter(a=> a.id !== userIdToDelete))
+        })
+        .catch((error) => {
+            if (error.response.status===401) {
+                navigate('/login')
+                console.warn("Faça o login")
+            }else{ console.log(error)}
+        })
+        setDeletaUsuario(false)
+    }
+
     function showEditUsuario(element){
         element.admin?document.getElementById("admintrue"+element.id).checked=true:document.getElementById("adminfalse"+element.id).checked=true
         let v=document.getElementById("userName"+element.id)
@@ -232,7 +251,7 @@ export default function PaginaUsuario(){
         setNewUser(
             <MDBListGroupItem noBorders className='rounded-3 mt-3'>
                 <MDBContainer fluid className='mt-2'>
-                <div className='enunciado row'>
+                <div className='row'>
                     <div className="col-12 pt-md-2 pt-sm-1">
                         <MDBInputGroup>
                             <MDBBtn color='secondary' className='numQuestao'>Nome</MDBBtn>
@@ -279,25 +298,6 @@ export default function PaginaUsuario(){
         )
     }
 
-    async function deleteUser(){
-        // Form a ser deletado é original
-        await axios.delete(baseUrl+"/users/"+userIdToDelete+"/admin/"+sessionStorage.getItem('userId'),{
-            headers: {
-                'Authorization': 'bearer ' + sessionStorage.getItem("token")
-            }
-        })
-        .then((response)=>{
-            setUsers(users.filter(a=> a.id !== userIdToDelete))
-        })
-        .catch((error) => {
-            if (error.response.status===401) {
-                navigate('/login')
-                console.warn("Faça o login")
-            }else{ console.log(error)}
-        })
-        setDeletaUsuario(false)
-    }
-
     const secaoUsers=<main className='mt-3 principal'>
         {Title("Usuários",carregaUsuarios)}
         
@@ -307,7 +307,7 @@ export default function PaginaUsuario(){
 
         {newUser}
 
-        <MDBBtn className='mt-3' onClick={e=>{handleNewUser()}} color='success'><i title='Adicionar novo email a enviar' className="edit fas fa-regular fa-plus fa-2x"></i></MDBBtn>
+        <MDBBtn onClick={e=>{handleNewUser()}} outline color='dark' className='border-1 bg-light contatoBotoes mt-3'><i title='Adicionar novo email a enviar' className="edit fas fa-regular fa-plus fa-2x"></i></MDBBtn>
     </main>
     // Usuários
 

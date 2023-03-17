@@ -1,25 +1,19 @@
-a{color: rgb(58, 58, 58);}
-a:hover{color: rgb(21, 21, 21)}
-
 .edit{color: rgb(58, 58, 58);}
 .edit:hover{color: rgb(21, 21, 21)}
-
 
 .trashcan{color: rgb(255, 34, 34);}
 .trashcan:hover{color: rgb(180, 0, 0);}
 
-.enunciado{
-    color: rgb(34, 34, 34);
-    font-size: 1.4em;
-}
 
 .numQuestao{
     color: rgb(34, 34, 34);
-    background-color: #ffffff;
     box-shadow: none;
     border: #aeaeae solid 1px;
 }
-
+.numQuestao:hover{
+    border: #ffa564 solid 1px;
+    background-color: #fffff6;
+}
 .numQuestao:disabled{
     background-color: #e7e7e7;
     border: #aeaeae solid 1px;
@@ -38,15 +32,15 @@ a:hover{color: rgb(21, 21, 21)}
 .porcentagem{
     color: rgb(34, 34, 34);
     font-size: 1.2em;
-    background-color: #e8e8e8;
+}
+.contatoBotoes:hover{
+    background-color: #ffff00;
+    border: #ffa564 solid 1px;
+
 }
 
 .form-check-inline{
     margin-right: 0.5em;
-}
-
-.saveOption{
-    margin-left: 0;
 }
 
 .list-group-item{
@@ -76,6 +70,10 @@ a:hover{color: rgb(21, 21, 21)}
     border-radius: 0em 5px 5px 0em;
     padding-left: 0.3em;
     font-size: 0.65em;
+}
+
+.shadow{
+    box-shadow: rgba(0, 0, 0, 0.074) 0px 0.1px 0.1px, rgba(0, 0, 0, 0.156) 0px 0.1px 0.1px;
 }
 
 @media screen and (min-width:280px) {

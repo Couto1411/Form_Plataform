@@ -1,3 +1,11 @@
 .dropdown-toggle:after {
     display: none;
 }
+
+#main-navbar{
+    background-color: #00284e;
+}
+
+.fa-bars{
+    color: white;
+}

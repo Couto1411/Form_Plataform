@@ -1,5 +1,6 @@
 import React from "react"
 import './Navbar.css'
+import Logo from "./Logo"
 import {
     MDBDropdown, MDBDropdownMenu, MDBDropdownToggle, MDBDropdownItem,
     MDBContainer, MDBNavbarBrand} from 'mdb-react-ui-kit';
@@ -7,7 +8,7 @@ import {
 
 export default function Navbar(ShowSidebar,props){
     return(
-        <nav id="main-navbar" className="navbar navbar-expand-lg navbar-light sticky-top bg-dark">
+        <nav id="main-navbar" className="navbar navbar-expand-lg navbar-light sticky-top">
             <MDBContainer fluid>
                 {/* Toggle button */}
                 {!props?<button className="navbar-toggler" onClick={e=>{ShowSidebar('sidebarMenu')}}>
@@ -15,7 +16,7 @@ export default function Navbar(ShowSidebar,props){
                 </button>:<></>}
 
                 {/* Brand */}
-                <MDBNavbarBrand><div className="text-light">Logo</div></MDBNavbarBrand>
+                <Logo/>
 
                 {/* Right links */}
                 <ul className="navbar-nav ms-auto d-flex flex-row">

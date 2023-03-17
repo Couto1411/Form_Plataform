@@ -135,12 +135,10 @@ export default function FormsDerivados(){
                 case 1:
                     return(
                         <MDBListGroupItem noBorders key={element.id} className='rounded-3 mb-3'>
-                            <div className='enunciado mt-1'>
-                                <MDBInputGroup className='mb-2'>
-                                    <MDBBtn color='secondary' className='numQuestao'>{element.numero}</MDBBtn>
-                                    <input className='form-control' type='text' id={'questao'+element.id} defaultValue={element.enunciado} disabled/>
-                                </MDBInputGroup>
-                            </div>
+                            <MDBInputGroup className='mb-2 mt-1'>
+                                <MDBBtn color='secondary' className='numQuestao'>{element.numero}</MDBBtn>
+                                <input className='form-control' type='text' id={'questao'+element.id} defaultValue={element.enunciado} disabled/>
+                            </MDBInputGroup>
                             <div id={"opcoes"+element.id} className='mx-2'>
                                 {element.opcao1?<div className='d-flex'><MDBRadio disabled name='radioNoLabel' value='' inline/>{element.opcao1}</div>:<></>}
                                 {element.opcao2?<div className='d-flex'><MDBRadio disabled name='radioNoLabel' value='' inline/>{element.opcao2}</div>:<></>}
@@ -158,24 +156,20 @@ export default function FormsDerivados(){
                 case 2:
                     return(
                         <MDBListGroupItem noBorders key={element.id} className='rounded-3 mb-3'>
-                            <div className='enunciado mt-1'>
-                                <MDBInputGroup className='mb-2'>
-                                    <MDBBtn color='secondary' className='numQuestao'>{element.numero}</MDBBtn>
-                                    <input className='form-control' type='text' id={'questao'+element.id} defaultValue={element.enunciado} disabled/>
-                                </MDBInputGroup>
-                            </div>
+                            <MDBInputGroup className='mb-2 mt-1'>
+                                <MDBBtn color='secondary' className='numQuestao'>{element.numero}</MDBBtn>
+                                <input className='form-control' type='text' id={'questao'+element.id} defaultValue={element.enunciado} disabled/>
+                            </MDBInputGroup>
                             <MDBTextArea rows={4} label='Resposta' readOnly className='mb-2'/>
                         </MDBListGroupItem>
                     )
                 case 3:
                     return(
                         <MDBListGroupItem noBorders key={element.id} className='rounded-3 mb-3'>
-                            <div className='enunciado mt-1'>
-                                <MDBInputGroup className='mb-2'>
-                                    <MDBBtn color='secondary' className='numQuestao'>{element.numero}</MDBBtn>
-                                    <input className='form-control' type='text' id={'questao'+element.id} defaultValue={element.enunciado} disabled/>
-                                </MDBInputGroup>
-                            </div>
+                            <MDBInputGroup className='mb-2 mt-1'>
+                                <MDBBtn color='secondary' className='numQuestao'>{element.numero}</MDBBtn>
+                                <input className='form-control' type='text' id={'questao'+element.id} defaultValue={element.enunciado} disabled/>
+                            </MDBInputGroup>
                             <div id={"opcoes"+element.id} className='mx-2'>
                                 {element.opcao1?<div className='d-flex'><MDBCheckbox disabled name='checkNoLabel' value='' inline/>{element.opcao1}</div>:<></>}
                                 {element.opcao2?<div className='d-flex'><MDBCheckbox disabled name='checkNoLabel' value='' inline/>{element.opcao2}</div>:<></>}
@@ -346,7 +340,7 @@ export default function FormsDerivados(){
         return respostas?.map(element => {
             return(
                 <MDBListGroupItem key={element.id} className='mt-3 rounded-3'>
-                    <div className='enunciado d-flex'>{element.numero}) {element.enunciado}<div className='ms-auto'>{element.type===1?<MDBRadio disabled defaultChecked={true} className='mt-1' value='' inline/>:<MDBCheckbox disabled defaultChecked={true} className='mt-1' value='' inline/>}</div></div>
+                    <div className='d-flex'>{element.numero}) {element.enunciado}<div className='ms-auto'>{element.type===1?<MDBRadio disabled defaultChecked={true} className='mt-1' value='' inline/>:<MDBCheckbox disabled defaultChecked={true} className='mt-1' value='' inline/>}</div></div>
                     <hr className='mt-0 mb-2'></hr>
                     <div id={"resposta"+element.id} className='mx-2'>
                         {makeBar(element,element.type)}

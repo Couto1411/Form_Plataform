@@ -42,7 +42,7 @@ export default function Resposta(){
         return respostas?.map(element => {
             return(
                 <>{element.type!==4?<MDBListGroupItem key={"r"+element.id} className='mt-3 rounded-3'>
-                    <div className='enunciado'>{element.numero}) {element.enunciado}</div>
+                    <div className='porcentagem'>{element.numero}) {element.enunciado}</div>
                     <hr className='mt-0 mb-2'></hr>
                     <div className='mx-2'>
                         {element?makeResp(element):<></>}

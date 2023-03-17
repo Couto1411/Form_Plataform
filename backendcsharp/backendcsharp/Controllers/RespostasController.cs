@@ -378,6 +378,9 @@ namespace backendcsharp.Controllers
                 List<QuantidadeResposta> response = new List<QuantidadeResposta>();
                 Handlers.ExistsOrError(FormId.ToString(), "Id do formulário não informado");
                 Handlers.IdNegative(FormId, "Id do formulário inválido");
+                var formulario = await ProjetoDbContext.Formularios.Where(s => (s.Id == FormId)).FirstOrDefaultAsync();
+                int FormularioId = FormId;
+                if (formulario != null && formulario.DerivadoDeId != null) FormularioId = (int)formulario.DerivadoDeId;
                 var questoes = await ProjetoDbContext.Questoes
                         .Select(s => new QuestoesDTO
                         {
@@ -397,7 +400,7 @@ namespace backendcsharp.Controllers
                             opcao9 = s.Opcao9,
                             opcao10 = s.Opcao10
                         })
-                        .Where(s => (s.formId == FormId))
+                        .Where(s => (s.formId == FormularioId))
                         .ToListAsync();
                 // Adiciona a quatidade de respostas para cada questão numa lista
                 foreach (var item in questoes)
@@ -411,15 +414,15 @@ namespace backendcsharp.Controllers
                                 QuantidadeResposta radio = new QuantidadeResposta();
 
                                 // Acha as respostas da questão
-                                var radioBoxDB = await ProjetoDbContext.Radioboxes
-                                    .Select(s => new RadioboxDTO
-                                    {
-                                        radio = s.Radio,
-                                        questaoId = s.QuestaoId
-                                    })
-                                    .Where(s => (s.questaoId == item.id))
-                                    .ToListAsync();
-
+                                var radioBoxDB =
+                                       from radiobox in ProjetoDbContext.Radioboxes
+                                       join resposta in ProjetoDbContext.Enviados on radiobox.RespostaId equals resposta.Id
+                                       where radiobox.QuestaoId == item.id && resposta.FormId == FormId
+                                       select new RadioboxDTO
+                                       {
+                                           radio = radiobox.Radio,
+                                           questaoId = radiobox.QuestaoId
+                                       };
                                 // Adiciona texto e quantidade de respostas na estrutura "QuantidadeResposta"
                                 radio.resposta.Add(new TextQuant(item.opcao1, radioBoxDB.Where(s => s.radio == 1).Count()));
                                 if (item.opcao2 is not null) radio.resposta.Add(new TextQuant(item.opcao2, radioBoxDB.Where(s => s.radio == 2).Count()));
@@ -446,24 +449,24 @@ namespace backendcsharp.Controllers
                                 QuantidadeResposta check = new QuantidadeResposta();
 
                                 // Acha a resposta da questão
-                                var checkBoxDB = await ProjetoDbContext.Checkboxes
-                                    .Select(s => new CheckboxDTO
-                                    {
-                                        opcao1 = s.Opcao1,
-                                        opcao2 = s.Opcao2,
-                                        opcao3 = s.Opcao3,
-                                        opcao4 = s.Opcao4,
-                                        opcao5 = s.Opcao5,
-                                        opcao6 = s.Opcao6,
-                                        opcao7 = s.Opcao7,
-                                        opcao8 = s.Opcao8,
-                                        opcao9 = s.Opcao9,
-                                        opcao10 = s.Opcao10,
-                                        questaoId = s.QuestaoId
-                                    })
-                                    .Where(s => (s.questaoId == item.id))
-                                    .ToListAsync();
-
+                                var checkBoxDB =
+                                       from checkbox in ProjetoDbContext.Checkboxes
+                                       join resposta in ProjetoDbContext.Enviados on checkbox.RespostaId equals resposta.Id
+                                       where checkbox.QuestaoId==item.id && resposta.FormId==FormId
+                                       select new CheckboxDTO
+                                       {
+                                           opcao1 = checkbox.Opcao1,
+                                           opcao2 = checkbox.Opcao2,
+                                           opcao3 = checkbox.Opcao3,
+                                           opcao4 = checkbox.Opcao4,
+                                           opcao5 = checkbox.Opcao5,
+                                           opcao6 = checkbox.Opcao6,
+                                           opcao7 = checkbox.Opcao7,
+                                           opcao8 = checkbox.Opcao8,
+                                           opcao9 = checkbox.Opcao9,
+                                           opcao10 = checkbox.Opcao10,
+                                           questaoId = checkbox.QuestaoId
+                                       };
                                 // Adiciona texto e quantidade de respostas na estrutura "QuantidadeResposta"
                                 check.resposta.Add(new TextQuant(item.opcao1, checkBoxDB.Where(s => s.opcao1 == true).Count()));
                                 if (item.opcao2 is not null) check.resposta.Add(new TextQuant(item.opcao2, checkBoxDB.Where(s => s.opcao2 == true).Count()));

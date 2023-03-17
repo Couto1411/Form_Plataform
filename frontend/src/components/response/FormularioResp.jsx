@@ -36,7 +36,7 @@ export default function FormularioResposta(){
                 case 1:
                     return(
                         <MDBListGroupItem noBorders key={element.id} className='rounded-3 mb-3'>
-                            <div className='enunciado mt-1 rounded-3'>
+                            <div className='mt-1 rounded-3'>
                                 <MDBInputGroup id={element.id} className='mb-2 rounded-3'>
                                     <MDBBtn disabled color='secondary' className='numQuestao'>{element.numero}</MDBBtn>
                                     <input className='form-control' type='text' id={'questao'+element.id} value={element.enunciado} disabled/>
@@ -59,7 +59,7 @@ export default function FormularioResposta(){
                 case 2:
                     return(
                         <MDBListGroupItem noBorders key={element.id} className='rounded-3 mb-3'>
-                            <div className='enunciado mt-1 rounded-3'>
+                            <div className='mt-1 rounded-3'>
                                 <MDBInputGroup id={element.id} className='mb-2 rounded-3'>
                                     <MDBBtn disabled color='secondary' className='numQuestao'>{element.numero}</MDBBtn>
                                     <input className='form-control' type='text' id={'questao'+element.id} value={element.enunciado} disabled/>
@@ -71,7 +71,7 @@ export default function FormularioResposta(){
                 case 3:
                     return(
                         <MDBListGroupItem noBorders key={element.id} className='rounded-3 mb-3'>
-                            <div className='enunciado mt-1 rounded-3' >
+                            <div className='mt-1 rounded-3' >
                                 <MDBInputGroup id={element.id} className='mb-2 rounded-3'>
                                     <MDBBtn disabled color='secondary' className='numQuestao'>{element.numero}</MDBBtn>
                                     <input className='form-control' type='text' id={'questao'+element.id} value={element.enunciado} disabled/>

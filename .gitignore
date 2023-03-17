@@ -12,6 +12,7 @@ frontend/coverage
 frontend/build
 backendcsharp/backendcsharp/bin
 backendcsharp/backendcsharp/obj
+backendcsharp/backendcsharp/appsettings.json
 backendcsharp/APIs.Security.JWT/bin
 backendcsharp/APIs.Security.JWT/obj
 
@@ -26,6 +27,7 @@ frontend/.env.production.local
 .vs
 .vscode
 backendcsharp/.vs
+secret.txt
 
 
 npm-debug.log*

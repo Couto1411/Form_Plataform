@@ -256,7 +256,7 @@ export default function UserSection(main,secao,props){
                     </MDBModal>
 
                     {/* Informações do usuários */}
-                    <MDBContainer fluid className="bg-light mt-3 rounded-3 p-3">
+                    <MDBContainer fluid className="shadow bg-light mt-3 rounded-3 p-3">
                         <h4>Usuário</h4>
                         <hr className='mt-0 mb-3'></hr>
                         <div className='row g-3'>
@@ -296,7 +296,7 @@ export default function UserSection(main,secao,props){
                     </MDBContainer>
 
                     {/* Informações dos cursos e modalidades */}
-                    <MDBContainer fluid className="bg-light mt-3 rounded-3 p-3">
+                    <MDBContainer fluid className="shadow bg-light mt-3 rounded-3 p-3">
                         <h4 >Curso</h4>
                         <hr className='mt-0 mb-3'></hr>
                         

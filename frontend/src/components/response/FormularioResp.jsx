@@ -30,12 +30,13 @@ export default function FormularioResposta(){
     }, []);
 
     // Questões
-    function renderizaQuestoes(){
-        return questoes?.map(element => {
+    function renderizaQuestoes(listaQuestoes,derivada){
+        listaQuestoes?.length?listaQuestoes=listaQuestoes:listaQuestoes=questoes
+        return listaQuestoes?.map(element => {
             switch (element.type) {
                 case 1:
                     return(
-                        <MDBListGroupItem noBorders key={element.id} className='rounded-3 mb-3'>
+                        <MDBListGroupItem noBorders key={element.id} className={derivada?'rounded-3 mb-3 opcao1':'rounded-3 mb-3'}>
                             <div className='mt-1 rounded-3'>
                                 <MDBInputGroup id={element.id} className='mb-2 rounded-3'>
                                     <MDBBtn disabled color='secondary' className='numQuestao'>{element.numero}</MDBBtn>
@@ -58,7 +59,7 @@ export default function FormularioResposta(){
                     )
                 case 2:
                     return(
-                        <MDBListGroupItem noBorders key={element.id} className='rounded-3 mb-3'>
+                        <MDBListGroupItem noBorders key={element.id} className={derivada?'rounded-3 mb-3 opcao1':'rounded-3 mb-3'}>
                             <div className='mt-1 rounded-3'>
                                 <MDBInputGroup id={element.id} className='mb-2 rounded-3'>
                                     <MDBBtn disabled color='secondary' className='numQuestao'>{element.numero}</MDBBtn>
@@ -70,7 +71,7 @@ export default function FormularioResposta(){
                     )
                 case 3:
                     return(
-                        <MDBListGroupItem noBorders key={element.id} className='rounded-3 mb-3'>
+                        <MDBListGroupItem noBorders key={element.id} className={derivada?'rounded-3 mb-3 opcao1':'rounded-3 mb-3'}>
                             <div className='mt-1 rounded-3' >
                                 <MDBInputGroup id={element.id} className='mb-2 rounded-3'>
                                     <MDBBtn disabled color='secondary' className='numQuestao'>{element.numero}</MDBBtn>
@@ -93,9 +94,35 @@ export default function FormularioResposta(){
                     )
                 case 4:
                     return(
-                        <MDBListGroupItem noBorders key={element.id} className='rounded-3 mb-3'>
+                        <MDBListGroupItem noBorders key={element.id} className={derivada?'rounded-3 mb-3 opcao1':'rounded-3 mb-3'}>
                             <MDBTextArea rows={4} id={'questao'+element.id} defaultValue={element.enunciado} label='Resposta' readOnly className='mb-2'/>
                         </MDBListGroupItem>
+                    )
+                case 9:
+                    return(
+                        <div  key={element.id}>
+                        <MDBListGroupItem noBorders className='rounded-3 mb-3 opcao10'>
+                            <div className='mt-1 rounded-3'>
+                                <MDBInputGroup id={element.id} className='mb-2 rounded-3'>
+                                    <MDBBtn disabled color='secondary' className='numQuestao'>{element.numero}</MDBBtn>
+                                    <input className='form-control' type='text' id={'questao'+element.id} value={element.enunciado} disabled/>
+                                </MDBInputGroup>
+                            </div>
+                            <div id={"opcoes"+element.id} className='mx-2'>
+                                {element.opcao1?<div className='d-flex'><MDBRadio onClick={e=>{showDerivada(element.id,1)}} name={'radioNoLabel'+element.id} value={1} inline/>{element.opcao1}</div>:questoes[questoes.map(object => object.id).indexOf(element.id)].semQuestao=true}
+                                {element.opcao2?<div className='d-flex'><MDBRadio onClick={e=>{showDerivada(element.id,2)}} name={'radioNoLabel'+element.id} value={2} inline/>{element.opcao2}</div>:<div className='mb-1 erro'></div>}
+                                {element.opcao3?<div className='d-flex'><MDBRadio onClick={e=>{showDerivada(element.id,3)}} name={'radioNoLabel'+element.id} value={3} inline/>{element.opcao3}</div>:<div className='mb-1 erro'></div>}
+                                {element.opcao4?<div className='d-flex'><MDBRadio onClick={e=>{showDerivada(element.id,4)}} name={'radioNoLabel'+element.id} value={4} inline/>{element.opcao4}</div>:<div className='mb-1 erro'></div>}
+                                {element.opcao5?<div className='d-flex'><MDBRadio onClick={e=>{showDerivada(element.id,5)}} name={'radioNoLabel'+element.id} value={5} inline/>{element.opcao5}</div>:<div className='mb-1 erro'></div>}
+                                {element.opcao6?<div className='d-flex'><MDBRadio onClick={e=>{showDerivada(element.id,6)}} name={'radioNoLabel'+element.id} value={6} inline/>{element.opcao6}</div>:<div className='mb-1 erro'></div>}
+                                {element.opcao7?<div className='d-flex'><MDBRadio onClick={e=>{showDerivada(element.id,7)}} name={'radioNoLabel'+element.id} value={7} inline/>{element.opcao7}</div>:<div className='mb-1 erro'></div>}
+                                {element.opcao8?<div className='d-flex'><MDBRadio onClick={e=>{showDerivada(element.id,8)}} name={'radioNoLabel'+element.id} value={8} inline/>{element.opcao8}</div>:<div className='mb-1 erro'></div>}
+                                {element.opcao9?<div className='d-flex'><MDBRadio onClick={e=>{showDerivada(element.id,9)}} name={'radioNoLabel'+element.id} value={9} inline/>{element.opcao9}</div>:<div className='mb-1 erro'></div>}
+                                {element.opcao10?<div className='d-flex mb-1'><MDBRadio onClick={e=>{showDerivada(element.id,10)}} name={'radioNoLabel'+element.id} vlue={10} inline/>{element.opcao10}</div>:<div className='mb-1 erro'></div>}
+                            </div>
+                        </MDBListGroupItem>
+                        {renderizaDerivadas(element)}
+                        </div>
                     )
                 default:
                     return(
@@ -103,6 +130,21 @@ export default function FormularioResposta(){
                     )
             }
         });
+    }
+    function showDerivada(questaoId,opcao){
+        let opcoes = [1,2,3,4,5,6,7,8,9,10]
+        document.getElementById(questaoId+'opcao'+opcao).style.display='block'
+        opcoes.filter(e=>e!=opcao).map(element=>{document.getElementById(questaoId+'opcao'+element).style.display='none'})
+    }
+    function renderizaDerivadas(questao){
+        let opcoes = [1,2,3,4,5,6,7,8,9,10]
+        return opcoes.map(element=> { 
+            return(
+                <MDBListGroup id={questao.id+'opcao'+element} key={questao.id+'opcao'+element} style={{display: 'none'}} small>
+                    {questao.derivadas?.filter(s=>s.derivadaDeOpcao==element)?.length?renderizaQuestoes(questao.derivadas?.filter(s=>s.derivadaDeOpcao==element),true):null}
+                </MDBListGroup>
+            )
+        })
     }
 
     async function checkUser(email){
@@ -127,7 +169,7 @@ export default function FormularioResposta(){
                         if (radio) {
                             document.getElementById(element.id).style.border='none'
                             respostas.push({
-                                numero: element.numero,
+                                id: element.id,
                                 radio: +radio.value
                             })
                         }else{
@@ -140,7 +182,7 @@ export default function FormularioResposta(){
                         if (text) {
                             document.getElementById(element.id).style.border='none'
                             respostas.push({
-                                numero: element.numero,
+                                id: element.id,
                                 texto: text
                             })
                         }else{
@@ -157,7 +199,7 @@ export default function FormularioResposta(){
                         if (check.length!==0) {
                             document.getElementById(element.id).style.border='none'
                             respostas.push({
-                                numero: element.numero,
+                                id: element.id,
                                 opcoes: check
                             })
                         }else{
@@ -165,7 +207,66 @@ export default function FormularioResposta(){
                             enviar=false
                         }
                         break
-                
+                    case 9:
+                        let questao= document.querySelector(`input[name="radioNoLabel${element.id}"]:checked`)
+                        if (questao) {
+                            document.getElementById(element.id).style.border='none'
+                            respostas.push({
+                                id: element.id,
+                                radio: +questao.value
+                            })
+                            element.derivadas?.filter(e=>e.derivadaDeOpcao==questao.value)?.map(item=>{
+                                switch (item.type) {
+                                    case 1:
+                                        let radio= document.querySelector(`input[name="radioNoLabel${item.id}"]:checked`)
+                                        if (radio) {
+                                            document.getElementById(item.id).style.border='none'
+                                            respostas.push({
+                                                id: item.id,
+                                                radio: +radio.value
+                                            })
+                                        }else{
+                                            document.getElementById(item.id).style.border='1px solid rgb(255, 43, 43)'
+                                            enviar=false
+                                        }
+                                        break
+                                    case 2:
+                                        let text= document.getElementById(`open${item.id}`).value
+                                        if (text) {
+                                            document.getElementById(item.id).style.border='none'
+                                            respostas.push({
+                                                id: item.id,
+                                                texto: text
+                                            })
+                                        }else{
+                                            document.getElementById(item.id).style.border='1px solid rgb(255, 43, 43)'
+                                            enviar=false
+                                        }
+                                        break
+                                    case 3:
+                                        let check=[]
+                                        let markCheck = document.getElementsByName('checkNoLabel'+item.id);  
+                                        for (var checkbox of markCheck) {  
+                                            if (checkbox.checked) check.push(+checkbox.value);  
+                                        } 
+                                        if (check.length!==0) {
+                                            document.getElementById(item.id).style.border='none'
+                                            respostas.push({
+                                                id: item.id,
+                                                opcoes: check
+                                            })
+                                        }else{
+                                            document.getElementById(item.id).style.border='1px solid rgb(255, 43, 43)'
+                                            enviar=false
+                                        }
+                                        break
+                                    }
+                            })
+                        }else{
+                            document.getElementById(element.id).style.border='1px solid rgb(255, 43, 43)'
+                            enviar=false
+                        }
+                        break;
                     default:
                         break;
                 }
@@ -199,18 +300,21 @@ export default function FormularioResposta(){
             <MDBModal staticBackdrop tabIndex='-1' show={emailChecker} setShow={setEmailChecker}>
                 <MDBModalDialog centered>
                     <MDBModalContent>
-                        <MDBModalHeader className='py-2'>
-                            Insira seu email, caso aprovado, poderá responder o questionário
-                        </MDBModalHeader>
-                        <MDBModalBody className='py-2'>
-                            <MDBInput label='Email' id={"email"} type='text' onChange={e=>{e.target.classList.remove('is-invalid')}}/>
-                        </MDBModalBody>
-                        <MDBModalFooter className='py-2'>
-                            <MDBBtn onClick={e=>{
-                                let x=document.getElementById("email")
-                                x.value?verificaUsuario(x):x.classList.add('is-invalid')
-                            }}>Enviar</MDBBtn>
-                        </MDBModalFooter>
+                        <form onSubmit={e=>{
+                                    e.preventDefault()
+                                    let x=document.getElementById("email")
+                                    x.value?verificaUsuario(x):x.classList.add('is-invalid')
+                                }}>
+                            <MDBModalHeader className='py-2'>
+                                Insira seu email, caso aprovado, poderá responder o questionário
+                            </MDBModalHeader>
+                            <MDBModalBody className='py-2'>
+                                <MDBInput label='Email' id={"email"} type='text' onChange={e=>{e.target.classList.remove('is-invalid')}}/>
+                            </MDBModalBody>
+                            <MDBModalFooter className='py-2'>
+                                <MDBBtn type='submit'>Enviar</MDBBtn>
+                            </MDBModalFooter>
+                        </form>
                     </MDBModalContent>
                 </MDBModalDialog>
             </MDBModal>

@@ -1,5 +1,6 @@
 import React, {useEffect,useState}from 'react'
 import './Forms.css'
+import Questoes from './Questoes'
 import axios from "axios";
 import * as XLSX from "xlsx";
 import baseUrl from "../../config/api";
@@ -79,14 +80,13 @@ export default function Forms(){
     }
 
     async function carregaEnvios(){
-        console.log("oi")
         let reponse = await axios.get(baseUrl+"/users/"+sessionStorage.getItem("userId")+"/forms/"+sessionStorage.getItem("formId")+"/enviados",{
             headers: {
                 'Content-Type' : 'application/json',
                 'Authorization': 'bearer ' + sessionStorage.getItem("token")
             }
         })
-        .then((response)=>{console.log(response.data);setContatos(response.data);setContatosDB(response.data)})
+        .then((response)=>{setContatos(response.data);setContatosDB(response.data)})
         .catch((error) => {
             if (error.response.status===401) {
                 navigate('/login')
@@ -195,8 +195,8 @@ export default function Forms(){
                                 {handleInput(element.id)}
                             </div>
                             <div className='d-flex'>
-                                <MDBBtn onClick={e=>{excluiQuestao(element)}} id={'exclui'+element.id} className='ms-auto me-2' style={{display:'none'}}>Excluir</MDBBtn>
-                                <MDBBtn onClick={e=>{editaQuestao(element.id)}} id={'salva'+element.id} style={{display: 'none'}}>Salvar</MDBBtn>
+                                <MDBBtn color='danger' outline onClick={e=>{excluiQuestao(element)}} id={'exclui'+element.id} className='ms-auto me-2' style={{display:'none'}}>Excluir</MDBBtn>
+                                <MDBBtn color='success' outline onClick={e=>{editaQuestao(element.id)}} id={'salva'+element.id} style={{display: 'none'}}>Salvar</MDBBtn>
                             </div>
                         </MDBListGroupItem>
                     )
@@ -210,8 +210,8 @@ export default function Forms(){
                             </MDBInputGroup>
                             <MDBTextArea rows={4} label='Resposta' readOnly className='mb-2'/>
                             <div className='d-flex'>
-                                <MDBBtn onClick={e=>{excluiQuestao(element)}} id={'exclui'+element.id} className='ms-auto me-2' style={{display:'none'}}>Excluir</MDBBtn>
-                                <MDBBtn onClick={e=>{editaQuestao(element.id)}} id={'salva'+element.id} style={{display: 'none'}}>Salvar</MDBBtn>
+                                <MDBBtn color='danger' outline onClick={e=>{excluiQuestao(element)}} id={'exclui'+element.id} className='ms-auto me-2' style={{display:'none'}}>Excluir</MDBBtn>
+                                <MDBBtn color='success' outline onClick={e=>{editaQuestao(element.id)}} id={'salva'+element.id} style={{display: 'none'}}>Salvar</MDBBtn>
                             </div>
                         </MDBListGroupItem>
                     )
@@ -237,8 +237,8 @@ export default function Forms(){
                                 {handleInput(element.id)}
                             </div>
                             <div className='d-flex'>
-                                <MDBBtn onClick={e=>{excluiQuestao(element)}} id={'exclui'+element.id} className='ms-auto me-2' style={{display:'none'}}>Excluir</MDBBtn>
-                                <MDBBtn onClick={e=>{editaQuestao(element.id)}} id={'salva'+element.id} style={{display: 'none'}}>Salvar</MDBBtn>
+                                <MDBBtn color='danger' outline onClick={e=>{excluiQuestao(element)}} id={'exclui'+element.id} className='ms-auto me-2' style={{display:'none'}}>Excluir</MDBBtn>
+                                <MDBBtn color='success' outline onClick={e=>{editaQuestao(element.id)}} id={'salva'+element.id} style={{display: 'none'}}>Salvar</MDBBtn>
                             </div>
                         </MDBListGroupItem>
                     )
@@ -251,10 +251,40 @@ export default function Forms(){
                                          defaultValue={element.enunciado} rows={4} label='Descrição' className='mb-2'/>
                             <MDBBtn outline color='dark' onClick={e=>{toggleShowExcluiSalva(element.id,true)}} className='numQuestao'><i className='p-1 fas fa-regular fa-pen'></i></MDBBtn>
                             <div className='d-flex'>
-                                <MDBBtn onClick={e=>{excluiQuestao(element)}} id={'exclui'+element.id} className='ms-auto me-2' style={{display:'none'}}>Excluir</MDBBtn>
-                                <MDBBtn onClick={e=>{editaQuestao(element.id)}} id={'salva'+element.id} style={{display: 'none'}}>Salvar</MDBBtn>
+                                <MDBBtn color='danger' outline onClick={e=>{excluiQuestao(element)}} id={'exclui'+element.id} className='ms-auto me-2' style={{display:'none'}}>Excluir</MDBBtn>
+                                <MDBBtn color='success' outline onClick={e=>{editaQuestao(element.id)}} id={'salva'+element.id} style={{display: 'none'}}>Salvar</MDBBtn>
                             </div>
                         </MDBListGroupItem>
+                    )
+                case 9:
+                    return(
+                        <div  key={element.id} >
+                        <MDBListGroupItem className='shadow rounded-2 mb-3'>
+                            <MDBInputGroup className='mb-2 mt-1'>
+                                <MDBBtn outline color='dark' onClick={e=>{toggleShowExcluiSalva(element.id)}} className='numQuestao'>{element.numero}</MDBBtn>
+                                <input onKeyDown={e=>{limit(e.target)}} onKeyUp={e=>{limit(e.target)}} className='form-control' type='text' id={'questao'+element.id} defaultValue={element.enunciado} disabled onChange={e=>{questoes[questoes.map(object => object.id).indexOf(element.id)].enunciado=e.target.value}}/>
+                            </MDBInputGroup>
+                            <div id={"opcoes"+element.id} className='mx-2'>
+                                {element.opcao1?<div className='my-1 opcao1 rounded-2 d-flex'><MDBRadio name='radioNoLabel' value='' inline/>{element.opcao1}<i role='button' onClick={e=>{editOpcao(element.id,"1")}} className='edit editOpcoes ms-auto p-1 fas fa-regular fa-pen fa-md'></i></div>:<></>}
+                                {element.opcao2?<div className='my-1 opcao2 rounded-2 d-flex'><MDBRadio name='radioNoLabel' value='' inline/>{element.opcao2}<i role='button' onClick={e=>{editOpcao(element.id,"2")}} className='edit editOpcoes ms-auto p-1 fas fa-regular fa-pen fa-md'></i></div>:<></>}
+                                {element.opcao3?<div className='my-1 opcao3 rounded-2 d-flex'><MDBRadio name='radioNoLabel' value='' inline/>{element.opcao3}<i role='button' onClick={e=>{editOpcao(element.id,"3")}} className='edit editOpcoes ms-auto p-1 fas fa-regular fa-pen fa-md'></i></div>:<></>}
+                                {element.opcao4?<div className='my-1 opcao4 rounded-2 d-flex'><MDBRadio name='radioNoLabel' value='' inline/>{element.opcao4}<i role='button' onClick={e=>{editOpcao(element.id,"4")}} className='edit editOpcoes ms-auto p-1 fas fa-regular fa-pen fa-md'></i></div>:<></>}
+                                {element.opcao5?<div className='my-1 opcao5 rounded-2 d-flex'><MDBRadio name='radioNoLabel' value='' inline/>{element.opcao5}<i role='button' onClick={e=>{editOpcao(element.id,"5")}} className='edit editOpcoes ms-auto p-1 fas fa-regular fa-pen fa-md'></i></div>:<></>}
+                                {element.opcao6?<div className='my-1 opcao6 rounded-2 d-flex'><MDBRadio name='radioNoLabel' value='' inline/>{element.opcao6}<i role='button' onClick={e=>{editOpcao(element.id,"6")}} className='edit editOpcoes ms-auto p-1 fas fa-regular fa-pen fa-md'></i></div>:<></>}
+                                {element.opcao7?<div className='my-1 opcao7 rounded-2 d-flex'><MDBRadio name='radioNoLabel' value='' inline/>{element.opcao7}<i role='button' onClick={e=>{editOpcao(element.id,"7")}} className='edit editOpcoes ms-auto p-1 fas fa-regular fa-pen fa-md'></i></div>:<></>}
+                                {element.opcao8?<div className='my-1 opcao8 rounded-2 d-flex'><MDBRadio name='radioNoLabel' value='' inline/>{element.opcao8}<i role='button' onClick={e=>{editOpcao(element.id,"8")}} className='edit editOpcoes ms-auto p-1 fas fa-regular fa-pen fa-md'></i></div>:<></>}
+                                {element.opcao9?<div className='my-1 opcao9 rounded-2 d-flex'><MDBRadio name='radioNoLabel' value='' inline/>{element.opcao9}<i role='button' onClick={e=>{editOpcao(element.id,"9")}} className='edit editOpcoes ms-auto p-1 fas fa-regular fa-pen fa-md'></i></div>:<></>}
+                                {element.opcao10?<div className='my-1 opcao10 rounded-2 d-flex'><MDBRadio name='radioNoLabel' value='' inline/>{element.opcao10}<i role='button' onClick={e=>{editOpcao(element.id,"10")}} className='edit editOpcoes mb-2 ms-auto p-1 fas fa-regular fa-pen fa-md'></i></div>:<i role='button' className="addQuestao edit fas fa-regular fa-plus" onClick={e=>{addOpcao(element.id)}}></i>}
+                                {handleInput(element.id)}
+                            </div>
+                            <div className='d-flex'>
+                                <MDBBtn color='danger' outline onClick={e=>{excluiQuestao(element)}} id={'exclui'+element.id} className='ms-auto me-2' style={{display:'none'}}>Excluir</MDBBtn>
+                                <MDBBtn color='success' outline onClick={e=>{editaQuestao(element.id)}} id={'salva'+element.id} style={{display: 'none'}}>Salvar</MDBBtn>
+                            </div>
+                            {/* <Questoes questoes={element.derivadas}/> */}
+                        </MDBListGroupItem>
+                        <Questoes questao={element}/>
+                        </div>
                     )
                 default:
                     return(
@@ -312,8 +342,10 @@ export default function Forms(){
                 'Authorization': 'bearer ' + sessionStorage.getItem("token")
             }
         })
-        .then(resposta=>{toggleShowExcluiSalva(id)})
-        .catch((error) => {
+        .then(resposta=>{
+            toggleShowExcluiSalva(id)
+            document.getElementById("questao"+id).disabled=true
+        }).catch((error) => {
             if (error.response.status===401) {
                 navigate('/login')
                 console.warn("Faça o login")
@@ -386,24 +418,26 @@ export default function Forms(){
     function editOpcao(id,opcao){
         var v = document.getElementsByClassName("addQuestao")
         var opcoes = document.getElementsByClassName("editOpcoes")
-        var excluiSalva = document.getElementsByClassName("exclui-salva"+id)
-        setInput([
-            ...input,{
+        document.getElementById("exclui"+id).style.display= "inline-block"
+        document.getElementById("salva"+id).style.display = "inline-block"
+        setInput({
             id:id,
             content:<div className='my-2'>
                 <MDBTextArea onKeyDown={e=>{limit(e.target)}} onKeyUp={e=>{limit(e.target)}} id={"questao"+id+"novaopcao"} rows={3} label='Opcao' className='mb-2'/>
                 <MDBBtn className='border border-secondary' color='light' onClick={e=>{
                     for (let item of v) item.style.display = "inline-block"
                     for (let item of opcoes) item.style.display = "inline-block"
-                    for (let item of excluiSalva) item.style.display = "inline-block"
-                    setInput(input.filter(a=> a.id !== id))
+                    document.getElementById("exclui"+id).style.display= "inline-block"
+                    document.getElementById("salva"+id).style.display = "inline-block"
+                    setInput({})
                     eval("questoes[questoes.map(object => object.id).indexOf(id)].opcao"+opcao+`=document.getElementById("questao"+${id}+"novaopcao").value`)
                 }}><i className='p-1 fas fa-regular fa-pen'></i></MDBBtn>
             </div>
-        }])
+        })
         for (let item of v) item.style.display = "none"
         for (let item of opcoes) item.style.display = "none"
-        for (let item of excluiSalva) item.style.display = "none"
+        document.getElementById("exclui"+id).style.display= "none"
+        document.getElementById("salva"+id).style.display = "none"
     }
 
     function handleNewQuestion(){
@@ -412,6 +446,7 @@ export default function Forms(){
         switch (novaQuestao.type) {
             case 1:
             case 3:
+            case 9:
                 setNewQuestion(
                     <MDBListGroupItem noBorders key={"novaQuestao"} className='shadow rounded-3 mb-3'>
                         <div className='enunciado mt-1'>
@@ -477,10 +512,11 @@ export default function Forms(){
             <MDBListGroupItem noBorders key={"typequestion"} className='shadow rounded-3 mb-3'>
                 <div className='d-flex justify-content-around align-items-center'>
                     <div className='enunciado'>Tipo da Questão:</div>
-                    <MDBRadio onClick={e=>{novaQuestao.type=3}} inline name='tipoQuestao' label='Múltipla Escolha'></MDBRadio>
-                    <MDBRadio onClick={e=>{novaQuestao.type=1}} inline name='tipoQuestao' label='Caixa de seleção'></MDBRadio>
+                    <MDBRadio onClick={e=>{novaQuestao.type=3}} inline name='tipoQuestao' label='Caixa de seleção'></MDBRadio>
+                    <MDBRadio onClick={e=>{novaQuestao.type=1}} inline name='tipoQuestao' label='Múltipla Escolha'></MDBRadio>
                     <MDBRadio onClick={e=>{novaQuestao.type=2}} inline name='tipoQuestao' label='Aberta'></MDBRadio>
                     <MDBRadio onClick={e=>{novaQuestao.type=4}} inline name='tipoQuestao' label='Descrição'></MDBRadio>
+                    <MDBRadio onClick={e=>{novaQuestao.type=9}} inline name='tipoQuestao' label='Funcional'></MDBRadio>
                 </div>
                 <hr className='mt-1 mb-1'></hr>
                 <div className='d-flex'>
@@ -504,8 +540,7 @@ export default function Forms(){
             {typeQuestion}
             {newQuestion}
         </MDBListGroup>
-        
-        <MDBBtn onClick={e=>{handleNewTypeQuestion()}} outline color='dark' className='border-1 bg-light contatoBotoes mt-2'><i className="edit fas fa-regular fa-plus fa-2x"></i></MDBBtn>
+        <MDBBtn color='dark' outline onClick={e=>{handleNewTypeQuestion()}} className='border-1 btn-secondary mt-1'><i className="edit fas fa-regular fa-plus fa-2x"></i></MDBBtn>
     </main>
     // Questões
 
@@ -529,7 +564,7 @@ export default function Forms(){
                             <MDBInputGroup id={'send'+element.id} textAfter={<i title='Enviar formulário para este email' onClick={e=>{sendOneEmail(element.id)}} className="edit fas fa-light fa-paper-plane fa-sm"></i>}>
                                 <MDBBtn outline color='dark' onClick={e=>{showEditContato(element)}} className='numQuestao'>@</MDBBtn>
                                 <input onKeyDown={e=>{limit(e.target)}} onKeyUp={e=>{limit(e.target)}} className='form-control' type='text' id={'contatoEmail'+element.id} defaultValue={element.email} disabled onChange={e=>{contatos[contatos.map(object => object.id).indexOf(element.id)].email=e.target.value}}/>
-                                <div outline color='dark' role='button' onClick={e=>{editaContato(element.id)}} className='numQuestao borda-direita' id={'edit'+element.id} style={{display: 'none'}}><i className='p-2 ms-auto fas fa-regular fa-pen'></i></div>
+                                <div role='button' onClick={e=>{editaContato(element.id)}} className='numQuestao borda-direita' id={'edit'+element.id} style={{display: 'none'}}><i className='p-2 ms-auto fas fa-regular fa-pen'></i></div>
                                 <div role='button' onClick={e=>{excluiContato(element.id)}} className='numQuestao borda-direita' id={'erase'+element.id} style={{display: 'none'}}><i className='p-2 ms-auto trashcan fas fa-trash-can'></i></div>
                             </MDBInputGroup>
                             <MDBContainer fluid className='mt-2' id={'contatoForm'+element.id} style={{display: 'none'}}>
@@ -597,7 +632,7 @@ export default function Forms(){
                                     <div className="col-md-12 pt-md-2 pt-sm-1">
                                         <MDBInputGroup>
                                             <MDBBtn color='secondary' className='novoContatoForm px-2'>Data de colação</MDBBtn>
-                                            <input type="date" className='selectCurso' onChange={e=>{contatos[contatos.map(object => object.id).indexOf(element.id)].dataColacao=e.target.value}} id={'contatoData'+element.id}/>
+                                            <input type="date" className='porcentagem selectCurso' onChange={e=>{contatos[contatos.map(object => object.id).indexOf(element.id)].dataColacao=e.target.value}} id={'contatoData'+element.id}/>
                                         </MDBInputGroup>
                                     </div>
                                 </div>
@@ -704,7 +739,11 @@ export default function Forms(){
                 'Authorization': 'bearer ' + sessionStorage.getItem("token")
             }
         })
-        .then((response)=>{setContatos(contatos.filter(a=> a.id !== id))})
+        .then((response)=>{
+            if(contatos.map(a=>a.id).indexOf(id)%15==0) {
+                setContatosPage(contatosPage-1)}
+            setContatos(contatos.filter(a=> a.id !== id))
+        })
         .catch((error) => {
             if (error.response.status===401) {
                 navigate('/login')
@@ -1033,28 +1072,56 @@ export default function Forms(){
     function renderizaRepostas(){
         return respostas?.map(element => {
             return(
-                <MDBListGroupItem key={element.id} className='shadow mt-4 rounded-3'>
-                    <div className='d-flex porcentagem'>{element.numero}) {element.enunciado}<div className='ms-auto'>{element.type===1?<MDBRadio disabled defaultChecked={true} className='mt-1' value='' inline/>:<MDBCheckbox disabled defaultChecked={true} className='mt-1' value='' inline/>}</div></div>
+                <div  key={element.id}>
+                <MDBListGroupItem className='shadow mt-3 rounded-3'>
+                    <div className='d-flex porcentagem'>{element.numero}) {element.enunciado}
+                        <div className='ms-auto'>
+                            {element.type===1?
+                            <MDBRadio disabled defaultChecked={true} className='mt-1' value='' inline/>:
+                            <MDBCheckbox disabled defaultChecked={true} className='mt-1' value='' inline/>}
+                        </div>
+                    </div>
                     <hr className='mt-0 mb-2'></hr>
                     <div id={"resposta"+element.id} className='mx-2'>
-                        {makeBar(element,element.type)}
+                        {element.type===9?makeBar(element,true):makeBar(element,false)}
                     </div>
                 </MDBListGroupItem>
+                {element.derivadas.length>0?renderizaRepostasDerivadas(element.derivadas,element):<></>}</div>
             )
+        })
+    }
+    function renderizaRepostasDerivadas(derivadas, questaoOrig){
+        let opcoes = [1,2,3,4,5,6,7,8,9,10]
+        return opcoes.map(opcao=>{
+            return (
+                <MDBListGroup key={questaoOrig.id+'respostasopcao'+opcao} className='mt-1 rounded-3' >
+                    {derivadas?.filter(s=>s.derivadaDeOpcao==opcao)?.map(element=>{
+                        console.log(element)
+                        return (<MDBListGroupItem key={element.id} className={'mt-1 rounded-3 opcao'+opcao}>
+                                    <div className='d-flex porcentagem'>{element.numero}) {element.enunciado}<div className='ms-auto'>{element.type===1?<MDBRadio disabled defaultChecked={true} className='mt-1' value='' inline/>:<MDBCheckbox disabled defaultChecked={true} className='mt-1' value='' inline/>}</div></div>
+                                    <hr className='mt-0 mb-2'></hr>
+                                    <div id={"resposta"+element.id} className='mx-2'>
+                                        {makeBar(element,false)}
+                                    </div>
+                                </MDBListGroupItem>)})}
+                </MDBListGroup>)
         })
     }
 
     function makeBar(element,tipo){
         let numero=0
         let sum = element.resposta.reduce((partialSum, a) => partialSum + a.quantidade, 0);
+        let count=0
         return element.resposta?.map((item,index)=>{
             numero+=1
+            count+=1
             let parcial=Math.trunc((item.quantidade/sum)*100)
+            if(!parcial) parcial=0
             if(item.texto){
                 return(
-                    <div className='mb-2 porcentagem'>{numero}) {item.texto}
+                    <div key={'Barra'+element.id+count} className='mb-2 porcentagem'> <div className={tipo?'rounded-3 opcao'+count:null}>{numero}) {item.texto}</div>
                         <MDBProgress height='30' className='rounded-3'>
-                            <MDBProgressBar className='porcentagem' width={`${parcial}`} valuemin={0} valuemax={100}>{parcial}%</MDBProgressBar>
+                            <MDBProgressBar className='porcentagem' width={parcial} valuemin={0} valuemax={100}>{parcial}%</MDBProgressBar>
                         </MDBProgress>
                     </div>
                 )

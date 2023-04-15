@@ -271,22 +271,14 @@ export default function PaginaUsuario(){
     const secaoForms=<main className='mt-3 principal'>
         {Title("Formularios",carregaForms)}
         
-        <MDBListGroup small className='mt-3 rounded-3 bg-light' >
+        <MDBListGroup small className='shadow mt-3 rounded-3 bg-light' >
             {renderizaForms()}
         </MDBListGroup>
         <MDBBtn onClick={e=>{
             setAddForm(true)
             toggleShow({id: 'novo', titulo:null})
             }} outline color='dark' className='border-1 bg-light contatoBotoes mt-3'><i className="edit fas fa-light fa-plus fa-2x"></i></MDBBtn>
-    </main>
-
-    return(
-        <section>
-            {Sidebar(setMain,'forms')}
-            {Navbar(ShowSidebar)}
-
-            {UserSection(main,secaoForms)}
-
+    
             {/* Modal de Adicionar Form */}
             <MDBModal tabIndex='-1' show={centredModal} setShow={setCentredModal}>
                 <MDBModalDialog centered>
@@ -316,6 +308,14 @@ export default function PaginaUsuario(){
                     </MDBModalContent>
                 </MDBModalDialog>
             </MDBModal>
+    </main>
+
+    return(
+        <section>
+            {Sidebar(setMain,'forms')}
+            {Navbar(ShowSidebar)}
+
+            {UserSection(main,secaoForms)}
         </section>
     )
 }

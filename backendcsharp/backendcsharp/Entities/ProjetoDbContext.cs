@@ -168,12 +168,14 @@ public partial class ProjetoDbContext : DbContext
             entity.ToTable("questoes");
 
             entity.HasIndex(e => e.FormId, "questoes_formid_foreign");
+            entity.HasIndex(e => e.DerivadaDeId, "questoes_derivadodeid_foreign");
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Enunciado)
                 .HasColumnType("longtext")
                 .HasColumnName("enunciado");
             entity.Property(e => e.FormId).HasColumnName("formId");
+            entity.Property(e => e.DerivadaDeOpcao).HasColumnName("derivadaDeOpcao");
             entity.Property(e => e.Numero).HasColumnName("numero");
             entity.Property(e => e.Opcao1)
                 .HasMaxLength(255)
@@ -210,6 +212,10 @@ public partial class ProjetoDbContext : DbContext
             entity.HasOne(d => d.Form).WithMany(p => p.Questoes)
                 .HasForeignKey(d => d.FormId)
                 .HasConstraintName("questoes_formid_foreign");
+
+            entity.HasOne(d => d.QuestaoOrig).WithMany(p => p.Derivadas)
+                .HasForeignKey(d => d.DerivadaDeId)
+                .HasConstraintName("questoes_derivadodeid_foreign");
         });
 
         modelBuilder.Entity<Radiobox>(entity =>

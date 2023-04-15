@@ -4,7 +4,9 @@ using backendcsharp.Handles;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Build.Framework;
 using Microsoft.EntityFrameworkCore;
+using Org.BouncyCastle.Asn1.Ocsp;
 using System.Text;
 
 namespace backendcsharp.Controllers
@@ -21,7 +23,7 @@ namespace backendcsharp.Controllers
         // Usada quando cadastra-se uma nova resposta de um email
         public class Resposta
         {
-            public int? numero { get; set; } = null!;
+            public int? id { get; set; } = null!;
             public int? radio { get; set; } = null!;
             public string? texto { get; set; } = null!;
             public virtual List<int> opcoes { get; set; } = new List<int>();
@@ -72,7 +74,7 @@ namespace backendcsharp.Controllers
                                 formId = s.FormId,
                                 numero = s.Numero
                             })
-                            .Where(s => (s.formId == FormId && s.numero==item.numero))
+                            .Where(s => (s.formId == FormId && s.id==item.id))
                             .FirstOrDefaultAsync();
                         if (questao is null) throw new Exception("Questao não encontrada");
                         if (item.radio is not null)
@@ -159,185 +161,31 @@ namespace backendcsharp.Controllers
                 Handlers.IdNegative(FormId, "Id do formulário inválido");
                 Handlers.ExistsOrError(EnviadoId.ToString(), "Id do email não informado");
                 Handlers.IdNegative(EnviadoId, "Id do email inválido");
-                var questoes = await ProjetoDbContext.Questoes
-                        .Select(s => new QuestoesDTO
-                        {
-                            id = s.Id,
-                            numero = s.Numero,
-                            type = s.Type,
-                            formId = s.FormId,
-                            enunciado = s.Enunciado,
-                            opcao1 = s.Opcao1,
-                            opcao2 = s.Opcao2,
-                            opcao3 = s.Opcao3,
-                            opcao4 = s.Opcao4,
-                            opcao5 = s.Opcao5,
-                            opcao6 = s.Opcao6,
-                            opcao7 = s.Opcao7,
-                            opcao8 = s.Opcao8,
-                            opcao9 = s.Opcao9,
-                            opcao10 = s.Opcao10
-                        })
-                        .Where(s => (s.formId == FormId))
-                        .ToListAsync();
+                var questoes =await
+                       (from questao in ProjetoDbContext.Questoes
+                       where questao.FormId == FormId && questao.DerivadaDeId == null
+                       select new QuestoesDTO
+                       {
+                           id = questao.Id,
+                           numero = questao.Numero,
+                           type = questao.Type,
+                           formId = questao.FormId,
+                           enunciado = questao.Enunciado,
+                           derivadaDeOpcao = questao.DerivadaDeOpcao,
+                           opcao1 = questao.Opcao1,
+                           opcao2 = questao.Opcao2,
+                           opcao3 = questao.Opcao3,
+                           opcao4 = questao.Opcao4,
+                           opcao5 = questao.Opcao5,
+                           opcao6 = questao.Opcao6,
+                           opcao7 = questao.Opcao7,
+                           opcao8 = questao.Opcao8,
+                           opcao9 = questao.Opcao9,
+                           opcao10 = questao.Opcao10
+                       }).ToListAsync();
                 // Adiciona as respostas para cada questão numa lista
-                foreach (var item in questoes)
-                {
-                    switch (item.type)
-                    {
-                        // Adiciona questões do tipo RadioBox
-                        case 1:
-                            TipoResposta radio = new TipoResposta();
-                            if (item.opcao1 is not null)
-                            {
-                                // Acha a resposta da questão
-                                var radioBoxDB =  await ProjetoDbContext.Radioboxes
-                                    .Select(s => new RadioboxDTO
-                                    {
-                                        radio = s.Radio,
-                                        questaoId = s.QuestaoId,
-                                        respostaId = s.RespostaId
-                                    })
-                                    .Where(s => (s.questaoId == item.id && s.respostaId == EnviadoId))
-                                    .FirstOrDefaultAsync();
-                                if (radioBoxDB is not null)
-                                {
-                                    // Coloca a opcao respondida na estrutura "TipoResposta"
-                                    switch (radioBoxDB.radio)
-                                    {
-                                        case 1:
-                                            radio.radio = item.opcao1;
-                                            break;
-                                        case 2:
-                                            radio.radio = item.opcao2;
-                                            break;
-                                        case 3:
-                                            radio.radio = item.opcao3;
-                                            break;
-                                        case 4:
-                                            radio.radio = item.opcao4;
-                                            break;
-                                        case 5:
-                                            radio.radio = item.opcao5;
-                                            break;
-                                        case 6:
-                                            radio.radio = item.opcao6;
-                                            break;
-                                        case 7:
-                                            radio.radio = item.opcao7;
-                                            break;
-                                        case 8:
-                                            radio.radio = item.opcao8;
-                                            break;
-                                        case 9:
-                                            radio.radio = item.opcao9;
-                                            break;
-                                        case 10:
-                                            radio.radio = item.opcao10;
-                                            break;
-                                        default:
-                                            break;
-                                    }
-                                }
-                            }
-
-                            // Informações gerais
-                            radio.enunciado = item.enunciado;
-                            radio.id = item.id != null ? (uint)item.id : throw new Exception("Id da questão não encontrado");
-                            radio.type = item.type;
-                            radio.numero = item.numero;
-                            response.Add(radio);
-                            break;
-
-                        // Adiciona questões do tipo Texto
-                        case 2:
-                            TipoResposta texto = new TipoResposta();
-
-                            // Acha a resposta da questão
-                            var textDB = await ProjetoDbContext.Texts
-                                .Select(s => new TextDTO
-                                {
-                                    texto = s.Texto,
-                                    questaoId = s.QuestaoId,
-                                    respostaId = s.RespostaId
-                                })
-                                .Where(s => (s.questaoId == item.id && s.respostaId == EnviadoId))
-                                .FirstOrDefaultAsync();
-
-                            // Coloca o texto respondido na estrutura "TipoResposta"
-                            if (textDB is not null)
-                            {
-                                texto.texto = textDB.texto;
-                            }
-
-                            // Informações gerais
-                            texto.enunciado = item.enunciado;
-                            texto.id = item.id != null ? (uint)item.id : throw new Exception("Id da questão não encontrado");
-                            texto.type = item.type;
-                            texto.numero = item.numero;
-                            response.Add(texto);
-                            break;
-
-                        // Adiciona questões do tipo Checkbox
-                        case 3:
-                            TipoResposta check = new TipoResposta();
-                            if (item.opcao1 is not null)
-                            {
-                                // Acha a resposta da questão
-                                var checkBoxDB = await ProjetoDbContext.Checkboxes
-                                    .Select(s => new CheckboxDTO
-                                    {
-                                        opcao1 = s.Opcao1,
-                                        opcao2 = s.Opcao2,
-                                        opcao3 = s.Opcao3,
-                                        opcao4 = s.Opcao4,
-                                        opcao5 = s.Opcao5,
-                                        opcao6 = s.Opcao6,
-                                        opcao7 = s.Opcao7,
-                                        opcao8 = s.Opcao8,
-                                        opcao9 = s.Opcao9,
-                                        opcao10 = s.Opcao10,
-                                        questaoId = s.QuestaoId,
-                                        respostaId = s.RespostaId
-                                    })
-                                    .Where(s => (s.questaoId == item.id && s.respostaId == EnviadoId))
-                                    .FirstOrDefaultAsync();
-                                if (checkBoxDB is not null)
-                                {
-                                    // Coloca as opcões respondidas na estrutura "TipoResposta"
-                                    if (checkBoxDB.opcao1 == true) check.opcoes.Add(item.opcao1);
-                                    if (item.opcao2 is not null && checkBoxDB.opcao2 == true) check.opcoes.Add(item.opcao2);
-                                    if (item.opcao3 is not null && checkBoxDB.opcao3 == true) check.opcoes.Add(item.opcao3);
-                                    if (item.opcao4 is not null && checkBoxDB.opcao4 == true) check.opcoes.Add(item.opcao4);
-                                    if (item.opcao5 is not null && checkBoxDB.opcao5 == true) check.opcoes.Add(item.opcao5);
-                                    if (item.opcao6 is not null && checkBoxDB.opcao6 == true) check.opcoes.Add(item.opcao6);
-                                    if (item.opcao7 is not null && checkBoxDB.opcao7 == true) check.opcoes.Add(item.opcao7);
-                                    if (item.opcao8 is not null && checkBoxDB.opcao8 == true) check.opcoes.Add(item.opcao8);
-                                    if (item.opcao9 is not null && checkBoxDB.opcao9 == true) check.opcoes.Add(item.opcao9);
-                                    if (item.opcao10 is not null && checkBoxDB.opcao10 == true) check.opcoes.Add(item.opcao10);
-                                }
-                            }
-
-                            // Informações gerais
-                            check.enunciado = item.enunciado;
-                            check.id = item.id != null ? (uint)item.id : throw new Exception("Id da questão não encontrado");
-                            check.type = item.type;
-                            check.numero = item.numero;
-                            response.Add(check);
-                            break;
-                        case 4:
-                            TipoResposta descricao = new TipoResposta();
-                            descricao.enunciado = item.enunciado;
-                            descricao.id = item.id != null ? (uint)item.id : throw new Exception("Id da questão não encontrado");
-                            descricao.type = item.type;
-                            descricao.numero = item.numero;
-                            response.Add(descricao);
-                            break;
-                        default:
-                            throw new Exception("Tipo da questão não existe");
-                    }
-                }
-                // Retorna resposta
+                response = await PegarRespostasIndividual(questoes, FormId, EnviadoId);
+                 // Retorna resposta
                 return response;
             }
             catch (Exception ex)
@@ -345,6 +193,257 @@ namespace backendcsharp.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+        public async Task<List<TipoResposta>> PegarRespostasIndividual(List<QuestoesDTO> questoes, int FormId, int EnviadoId)
+        {
+            List<TipoResposta> response = new List<TipoResposta>();
+            foreach (var item in questoes)
+            {
+                switch (item.type)
+                {
+                    // Adiciona questões do tipo RadioBox
+                    case 1:
+                        TipoResposta radio = new TipoResposta();
+                        if (item.opcao1 is not null)
+                        {
+                            // Acha a resposta da questão
+                            var radioBoxDB = await ProjetoDbContext.Radioboxes
+                                .Select(s => new RadioboxDTO
+                                {
+                                    radio = s.Radio,
+                                    questaoId = s.QuestaoId,
+                                    respostaId = s.RespostaId
+                                })
+                                .Where(s => (s.questaoId == item.id && s.respostaId == EnviadoId))
+                                .FirstOrDefaultAsync();
+                            if (radioBoxDB is not null)
+                            {
+                                // Coloca a opcao respondida na estrutura "TipoResposta"
+                                switch (radioBoxDB.radio)
+                                {
+                                    case 1:
+                                        radio.radio = item.opcao1;
+                                        break;
+                                    case 2:
+                                        radio.radio = item.opcao2;
+                                        break;
+                                    case 3:
+                                        radio.radio = item.opcao3;
+                                        break;
+                                    case 4:
+                                        radio.radio = item.opcao4;
+                                        break;
+                                    case 5:
+                                        radio.radio = item.opcao5;
+                                        break;
+                                    case 6:
+                                        radio.radio = item.opcao6;
+                                        break;
+                                    case 7:
+                                        radio.radio = item.opcao7;
+                                        break;
+                                    case 8:
+                                        radio.radio = item.opcao8;
+                                        break;
+                                    case 9:
+                                        radio.radio = item.opcao9;
+                                        break;
+                                    case 10:
+                                        radio.radio = item.opcao10;
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }
+                        }
+
+                        // Informações gerais
+                        radio.enunciado = item.enunciado;
+                        radio.id = item.id != null ? (uint)item.id : throw new Exception("Id da questão não encontrado");
+                        radio.type = item.type;
+                        radio.numero = item.numero;
+                        response.Add(radio);
+                        break;
+
+                    // Adiciona questões do tipo Texto
+                    case 2:
+                        TipoResposta texto = new TipoResposta();
+
+                        // Acha a resposta da questão
+                        var textDB = await ProjetoDbContext.Texts
+                            .Select(s => new TextDTO
+                            {
+                                texto = s.Texto,
+                                questaoId = s.QuestaoId,
+                                respostaId = s.RespostaId
+                            })
+                            .Where(s => (s.questaoId == item.id && s.respostaId == EnviadoId))
+                            .FirstOrDefaultAsync();
+
+                        // Coloca o texto respondido na estrutura "TipoResposta"
+                        if (textDB is not null)
+                        {
+                            texto.texto = textDB.texto;
+                        }
+
+                        // Informações gerais
+                        texto.enunciado = item.enunciado;
+                        texto.id = item.id != null ? (uint)item.id : throw new Exception("Id da questão não encontrado");
+                        texto.type = item.type;
+                        texto.numero = item.numero;
+                        response.Add(texto);
+                        break;
+
+                    // Adiciona questões do tipo Checkbox
+                    case 3:
+                        TipoResposta check = new TipoResposta();
+                        if (item.opcao1 is not null)
+                        {
+                            // Acha a resposta da questão
+                            var checkBoxDB = await ProjetoDbContext.Checkboxes
+                                .Select(s => new CheckboxDTO
+                                {
+                                    opcao1 = s.Opcao1,
+                                    opcao2 = s.Opcao2,
+                                    opcao3 = s.Opcao3,
+                                    opcao4 = s.Opcao4,
+                                    opcao5 = s.Opcao5,
+                                    opcao6 = s.Opcao6,
+                                    opcao7 = s.Opcao7,
+                                    opcao8 = s.Opcao8,
+                                    opcao9 = s.Opcao9,
+                                    opcao10 = s.Opcao10,
+                                    questaoId = s.QuestaoId,
+                                    respostaId = s.RespostaId
+                                })
+                                .Where(s => (s.questaoId == item.id && s.respostaId == EnviadoId))
+                                .FirstOrDefaultAsync();
+                            if (checkBoxDB is not null)
+                            {
+                                // Coloca as opcões respondidas na estrutura "TipoResposta"
+                                if (checkBoxDB.opcao1 == true) check.opcoes.Add(item.opcao1);
+                                if (item.opcao2 is not null && checkBoxDB.opcao2 == true) check.opcoes.Add(item.opcao2);
+                                if (item.opcao3 is not null && checkBoxDB.opcao3 == true) check.opcoes.Add(item.opcao3);
+                                if (item.opcao4 is not null && checkBoxDB.opcao4 == true) check.opcoes.Add(item.opcao4);
+                                if (item.opcao5 is not null && checkBoxDB.opcao5 == true) check.opcoes.Add(item.opcao5);
+                                if (item.opcao6 is not null && checkBoxDB.opcao6 == true) check.opcoes.Add(item.opcao6);
+                                if (item.opcao7 is not null && checkBoxDB.opcao7 == true) check.opcoes.Add(item.opcao7);
+                                if (item.opcao8 is not null && checkBoxDB.opcao8 == true) check.opcoes.Add(item.opcao8);
+                                if (item.opcao9 is not null && checkBoxDB.opcao9 == true) check.opcoes.Add(item.opcao9);
+                                if (item.opcao10 is not null && checkBoxDB.opcao10 == true) check.opcoes.Add(item.opcao10);
+                            }
+                        }
+
+                        // Informações gerais
+                        check.enunciado = item.enunciado;
+                        check.id = item.id != null ? (uint)item.id : throw new Exception("Id da questão não encontrado");
+                        check.type = item.type;
+                        check.numero = item.numero;
+                        response.Add(check);
+                        break;
+                    case 4:
+                        TipoResposta descricao = new TipoResposta();
+                        descricao.enunciado = item.enunciado;
+                        descricao.id = item.id != null ? (uint)item.id : throw new Exception("Id da questão não encontrado");
+                        descricao.type = item.type;
+                        descricao.numero = item.numero;
+                        response.Add(descricao);
+                        break;
+                    case 9:
+                        TipoResposta questaoOrig = new TipoResposta();
+                        List<TipoResposta> derivadas = new List<TipoResposta>();
+                        if (item.opcao1 is not null)
+                        {
+                            // Acha a resposta da questão
+                            var questaoOrigDB = await ProjetoDbContext.Radioboxes
+                                .Select(s => new RadioboxDTO
+                                {
+                                    radio = s.Radio,
+                                    questaoId = s.QuestaoId,
+                                    respostaId = s.RespostaId
+                                })
+                                .Where(s => (s.questaoId == item.id && s.respostaId == EnviadoId))
+                                .FirstOrDefaultAsync();
+                            if (questaoOrigDB is not null)
+                            {
+                                // Coloca a opcao respondida na estrutura "TipoResposta"
+                                switch (questaoOrigDB.radio)
+                                {
+                                    case 1:
+                                        questaoOrig.radio = item.opcao1;
+                                        break;
+                                    case 2:
+                                        questaoOrig.radio = item.opcao2;
+                                        break;
+                                    case 3:
+                                        questaoOrig.radio = item.opcao3;
+                                        break;
+                                    case 4:
+                                        questaoOrig.radio = item.opcao4;
+                                        break;
+                                    case 5:
+                                        questaoOrig.radio = item.opcao5;
+                                        break;
+                                    case 6:
+                                        questaoOrig.radio = item.opcao6;
+                                        break;
+                                    case 7:
+                                        questaoOrig.radio = item.opcao7;
+                                        break;
+                                    case 8:
+                                        questaoOrig.radio = item.opcao8;
+                                        break;
+                                    case 9:
+                                        questaoOrig.radio = item.opcao9;
+                                        break;
+                                    case 10:
+                                        questaoOrig.radio = item.opcao10;
+                                        break;
+                                    default:
+                                        break;
+                                }
+
+                                var questoesDerivadas = await
+                                       (from questaodb in ProjetoDbContext.Questoes
+                                        where questaodb.FormId == FormId && questaodb.DerivadaDeId == item.id && questaodb.DerivadaDeOpcao == questaoOrigDB.radio
+                                        select new QuestoesDTO
+                                        {
+                                            id = questaodb.Id,
+                                            numero = questaodb.Numero,
+                                            type = questaodb.Type,
+                                            formId = questaodb.FormId,
+                                            enunciado = questaodb.Enunciado,
+                                            derivadaDeOpcao = questaodb.DerivadaDeOpcao,
+                                            opcao1 = questaodb.Opcao1,
+                                            opcao2 = questaodb.Opcao2,
+                                            opcao3 = questaodb.Opcao3,
+                                            opcao4 = questaodb.Opcao4,
+                                            opcao5 = questaodb.Opcao5,
+                                            opcao6 = questaodb.Opcao6,
+                                            opcao7 = questaodb.Opcao7,
+                                            opcao8 = questaodb.Opcao8,
+                                            opcao9 = questaodb.Opcao9,
+                                            opcao10 = questaodb.Opcao10
+                                        }).ToListAsync();
+                                derivadas = await PegarRespostasIndividual(questoesDerivadas, FormId, EnviadoId);
+                            }
+                        }
+
+                        // Informações gerais
+                        questaoOrig.enunciado = item.enunciado;
+                        questaoOrig.id = item.id != null ? (uint)item.id : throw new Exception("Id da questão não encontrado");
+                        questaoOrig.type = item.type;
+                        questaoOrig.numero = item.numero;
+                        response.Add(questaoOrig);
+                        foreach (var elemento in derivadas) response.Add(elemento);
+                        break;
+                    default:
+                        throw new Exception("Tipo da questão não existe");
+                }
+            }
+
+            return response;
+        }
+
 
         // Texto e quantidade de resposta
         public class TextQuant
@@ -353,8 +452,8 @@ namespace backendcsharp.Controllers
             public virtual int quantidade { get; set; }
             public TextQuant(string a, int b)
             {
-                texto = a;
-                quantidade = b;
+                this.texto = a;
+                this.quantidade = b;
             }
 
         }
@@ -362,9 +461,11 @@ namespace backendcsharp.Controllers
         public class QuantidadeResposta
         {
             public uint id { get; set; }
+            public int? derivadaDeOpcao { get; set; }
             public int type { get; set; }
             public string? enunciado { get; set; } = null!;
             public uint numero { get; set; }
+            public List<QuantidadeResposta> derivadas { get; set; } = new List<QuantidadeResposta>();
             public List<TextQuant> resposta { get; set; } = new List<TextQuant>();
         }
 
@@ -381,126 +482,192 @@ namespace backendcsharp.Controllers
                 var formulario = await ProjetoDbContext.Formularios.Where(s => (s.Id == FormId)).FirstOrDefaultAsync();
                 int FormularioId = FormId;
                 if (formulario != null && formulario.DerivadoDeId != null) FormularioId = (int)formulario.DerivadoDeId;
-                var questoes = await ProjetoDbContext.Questoes
-                        .Select(s => new QuestoesDTO
-                        {
-                            id = s.Id,
-                            numero = s.Numero,
-                            type = s.Type,
-                            formId = s.FormId,
-                            enunciado = s.Enunciado,
-                            opcao1 = s.Opcao1,
-                            opcao2 = s.Opcao2,
-                            opcao3 = s.Opcao3,
-                            opcao4 = s.Opcao4,
-                            opcao5 = s.Opcao5,
-                            opcao6 = s.Opcao6,
-                            opcao7 = s.Opcao7,
-                            opcao8 = s.Opcao8,
-                            opcao9 = s.Opcao9,
-                            opcao10 = s.Opcao10
-                        })
-                        .Where(s => (s.formId == FormularioId))
-                        .ToListAsync();
+
+                var questoes = await
+                       (from questao in ProjetoDbContext.Questoes
+                       where questao.FormId == FormularioId && questao.DerivadaDeId == null
+                       select new QuestoesDTO
+                       {
+                           id = questao.Id,
+                           numero = questao.Numero,
+                           type = questao.Type,
+                           formId = questao.FormId,
+                           enunciado = questao.Enunciado,
+                           derivadaDeOpcao = questao.DerivadaDeOpcao,
+                           opcao1 = questao.Opcao1,
+                           opcao2 = questao.Opcao2,
+                           opcao3 = questao.Opcao3,
+                           opcao4 = questao.Opcao4,
+                           opcao5 = questao.Opcao5,
+                           opcao6 = questao.Opcao6,
+                           opcao7 = questao.Opcao7,
+                           opcao8 = questao.Opcao8,
+                           opcao9 = questao.Opcao9,
+                           opcao10 = questao.Opcao10
+                       }).ToListAsync();
+                response = await PegarRespostas(questoes, FormId, FormularioId);
                 // Adiciona a quatidade de respostas para cada questão numa lista
-                foreach (var item in questoes)
-                {
-                    switch (item.type)
-                    {
-                        // Adiciona questões do tipo RadioBox
-                        case 1:
-                            if (item.opcao1 is not null)
-                            {
-                                QuantidadeResposta radio = new QuantidadeResposta();
-
-                                // Acha as respostas da questão
-                                var radioBoxDB =
-                                       from radiobox in ProjetoDbContext.Radioboxes
-                                       join resposta in ProjetoDbContext.Enviados on radiobox.RespostaId equals resposta.Id
-                                       where radiobox.QuestaoId == item.id && resposta.FormId == FormId
-                                       select new RadioboxDTO
-                                       {
-                                           radio = radiobox.Radio,
-                                           questaoId = radiobox.QuestaoId
-                                       };
-                                // Adiciona texto e quantidade de respostas na estrutura "QuantidadeResposta"
-                                radio.resposta.Add(new TextQuant(item.opcao1, radioBoxDB.Where(s => s.radio == 1).Count()));
-                                if (item.opcao2 is not null) radio.resposta.Add(new TextQuant(item.opcao2, radioBoxDB.Where(s => s.radio == 2).Count()));
-                                if (item.opcao3 is not null) radio.resposta.Add(new TextQuant(item.opcao3, radioBoxDB.Where(s => s.radio == 3).Count()));
-                                if (item.opcao4 is not null) radio.resposta.Add(new TextQuant(item.opcao4, radioBoxDB.Where(s => s.radio == 4).Count()));
-                                if (item.opcao5 is not null) radio.resposta.Add(new TextQuant(item.opcao5, radioBoxDB.Where(s => s.radio == 5).Count()));
-                                if (item.opcao6 is not null) radio.resposta.Add(new TextQuant(item.opcao6, radioBoxDB.Where(s => s.radio == 6).Count()));
-                                if (item.opcao7 is not null) radio.resposta.Add(new TextQuant(item.opcao7, radioBoxDB.Where(s => s.radio == 7).Count()));
-                                if (item.opcao8 is not null) radio.resposta.Add(new TextQuant(item.opcao8, radioBoxDB.Where(s => s.radio == 8).Count()));
-                                if (item.opcao9 is not null) radio.resposta.Add(new TextQuant(item.opcao9, radioBoxDB.Where(s => s.radio == 9).Count()));
-                                if (item.opcao10 is not null) radio.resposta.Add(new TextQuant(item.opcao10, radioBoxDB.Where(s => s.radio == 10).Count()));
-
-                                // Informações gerais
-                                radio.enunciado = item.enunciado;
-                                radio.id = item.id != null ? (uint)item.id : throw new Exception("Id da questão não encontrado");
-                                radio.type = item.type;
-                                radio.numero = item.numero;
-                                response.Add(radio);
-                            }
-                            break;
-                        case 3:
-                            if (item.opcao1 is not null)
-                            {
-                                QuantidadeResposta check = new QuantidadeResposta();
-
-                                // Acha a resposta da questão
-                                var checkBoxDB =
-                                       from checkbox in ProjetoDbContext.Checkboxes
-                                       join resposta in ProjetoDbContext.Enviados on checkbox.RespostaId equals resposta.Id
-                                       where checkbox.QuestaoId==item.id && resposta.FormId==FormId
-                                       select new CheckboxDTO
-                                       {
-                                           opcao1 = checkbox.Opcao1,
-                                           opcao2 = checkbox.Opcao2,
-                                           opcao3 = checkbox.Opcao3,
-                                           opcao4 = checkbox.Opcao4,
-                                           opcao5 = checkbox.Opcao5,
-                                           opcao6 = checkbox.Opcao6,
-                                           opcao7 = checkbox.Opcao7,
-                                           opcao8 = checkbox.Opcao8,
-                                           opcao9 = checkbox.Opcao9,
-                                           opcao10 = checkbox.Opcao10,
-                                           questaoId = checkbox.QuestaoId
-                                       };
-                                // Adiciona texto e quantidade de respostas na estrutura "QuantidadeResposta"
-                                check.resposta.Add(new TextQuant(item.opcao1, checkBoxDB.Where(s => s.opcao1 == true).Count()));
-                                if (item.opcao2 is not null) check.resposta.Add(new TextQuant(item.opcao2, checkBoxDB.Where(s => s.opcao2 == true).Count()));
-                                if (item.opcao3 is not null) check.resposta.Add(new TextQuant(item.opcao3, checkBoxDB.Where(s => s.opcao3 == true).Count()));
-                                if (item.opcao4 is not null) check.resposta.Add(new TextQuant(item.opcao4, checkBoxDB.Where(s => s.opcao4 == true).Count()));
-                                if (item.opcao5 is not null) check.resposta.Add(new TextQuant(item.opcao5, checkBoxDB.Where(s => s.opcao5 == true).Count()));
-                                if (item.opcao6 is not null) check.resposta.Add(new TextQuant(item.opcao6, checkBoxDB.Where(s => s.opcao6== true).Count()));
-                                if (item.opcao7 is not null) check.resposta.Add(new TextQuant(item.opcao7, checkBoxDB.Where(s => s.opcao7 == true).Count()));
-                                if (item.opcao8 is not null) check.resposta.Add(new TextQuant(item.opcao8, checkBoxDB.Where(s => s.opcao8 == true).Count()));
-                                if (item.opcao9 is not null) check.resposta.Add(new TextQuant(item.opcao9, checkBoxDB.Where(s => s.opcao9 == true).Count()));
-                                if (item.opcao10 is not null) check.resposta.Add(new TextQuant(item.opcao10, checkBoxDB.Where(s => s.opcao10 == true).Count()));
-
-                                // Informações gerais
-                                check.enunciado = item.enunciado;
-                                check.id = item.id != null ? (uint)item.id : throw new Exception("Id da questão não encontrado");
-                                check.type = item.type;
-                                check.numero = item.numero;
-                                response.Add(check);
-                            }
-                            break;
-                        case 4:
-                        case 2:
-                            break;
-                        default:
-                            throw new Exception("Tipo da questão não existe");
-                    }
-                }
-                // Retorna resposta
+             // Retorna resposta
                 return response;
             }
             catch (Exception ex)
             {
                 return StatusCode(500, ex.Message);
             }
+        }
+        public async Task<List<QuantidadeResposta>> PegarRespostas( List<QuestoesDTO> questoes, int FormId, int FormularioId)
+        {
+            List<QuantidadeResposta> response = new List<QuantidadeResposta>();
+            foreach (var item in questoes)
+            {
+                switch (item.type)
+                {
+                    // Adiciona questões do tipo RadioBox
+                    case 1:
+                        if (item.opcao1 is not null)
+                        {
+                            QuantidadeResposta radio = new QuantidadeResposta();
+
+                            // Acha as respostas da questão
+                            var radioBoxDB =
+                                   from radiobox in ProjetoDbContext.Radioboxes
+                                   join resposta in ProjetoDbContext.Enviados on radiobox.RespostaId equals resposta.Id
+                                   where radiobox.QuestaoId == item.id && resposta.FormId == FormId
+                                   select new RadioboxDTO
+                                   {
+                                       radio = radiobox.Radio,
+                                       questaoId = radiobox.QuestaoId
+                                   };
+                            // Adiciona texto e quantidade de respostas na estrutura "QuantidadeResposta"
+                            radio.resposta.Add(new TextQuant(item.opcao1, radioBoxDB.Where(s => s.radio == 1).Count()));
+                            if (item.opcao2 is not null) radio.resposta.Add(new TextQuant(item.opcao2, radioBoxDB.Where(s => s.radio == 2).Count()));
+                            if (item.opcao3 is not null) radio.resposta.Add(new TextQuant(item.opcao3, radioBoxDB.Where(s => s.radio == 3).Count()));
+                            if (item.opcao4 is not null) radio.resposta.Add(new TextQuant(item.opcao4, radioBoxDB.Where(s => s.radio == 4).Count()));
+                            if (item.opcao5 is not null) radio.resposta.Add(new TextQuant(item.opcao5, radioBoxDB.Where(s => s.radio == 5).Count()));
+                            if (item.opcao6 is not null) radio.resposta.Add(new TextQuant(item.opcao6, radioBoxDB.Where(s => s.radio == 6).Count()));
+                            if (item.opcao7 is not null) radio.resposta.Add(new TextQuant(item.opcao7, radioBoxDB.Where(s => s.radio == 7).Count()));
+                            if (item.opcao8 is not null) radio.resposta.Add(new TextQuant(item.opcao8, radioBoxDB.Where(s => s.radio == 8).Count()));
+                            if (item.opcao9 is not null) radio.resposta.Add(new TextQuant(item.opcao9, radioBoxDB.Where(s => s.radio == 9).Count()));
+                            if (item.opcao10 is not null) radio.resposta.Add(new TextQuant(item.opcao10, radioBoxDB.Where(s => s.radio == 10).Count()));
+
+                            // Informações gerais
+                            radio.derivadaDeOpcao = item.derivadaDeOpcao is not null ? (int)item.derivadaDeOpcao : null;
+                            radio.enunciado = item.enunciado;
+                            radio.id = item.id != null ? (uint)item.id : throw new Exception("Id da questão não encontrado");
+                            radio.type = item.type;
+                            radio.numero = item.numero;
+                            response.Add(radio);
+                        }
+                        break;
+                    case 3:
+                        if (item.opcao1 is not null)
+                        {
+                            QuantidadeResposta check = new QuantidadeResposta();
+
+                            // Acha a resposta da questão
+                            var checkBoxDB =
+                                   from checkbox in ProjetoDbContext.Checkboxes
+                                   join resposta in ProjetoDbContext.Enviados on checkbox.RespostaId equals resposta.Id
+                                   where checkbox.QuestaoId == item.id && resposta.FormId == FormId
+                                   select new CheckboxDTO
+                                   {
+                                       opcao1 = checkbox.Opcao1,
+                                       opcao2 = checkbox.Opcao2,
+                                       opcao3 = checkbox.Opcao3,
+                                       opcao4 = checkbox.Opcao4,
+                                       opcao5 = checkbox.Opcao5,
+                                       opcao6 = checkbox.Opcao6,
+                                       opcao7 = checkbox.Opcao7,
+                                       opcao8 = checkbox.Opcao8,
+                                       opcao9 = checkbox.Opcao9,
+                                       opcao10 = checkbox.Opcao10,
+                                       questaoId = checkbox.QuestaoId
+                                   };
+                            // Adiciona texto e quantidade de respostas na estrutura "QuantidadeResposta"
+                            check.resposta.Add(new TextQuant(item.opcao1, checkBoxDB.Where(s => s.opcao1 == true).Count()));
+                            if (item.opcao2 is not null) check.resposta.Add(new TextQuant(item.opcao2, checkBoxDB.Where(s => s.opcao2 == true).Count()));
+                            if (item.opcao3 is not null) check.resposta.Add(new TextQuant(item.opcao3, checkBoxDB.Where(s => s.opcao3 == true).Count()));
+                            if (item.opcao4 is not null) check.resposta.Add(new TextQuant(item.opcao4, checkBoxDB.Where(s => s.opcao4 == true).Count()));
+                            if (item.opcao5 is not null) check.resposta.Add(new TextQuant(item.opcao5, checkBoxDB.Where(s => s.opcao5 == true).Count()));
+                            if (item.opcao6 is not null) check.resposta.Add(new TextQuant(item.opcao6, checkBoxDB.Where(s => s.opcao6 == true).Count()));
+                            if (item.opcao7 is not null) check.resposta.Add(new TextQuant(item.opcao7, checkBoxDB.Where(s => s.opcao7 == true).Count()));
+                            if (item.opcao8 is not null) check.resposta.Add(new TextQuant(item.opcao8, checkBoxDB.Where(s => s.opcao8 == true).Count()));
+                            if (item.opcao9 is not null) check.resposta.Add(new TextQuant(item.opcao9, checkBoxDB.Where(s => s.opcao9 == true).Count()));
+                            if (item.opcao10 is not null) check.resposta.Add(new TextQuant(item.opcao10, checkBoxDB.Where(s => s.opcao10 == true).Count()));
+
+                            // Informações gerais
+                            check.derivadaDeOpcao = item.derivadaDeOpcao is not null ? (int)item.derivadaDeOpcao : null;
+                            check.enunciado = item.enunciado;
+                            check.id = item.id != null ? (uint)item.id : throw new Exception("Id da questão não encontrado");
+                            check.type = item.type;
+                            check.numero = item.numero;
+                            response.Add(check);
+                        }
+                        break;
+                    case 9:
+                        QuantidadeResposta questao = new QuantidadeResposta();
+                        // Acha as respostas da questão
+                        var questaoDB =
+                               from radiobox in ProjetoDbContext.Radioboxes
+                               join resposta in ProjetoDbContext.Enviados on radiobox.RespostaId equals resposta.Id
+                               where radiobox.QuestaoId == item.id && resposta.FormId == FormId
+                               select new RadioboxDTO
+                               {
+                                   radio = radiobox.Radio,
+                                   questaoId = radiobox.QuestaoId
+                               };
+                        // Adiciona texto e quantidade de respostas na estrutura "QuantidadeResposta"
+                        questao.resposta.Add(new TextQuant(item.opcao1, questaoDB.Where(s => s.radio == 1).Count()));
+                        if (item.opcao2 is not null) questao.resposta.Add(new TextQuant(item.opcao2, questaoDB.Where(s => s.radio == 2).Count()));
+                        if (item.opcao3 is not null) questao.resposta.Add(new TextQuant(item.opcao3, questaoDB.Where(s => s.radio == 3).Count()));
+                        if (item.opcao4 is not null) questao.resposta.Add(new TextQuant(item.opcao4, questaoDB.Where(s => s.radio == 4).Count()));
+                        if (item.opcao5 is not null) questao.resposta.Add(new TextQuant(item.opcao5, questaoDB.Where(s => s.radio == 5).Count()));
+                        if (item.opcao6 is not null) questao.resposta.Add(new TextQuant(item.opcao6, questaoDB.Where(s => s.radio == 6).Count()));
+                        if (item.opcao7 is not null) questao.resposta.Add(new TextQuant(item.opcao7, questaoDB.Where(s => s.radio == 7).Count()));
+                        if (item.opcao8 is not null) questao.resposta.Add(new TextQuant(item.opcao8, questaoDB.Where(s => s.radio == 8).Count()));
+                        if (item.opcao9 is not null) questao.resposta.Add(new TextQuant(item.opcao9, questaoDB.Where(s => s.radio == 9).Count()));
+                        if (item.opcao10 is not null) questao.resposta.Add(new TextQuant(item.opcao10, questaoDB.Where(s => s.radio == 10).Count()));
+
+                        var questoesDerivadas = await
+                               (from questaodb in ProjetoDbContext.Questoes
+                               where questaodb.FormId == FormularioId && questaodb.DerivadaDeId == item.id
+                               select new QuestoesDTO
+                               {
+                                   id = questaodb.Id,
+                                   numero = questaodb.Numero,
+                                   type = questaodb.Type,
+                                   formId = questaodb.FormId,
+                                   enunciado = questaodb.Enunciado,
+                                   derivadaDeOpcao = questaodb.DerivadaDeOpcao,
+                                   opcao1 = questaodb.Opcao1,
+                                   opcao2 = questaodb.Opcao2,
+                                   opcao3 = questaodb.Opcao3,
+                                   opcao4 = questaodb.Opcao4,
+                                   opcao5 = questaodb.Opcao5,
+                                   opcao6 = questaodb.Opcao6,
+                                   opcao7 = questaodb.Opcao7,
+                                   opcao8 = questaodb.Opcao8,
+                                   opcao9 = questaodb.Opcao9,
+                                   opcao10 = questaodb.Opcao10
+                               }).ToListAsync();
+                        questao.derivadas = await PegarRespostas(questoesDerivadas,FormId,FormularioId);
+
+                        questao.derivadaDeOpcao = item.derivadaDeOpcao is not null ? (int)item.derivadaDeOpcao : null;
+                        questao.enunciado = item.enunciado;
+                        questao.id = item.id != null ? (uint)item.id : throw new Exception("Id da questão não encontrado");
+                        questao.type = item.type;
+                        questao.numero = item.numero;
+                        response.Add(questao);
+                        break;
+                    case 4:
+                    case 2:
+                        break;
+                    default:
+                        throw new Exception("Tipo da questão não existe");
+                }
+            }
+
+            return response;
         }
     }
 }

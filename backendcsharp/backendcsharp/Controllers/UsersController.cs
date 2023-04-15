@@ -304,7 +304,7 @@ namespace backendcsharp.Controllers
         [HttpPost("signin")]
         [ProducesResponseType(typeof(AccessToken), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
-        public async Task<ActionResult<AccessToken>> Post(
+        public async Task<ActionResult<AccessToken>> Signin(
         [FromBody] User usuario,
         [FromServices] ILogger<UserController> logger,
         [FromServices] AccessManager accessManager)

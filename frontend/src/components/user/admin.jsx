@@ -308,6 +308,21 @@ export default function PaginaUsuario(){
         {newUser}
 
         <MDBBtn onClick={e=>{handleNewUser()}} outline color='dark' className='border-1 bg-light contatoBotoes mt-3'><i title='Adicionar novo email a enviar' className="edit fas fa-regular fa-plus fa-2x"></i></MDBBtn>
+    
+        {/* Modal para deletar Usuário */}
+        <MDBModal tabIndex='-1' show={deletaUsuario} setShow={setDeletaUsuario}>
+            <MDBModalDialog centered>
+                <MDBModalContent>
+                    <MDBModalHeader className='py-2'>
+                        Tem certeza que deseja excluir o usuários e todas as informações dele? (Formulários, respostas, etc)
+                    </MDBModalHeader>
+                    <MDBModalFooter>
+                        <MDBBtn color='secondary' onClick={e=>{setDeletaUsuario(false)}}> Cancelar </MDBBtn>
+                        <MDBBtn color='danger' onClick={e=>{deleteUser()}}>Excluir tudo</MDBBtn>
+                    </MDBModalFooter>
+                </MDBModalContent>
+            </MDBModalDialog>
+        </MDBModal>
     </main>
     // Usuários
 
@@ -352,6 +367,21 @@ export default function PaginaUsuario(){
         <MDBListGroup small className='mt-3' >
             {renderizaForms()}
         </MDBListGroup>
+        
+        {/* Modal para deletar Formulário */}
+        <MDBModal tabIndex='-1' show={deletaFormulario} setShow={setDeletaFormulario}>
+            <MDBModalDialog centered>
+                <MDBModalContent>
+                    <MDBModalHeader className='py-2'>
+                        Tem certeza que deseja excluir o formulário e todas as informações dele? (Questões, respostas, etc)
+                    </MDBModalHeader>
+                    <MDBModalFooter>
+                        <MDBBtn color='secondary' onClick={e=>{setDeletaFormulario(false)}}> Cancelar </MDBBtn>
+                        <MDBBtn color='danger' onClick={e=>{deleteForm()}}>Excluir tudo</MDBBtn>
+                    </MDBModalFooter>
+                </MDBModalContent>
+            </MDBModalDialog>
+        </MDBModal>
     </main>
     // Formulários
 
@@ -389,36 +419,6 @@ export default function PaginaUsuario(){
             {Navbar(ShowSidebar)}
 
             {makeSecao()}
-
-            {/* Modal para deletar Usuário */}
-            <MDBModal tabIndex='-1' show={deletaUsuario} setShow={setDeletaUsuario}>
-                <MDBModalDialog centered>
-                    <MDBModalContent>
-                        <MDBModalHeader className='py-2'>
-                            Tem certeza que deseja excluir o usuários e todas as informações dele? (Formulários, respostas, etc)
-                        </MDBModalHeader>
-                        <MDBModalFooter>
-                            <MDBBtn color='secondary' onClick={e=>{setDeletaUsuario(false)}}> Cancelar </MDBBtn>
-                            <MDBBtn color='danger' onClick={e=>{deleteUser()}}>Excluir tudo</MDBBtn>
-                        </MDBModalFooter>
-                    </MDBModalContent>
-                </MDBModalDialog>
-            </MDBModal>
-            
-            {/* Modal para deletar Formulário */}
-            <MDBModal tabIndex='-1' show={deletaFormulario} setShow={setDeletaFormulario}>
-                <MDBModalDialog centered>
-                    <MDBModalContent>
-                        <MDBModalHeader className='py-2'>
-                            Tem certeza que deseja excluir o formulário e todas as informações dele? (Questões, respostas, etc)
-                        </MDBModalHeader>
-                        <MDBModalFooter>
-                            <MDBBtn color='secondary' onClick={e=>{setDeletaFormulario(false)}}> Cancelar </MDBBtn>
-                            <MDBBtn color='danger' onClick={e=>{deleteForm()}}>Excluir tudo</MDBBtn>
-                        </MDBModalFooter>
-                    </MDBModalContent>
-                </MDBModalDialog>
-            </MDBModal>
         </section>
     )
 }

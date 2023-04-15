@@ -19,6 +19,5 @@ export default props =>
     <Route path='/forms/:formDeId' element={<FormsDerivado/>} exact/>
     <Route path='/user' element={<FormsUser/>} exact/>
     <Route path='/login' element={<Login/>} exact/>
-    <Route path='/' element={<Home/>} exact/>
     <Route path="*" element={<Navigate to="/login" replace />}/>
 </Routes>

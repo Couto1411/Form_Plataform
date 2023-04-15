@@ -31,6 +31,9 @@ public partial class QuestoesDTO
     public string? opcao9 { get; set; } = null!;
 
     public string? opcao10 { get; set; } = null!;
+    public uint? derivadaDeId { get; set; } = null!;
+    public uint? derivadaDeOpcao { get; set; } = null!;
+    public virtual ICollection<QuestoesDTO> derivadas { get; set; } = new List<QuestoesDTO>();
 
     public virtual ICollection<CheckboxDTO> checkboxes { get; } = new List<CheckboxDTO>();
 
@@ -39,4 +42,5 @@ public partial class QuestoesDTO
     public virtual ICollection<RadioboxDTO> radioboxes { get; } = new List<RadioboxDTO>();
 
     public virtual ICollection<TextDTO> texts { get; } = new List<TextDTO>();
+    public virtual QuestoesDTO? questaoOrig { get; set; }
 }

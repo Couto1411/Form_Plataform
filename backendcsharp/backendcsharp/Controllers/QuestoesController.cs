@@ -40,6 +40,8 @@ namespace backendcsharp.Controllers
                         Type = Quest.type,
                         FormId = Quest.formId,
                         Enunciado = Quest.enunciado,
+                        DerivadaDeId = Quest.derivadaDeId,
+                        DerivadaDeOpcao = Quest.derivadaDeOpcao,
                         Opcao1 = Quest.opcao1,
                         Opcao2 = Quest.opcao2,
                         Opcao3 = Quest.opcao3,
@@ -101,6 +103,16 @@ namespace backendcsharp.Controllers
                         entity.Opcao8 = Quest.opcao8;
                         entity.Opcao9 = Quest.opcao9;
                         entity.Opcao10 = Quest.opcao10;
+                        if (Quest.opcao1 == "") ProjetoDbContext.Questoes.RemoveRange(ProjetoDbContext.Questoes.Where(s => s.DerivadaDeId == QuestaoId && s.DerivadaDeOpcao == 1));
+                        if (Quest.opcao2 == "") ProjetoDbContext.Questoes.RemoveRange(ProjetoDbContext.Questoes.Where(s => s.DerivadaDeId == QuestaoId && s.DerivadaDeOpcao == 2));
+                        if (Quest.opcao3 == "") ProjetoDbContext.Questoes.RemoveRange(ProjetoDbContext.Questoes.Where(s => s.DerivadaDeId == QuestaoId && s.DerivadaDeOpcao == 3));
+                        if (Quest.opcao4 == "") ProjetoDbContext.Questoes.RemoveRange(ProjetoDbContext.Questoes.Where(s => s.DerivadaDeId == QuestaoId && s.DerivadaDeOpcao == 4));
+                        if (Quest.opcao5 == "") ProjetoDbContext.Questoes.RemoveRange(ProjetoDbContext.Questoes.Where(s => s.DerivadaDeId == QuestaoId && s.DerivadaDeOpcao == 5));
+                        if (Quest.opcao6 == "") ProjetoDbContext.Questoes.RemoveRange(ProjetoDbContext.Questoes.Where(s => s.DerivadaDeId == QuestaoId && s.DerivadaDeOpcao == 6));
+                        if (Quest.opcao7 == "") ProjetoDbContext.Questoes.RemoveRange(ProjetoDbContext.Questoes.Where(s => s.DerivadaDeId == QuestaoId && s.DerivadaDeOpcao == 7));
+                        if (Quest.opcao8 == "") ProjetoDbContext.Questoes.RemoveRange(ProjetoDbContext.Questoes.Where(s => s.DerivadaDeId == QuestaoId && s.DerivadaDeOpcao == 8));
+                        if (Quest.opcao9 == "") ProjetoDbContext.Questoes.RemoveRange(ProjetoDbContext.Questoes.Where(s => s.DerivadaDeId == QuestaoId && s.DerivadaDeOpcao == 9));
+                        if (Quest.opcao10 == "") ProjetoDbContext.Questoes.RemoveRange(ProjetoDbContext.Questoes.Where(s => s.DerivadaDeId == QuestaoId && s.DerivadaDeOpcao == 10));
                         await ProjetoDbContext.SaveChangesAsync();
                         return StatusCode(204);
                     }
@@ -139,6 +151,7 @@ namespace backendcsharp.Controllers
                         type = s.Type,
                         formId = s.FormId,
                         enunciado = s.Enunciado,
+                        derivadaDeId = s.DerivadaDeId,
                         opcao1 = s.Opcao1,
                         opcao2 = s.Opcao2,
                         opcao3 = s.Opcao3,
@@ -150,7 +163,85 @@ namespace backendcsharp.Controllers
                         opcao9 = s.Opcao9,
                         opcao10 = s.Opcao10
                     })
-                    .Where(s => s.formId == FormId)
+                    .Where(s => s.formId == FormId && s.derivadaDeId == null)
+                    .ToListAsync();
+                foreach (var item in Questoes)
+                {
+                    item.derivadas = item.derivadaDeId is not null ? new List<QuestoesDTO>() : await ProjetoDbContext.Questoes
+                    .Select(s => new QuestoesDTO
+                    {
+                        id = s.Id,
+                        numero = s.Numero,
+                        type = s.Type,
+                        formId = s.FormId,
+                        enunciado = s.Enunciado,
+                        derivadaDeId = s.DerivadaDeId,
+                        derivadaDeOpcao = s.DerivadaDeOpcao,
+                        opcao1 = s.Opcao1,
+                        opcao2 = s.Opcao2,
+                        opcao3 = s.Opcao3,
+                        opcao4 = s.Opcao4,
+                        opcao5 = s.Opcao5,
+                        opcao6 = s.Opcao6,
+                        opcao7 = s.Opcao7,
+                        opcao8 = s.Opcao8,
+                        opcao9 = s.Opcao9,
+                        opcao10 = s.Opcao10
+                    })
+                    .Where(s => s.derivadaDeId == item.id)
+                    .ToListAsync();
+                }
+                if (Questoes.Count < 0) return NotFound();
+                else return Questoes;
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+
+        // Selecionar questões derivadas de outras questões por ID do formulário
+        [HttpGet("questoes/{FormId}/derivada/{QuestaoId}")]
+        public async Task<ActionResult<List<QuestoesDTO>>> GetQuestaoDerivadaByFormId([FromRoute] int FormId, [FromRoute] int QuestaoId)
+        {
+            try
+            {
+                Handlers.ExistsOrError(FormId.ToString(), "Id do formulário não informado");
+                Handlers.IdNegative(FormId, "Id do formulário inválido");
+                Handlers.ExistsOrError(QuestaoId.ToString(), "Id da questão não informado");
+                Handlers.IdNegative(QuestaoId, "Id da questão inválido");
+                var Form = await ProjetoDbContext.Formularios
+                    .Select(s => new FormularioDTO
+                    {
+                        id = s.Id,
+                        derivadoDeId = s.DerivadoDeId,
+                    })
+                    .Where(s => s.id == FormId)
+                    .FirstOrDefaultAsync();
+                FormId = Form.derivadoDeId is not null ? (int)Form.derivadoDeId : FormId;
+                var Questoes = await ProjetoDbContext.Questoes
+                    .Select(s => new QuestoesDTO
+                    {
+                        id = s.Id,
+                        numero = s.Numero,
+                        type = s.Type,
+                        formId = s.FormId,
+                        enunciado = s.Enunciado,
+                        derivadaDeId = s.DerivadaDeId,
+                        derivadaDeOpcao = s.DerivadaDeOpcao,
+                        opcao1 = s.Opcao1,
+                        opcao2 = s.Opcao2,
+                        opcao3 = s.Opcao3,
+                        opcao4 = s.Opcao4,
+                        opcao5 = s.Opcao5,
+                        opcao6 = s.Opcao6,
+                        opcao7 = s.Opcao7,
+                        opcao8 = s.Opcao8,
+                        opcao9 = s.Opcao9,
+                        opcao10 = s.Opcao10
+                    })
+                    .Where(s => s.formId == FormId && s.derivadaDeId == QuestaoId)
                     .ToListAsync();
                 if (Questoes.Count < 0) return NotFound();
                 else return Questoes;

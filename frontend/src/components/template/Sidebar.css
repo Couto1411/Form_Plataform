@@ -9,7 +9,16 @@
     z-index: 600;
     background: #f2f2f2;
 }
-.sidebarItem:hover{
+.sidebarSelected{
+    color: #ff9142;
+    background-color: #ffffe6;
+    border-right: thick solid #ff9142;
+}
+.sidebarItem{
+    color: #4f4f4f;
+    background-color: white;
+}
+.sidebarItem:hover, .sidebarSelected:hover{
     color: #ff9142;
     background-color: #ffffe6;
 }
@@ -26,7 +35,7 @@
     color: white;
 }
 .rodape .botoesconfig:hover{
-    color: #aeaeae;
+    color: #ffff96;
 }
 
 @media (max-width: 991.98px) {

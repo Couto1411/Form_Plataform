@@ -15,19 +15,19 @@ export default function Resposta(){
 
     const [respostas,setRespostas] = useState([{}])
 
-    const [secao, setsecao] = useState(1)
     const [appearing, setAppearing] = useState(false)
 
+    
+    async function carregaResposta(){
+        await axios.get(baseUrl+"/users/"+sessionStorage.getItem("userId")+"/forms/"+sessionStorage.getItem("formId")+"/respostas/"+sessionStorage.getItem("enviadoId"),{
+            headers: {
+                'Content-Type' : 'application/json',
+                'Authorization': 'bearer ' + sessionStorage.getItem("token")
+            }
+        }).then(response => setRespostas(response.data))
+    }
+
     useEffect(() => {
-        async function carregaResposta(){
-            let reponse = await axios.get(baseUrl+"/users/"+sessionStorage.getItem("userId")+"/forms/"+sessionStorage.getItem("formId")+"/respostas/"+sessionStorage.getItem("enviadoId"),{
-                headers: {
-                    'Content-Type' : 'application/json',
-                    'Authorization': 'bearer ' + sessionStorage.getItem("token")
-                }
-            })
-            setRespostas(reponse.data)
-        }
         if (sessionStorage.getItem("token")){
             carregaResposta()
         }
@@ -40,8 +40,9 @@ export default function Resposta(){
 
     function renderizaRepostas(){
         return respostas?.map(element => {
+            console.log(respostas)
             return(
-                <>{element.type!==4?<MDBListGroupItem key={"r"+element.id} className='mt-3 rounded-3'>
+                <>{element.type!==4?<MDBListGroupItem key={"r"+element.id} className={element?.type==9?'mt-3 rounded-3 opcao10':'mt-3 rounded-3'}>
                     <div className='porcentagem'>{element.numero}) {element.enunciado}</div>
                     <hr className='mt-0 mb-2'></hr>
                     <div className='mx-2'>
@@ -54,6 +55,7 @@ export default function Resposta(){
 
     function makeResp(element){
         switch (element.type) {
+            case 9:
             case 1:
                 return(
                     <div className='my-1'>
@@ -114,19 +116,12 @@ export default function Resposta(){
         }
     }  
 
-
-    function makeSecao() {
-        if(secao===1){
-            return(UserSection(main,secaoRespostas))
-        }
-    }
-
     return(
         <section>
-            {Sidebar(setMain,'resposta',setsecao)}
+            {Sidebar(setMain,'respostaDerivados')}
             {Navbar(ShowSidebar)}
 
-            {makeSecao()}
+            {UserSection(main,secaoRespostas)}
         </section>
     )
 }

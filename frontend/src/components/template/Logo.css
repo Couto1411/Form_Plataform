@@ -1,49 +1,22 @@
-/* Registro e Acompanhamento de Estudantes Egressos */
-#logosub{
-    position: absolute;
-    width: 155px;
-    height: 8px;
-
-    font-family: 'Quicksand';
-    font-style: normal;
-    font-weight: 700;
-    font-size: 6px;
-    line-height: 8px;
-    /* identical to box height */
-
-    color: #4E4E4E;
-}
-
-
-
 /* RAEG-EPT */
-#logo{
-    position: absolute;
-    width: 173px;
-    height: 45px;
-
-    font-family: 'Quicksand';
-    font-style: normal;
-    font-weight: 700;
-    font-size: 36px;
-    line-height: 45px;
-    /* identical to box height */
-
-    color: #006699;
-
-    text-shadow: 0px 0px 4px rgba(0, 102, 153, 0.64);
+.logo{
+    width: 187px;
+}
+.logo_desc{
+    display: none;
+}
+.logo_line{
+    display: none;
 }
 
-
-/* Rectangle 4 */
-#hifen{
-    box-sizing: border-box;
-
-    position: absolute;
-    width: 10.72px;
-    height: 4.34px;
-
-    background: #ff9142;
-    border: 0.5px solid #FF9029;
-    border-radius: 2.16888px;
+@media (min-width: 473px) {
+    .logo{
+        width: 349px;
+    }
+    .logo_desc{
+        display: inline-block;
+    }
+    .logo_line{
+        display: inline-block;
+    }
 }

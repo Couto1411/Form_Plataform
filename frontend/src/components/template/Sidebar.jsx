@@ -12,14 +12,12 @@ export default function Sidebar(setMain,area,setAdicional){
     function updateSelected(id){
         var lista = document.getElementById('sidebar')
         for (const child of lista.children) {
-            child.style.backgroundColor="white"
-            child.style.borderRight=""
-            child.style.color="#4f4f4f"
+            child.classList.remove('sidebarSelected')
+            child.classList.add('sidebarItem')
         }
         if(id){
-            document.getElementById(id).style.backgroundColor="#ffffe6"
-            document.getElementById(id).style.borderRight="thick solid #ff9142"
-            document.getElementById(id).style.color="#ff9142"
+            document.getElementById(id).classList.add('sidebarSelected')
+            document.getElementById(id).classList.remove('sidebarItem')
         }
     }  
 
@@ -47,6 +45,12 @@ export default function Sidebar(setMain,area,setAdicional){
                     <MDBListGroupItem tag='a' action id='VoltarResp' className='px-3 sidebarItem' onClick={e=>{navigate('/forms')}}>Voltar</MDBListGroupItem>
                 </MDBListGroup>
             )
+        }else if(area==='respostaDerivados'){
+            return(
+                <MDBListGroup className="rounded-0" id='sidebar'>
+                    <MDBListGroupItem tag='a' action id='VoltarResp' className='px-3 sidebarItem' onClick={e=>{navigate('/forms/'+sessionStorage.getItem('formDeId'))}}>Voltar</MDBListGroupItem>
+                </MDBListGroup>
+            )
         }else if(area==='admin'){
             return(
                 <MDBListGroup className="rounded-0" id='sidebar'>
@@ -59,7 +63,7 @@ export default function Sidebar(setMain,area,setAdicional){
 
     return(
         <nav id="sidebarMenu" className="collapse d-lg-block sidebar">
-            <div className="position-sticky">
+            <div className="position-sticky mt-0 pt-0">
                 {items()}
             </div>
             <MDBContainer fluid className='rodape d-flex border-top border-dark'>

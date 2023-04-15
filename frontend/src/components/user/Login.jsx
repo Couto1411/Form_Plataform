@@ -10,7 +10,8 @@ export default function Login (props) {
     const [email, setEmail] = useState();
     const [senha, setSenha] = useState();
     
-    async function signIn(){
+    const signIn = async (e) =>{
+        e.preventDefault()
         await axios.post(baseUrl+"/signin",{
             "email":email,
             "senha":senha
@@ -41,7 +42,7 @@ export default function Login (props) {
     }
 
     return(
-        <section className='login'>
+        <form className='login' onSubmit={e=>{signIn(e)}}>
             <div className="container py-5 h-100">
                 <div className="row d-flex justify-content-center align-items-center h-100">
                     <div className="col-12 col-md-8 col-lg-6 col-xl-5">
@@ -80,7 +81,7 @@ export default function Login (props) {
 
                                     <p className="small mb-5 pb-lg-2"><Link className='forgot text-white-50' to="/forgot">Esqueceu sua senha?</Link></p>
 
-                                    <button className="btn btn-outline-light btn-lg px-5" type="submit" onClick={() => {signIn()}} >Login</button>
+                                    <button className="btn btn-outline-light btn-lg px-5" type="submit" >Login</button>
                                 </div>
                                 <div>
                                     <p className="mb-0">Precisa de acesso? Contate o responsável da instituição</p>
@@ -91,6 +92,6 @@ export default function Login (props) {
                     </div>
                 </div>
             </div>
-        </section>
+        </form>
     )
 }

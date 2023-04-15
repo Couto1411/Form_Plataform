@@ -4,7 +4,6 @@
 .trashcan{color: rgb(255, 34, 34);}
 .trashcan:hover{color: rgb(180, 0, 0);}
 
-
 .numQuestao{
     color: rgb(34, 34, 34);
     box-shadow: none;
@@ -49,7 +48,7 @@
 }
 
 .pages:hover{
-    background-color: #aeaeae;
+    background-color: #ffa5647a;
     cursor: pointer;
 }
 
@@ -69,8 +68,19 @@
     border: #aeaeae solid 1px;
     border-radius: 0em 5px 5px 0em;
     padding-left: 0.3em;
-    font-size: 0.65em;
+    font-size: 1em;
 }
+
+.opcao1{background-color: #ccfcfc ;}
+.opcao2{background-color: #C7ECEE;}
+.opcao3{background-color: #B2EBF2 ;}
+.opcao4{background-color: #A0CFEC ;}
+.opcao5{background-color: #7FB3D5 ;}
+.opcao6{background-color: #77BFC7 ;}
+.opcao7{background-color: #87CEFA;}
+.opcao8{background-color: #87CEEB ;}
+.opcao9{background-color: #ADD8E6 ;}
+.opcao10{background-color: #BFEFFF ;}
 
 .shadow{
     box-shadow: rgba(0, 0, 0, 0.074) 0px 0.1px 0.1px, rgba(0, 0, 0, 0.156) 0px 0.1px 0.1px;

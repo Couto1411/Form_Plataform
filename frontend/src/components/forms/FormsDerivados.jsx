@@ -1,5 +1,6 @@
 import React, {useEffect,useState}from 'react'
 import './Forms.css'
+import Questoes from './Questoes'
 import axios from "axios";
 import baseUrl from "../../config/api";
 import {useNavigate} from 'react-router-dom';
@@ -10,7 +11,7 @@ import UserSection from '../user/UserSection'
 import {
     MDBInputGroup, MDBTextArea, MDBRadio, MDBCheckbox,
     MDBListGroup, MDBListGroupItem,
-    MDBBtn, MDBProgressBar, MDBContainer, MDBInput} from 'mdb-react-ui-kit';
+    MDBBtn, MDBProgress, MDBProgressBar, MDBContainer, MDBInput} from 'mdb-react-ui-kit';
 
 export default function FormsDerivados(){
     const navigate = useNavigate();
@@ -129,12 +130,14 @@ export default function FormsDerivados(){
 
 
     // Questões
-    function renderizaQuestoes(){
-        return questoes?.map(element => {
+    function renderizaQuestoes(listaQuestoes,opcao){
+        listaQuestoes?.length?listaQuestoes=listaQuestoes:listaQuestoes=questoes
+        let opcoes=[1,2,3,4,5,6,7,8,9,10]
+        return listaQuestoes?.map(element => {
             switch (element.type) {
                 case 1:
                     return(
-                        <MDBListGroupItem noBorders key={element.id} className='rounded-3 mb-3'>
+                        <MDBListGroupItem noBorders key={element.id} className={opcao?'rounded-3 mb-3 opcao'+opcao:'rounded-3 mb-3'}>
                             <MDBInputGroup className='mb-2 mt-1'>
                                 <MDBBtn color='secondary' className='numQuestao'>{element.numero}</MDBBtn>
                                 <input className='form-control' type='text' id={'questao'+element.id} defaultValue={element.enunciado} disabled/>
@@ -155,7 +158,7 @@ export default function FormsDerivados(){
                     )
                 case 2:
                     return(
-                        <MDBListGroupItem noBorders key={element.id} className='rounded-3 mb-3'>
+                        <MDBListGroupItem noBorders key={element.id} className={opcao?'rounded-3 mb-3 opcao'+opcao:'rounded-3 mb-3'}>
                             <MDBInputGroup className='mb-2 mt-1'>
                                 <MDBBtn color='secondary' className='numQuestao'>{element.numero}</MDBBtn>
                                 <input className='form-control' type='text' id={'questao'+element.id} defaultValue={element.enunciado} disabled/>
@@ -165,7 +168,7 @@ export default function FormsDerivados(){
                     )
                 case 3:
                     return(
-                        <MDBListGroupItem noBorders key={element.id} className='rounded-3 mb-3'>
+                        <MDBListGroupItem noBorders key={element.id} className={opcao?'rounded-3 mb-3 opcao'+opcao:'rounded-3 mb-3'}>
                             <MDBInputGroup className='mb-2 mt-1'>
                                 <MDBBtn color='secondary' className='numQuestao'>{element.numero}</MDBBtn>
                                 <input className='form-control' type='text' id={'questao'+element.id} defaultValue={element.enunciado} disabled/>
@@ -186,11 +189,38 @@ export default function FormsDerivados(){
                     )
                 case 4:
                     return(
-                        <MDBListGroupItem noBorders key={element.id} className='rounded-3 mb-3'>
+                        <MDBListGroupItem noBorders key={element.id} className={opcao?'rounded-3 mb-3 opcao'+opcao:'rounded-3 mb-3'}>
                             <MDBTextArea disabled id={'questao'+element.id}
                                          defaultValue={element.enunciado} rows={4} label='Descrição' className='mb-2'/>
                         </MDBListGroupItem>
                     )
+                case 9:
+                    return(<div  key={element.id} >
+                        <MDBListGroupItem className='rounded-2 mb-3'>
+                            <MDBInputGroup className='mb-2 mt-1'>
+                                <MDBBtn color='secondary' className='numQuestao'>{element.numero}</MDBBtn>
+                                <input className='form-control' type='text' id={'questao'+element.id} defaultValue={element.enunciado} disabled/>
+                            </MDBInputGroup>
+                            <div id={"opcoes"+element.id} className='mx-2'>
+                                {element.opcao1?<div className='my-1 opcao1 rounded-2 d-flex'><MDBRadio name='radioNoLabel' value='' inline/>{element.opcao1}</div>:<></>}
+                                {element.opcao2?<div className='my-1 opcao2 rounded-2 d-flex'><MDBRadio name='radioNoLabel' value='' inline/>{element.opcao2}</div>:<></>}
+                                {element.opcao3?<div className='my-1 opcao3 rounded-2 d-flex'><MDBRadio name='radioNoLabel' value='' inline/>{element.opcao3}</div>:<></>}
+                                {element.opcao4?<div className='my-1 opcao4 rounded-2 d-flex'><MDBRadio name='radioNoLabel' value='' inline/>{element.opcao4}</div>:<></>}
+                                {element.opcao5?<div className='my-1 opcao5 rounded-2 d-flex'><MDBRadio name='radioNoLabel' value='' inline/>{element.opcao5}</div>:<></>}
+                                {element.opcao6?<div className='my-1 opcao6 rounded-2 d-flex'><MDBRadio name='radioNoLabel' value='' inline/>{element.opcao6}</div>:<></>}
+                                {element.opcao7?<div className='my-1 opcao7 rounded-2 d-flex'><MDBRadio name='radioNoLabel' value='' inline/>{element.opcao7}</div>:<></>}
+                                {element.opcao8?<div className='my-1 opcao8 rounded-2 d-flex'><MDBRadio name='radioNoLabel' value='' inline/>{element.opcao8}</div>:<></>}
+                                {element.opcao9?<div className='my-1 opcao9 rounded-2 d-flex'><MDBRadio name='radioNoLabel' value='' inline/>{element.opcao9}</div>:<></>}
+                                {element.opcao10?<div className='my-1 opcao10 rounded-2 d-flex'><MDBRadio name='radioNoLabel' value='' inline/>{element.opcao10}</div>:<></>}
+                            </div>
+                        </MDBListGroupItem>
+                        {element?.derivadas?.length?opcoes.map(numero=>{
+                            return (
+                                <MDBListGroup key={element.id+'respostasopcao'+numero} className='mt-1 rounded-3' >
+                                    {element.derivadas?.filter(s=>s.derivadaDeOpcao==numero).length?renderizaQuestoes(element.derivadas?.filter(s=>s.derivadaDeOpcao==numero),numero):null}
+                                </MDBListGroup>)
+                        }):null}
+                    </div>)
                 default:
                     return(
                         <></>
@@ -299,6 +329,11 @@ export default function FormsDerivados(){
             })}
         </MDBListGroup>
 
+        {/* Botões de adição e envio de contatos */}
+        <div className='d-flex mt-3'>
+            <MDBBtn outline color='dark' className=' ms-auto border-1 bg-light contatoBotoes' onClick={e=>{sendEmails()}}><i title='Enviar à todos os emails da lista' className="edit fas fa-light fa-paper-plane py-1"></i></MDBBtn>
+        </div>
+
         {/* Pagination */}
         {contatos.length>0
         ?<div className="d-flex justify-content-center mt-2">
@@ -336,35 +371,67 @@ export default function FormsDerivados(){
     // Contatos
 
     // Secao Respostas
+    
     function renderizaRepostas(){
         return respostas?.map(element => {
+            console.log(element)
             return(
-                <MDBListGroupItem key={element.id} className='mt-3 rounded-3'>
-                    <div className='d-flex'>{element.numero}) {element.enunciado}<div className='ms-auto'>{element.type===1?<MDBRadio disabled defaultChecked={true} className='mt-1' value='' inline/>:<MDBCheckbox disabled defaultChecked={true} className='mt-1' value='' inline/>}</div></div>
+                <div  key={element.id}>
+                <MDBListGroupItem className='shadow mt-3 rounded-3'>
+                    <div className='d-flex porcentagem'>{element.numero}) {element.enunciado}
+                        <div className='ms-auto'>
+                            {element.type===1?
+                            <MDBRadio disabled defaultChecked={true} className='mt-1' value='' inline/>:
+                            <MDBCheckbox disabled defaultChecked={true} className='mt-1' value='' inline/>}
+                        </div>
+                    </div>
                     <hr className='mt-0 mb-2'></hr>
                     <div id={"resposta"+element.id} className='mx-2'>
-                        {makeBar(element,element.type)}
+                        {element.type===9?makeBar(element,true):makeBar(element,false)}
                     </div>
                 </MDBListGroupItem>
+                {element.derivadas.length>0?renderizaRepostasDerivadas(element.derivadas,element):<></>}</div>
             )
+        })
+    }
+    function renderizaRepostasDerivadas(derivadas, questaoOrig){
+        let opcoes = [1,2,3,4,5,6,7,8,9,10]
+        return opcoes.map(opcao=>{
+            return (
+                <MDBListGroup key={questaoOrig.id+'respostasopcao'+opcao} className='mt-1 rounded-3' >
+                    {derivadas?.filter(s=>s.derivadaDeOpcao==opcao)?.map(element=>{
+                        console.log(element)
+                        return (<MDBListGroupItem key={element.id} className={'mt-1 rounded-3 opcao'+opcao}>
+                                    <div className='d-flex porcentagem'>{element.numero}) {element.enunciado}<div className='ms-auto'>{element.type===1?<MDBRadio disabled defaultChecked={true} className='mt-1' value='' inline/>:<MDBCheckbox disabled defaultChecked={true} className='mt-1' value='' inline/>}</div></div>
+                                    <hr className='mt-0 mb-2'></hr>
+                                    <div id={"resposta"+element.id} className='mx-2'>
+                                        {makeBar(element,false)}
+                                    </div>
+                                </MDBListGroupItem>)})}
+                </MDBListGroup>)
         })
     }
 
     function makeBar(element,tipo){
+        let numero=0
         let sum = element.resposta.reduce((partialSum, a) => partialSum + a.quantidade, 0);
+        let count=0
         return element.resposta?.map((item,index)=>{
+            numero+=1
+            count+=1
             let parcial=Math.trunc((item.quantidade/sum)*100)
-            if(item.quantidade){
+            if(!parcial) parcial=0
+            if(item.texto){
                 return(
-                    <div className='d-flex my-1' key={'resposta'+element.id+index}>
-                        <div className='px-2 py-1 borda-esquerda porcentagem'>{String(parcial).padStart(2, '0')}%</div>
-                        <MDBProgressBar className='borda-direita porcentagem' striped bgColor='info' width={`${parcial}`} valuemin={0} valuemax={100}>{item.texto}</MDBProgressBar>
+                    <div key={'Barra'+element.id+count} className='mb-2 porcentagem'> <div className={tipo?'rounded-3 opcao'+count:null}>{numero}) {item.texto}</div>
+                        <MDBProgress height='30' className='rounded-3'>
+                            <MDBProgressBar className='porcentagem' width={parcial} valuemin={0} valuemax={100}>{parcial}%</MDBProgressBar>
+                        </MDBProgress>
                     </div>
                 )
             }
         })
     }
-
     const secaoRespostas = <main className='mt-3 principal'> 
         {Title("Repostas",carregaRespostas)}
         <MDBListGroup small className='mt-3' >

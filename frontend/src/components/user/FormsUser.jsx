@@ -1,6 +1,7 @@
 import React, {useEffect,useState}from 'react'
 import './FormsUser.css'
 import Title from '../template/Title'
+import { limit } from '../../config/utils'
 import Navbar from '../template/Navbar'
 import Sidebar from '../template/Sidebar'
 import UserSection from './UserSection'
@@ -25,9 +26,6 @@ export default function PaginaUsuario(){
     const [idDerivateToDelete, setIdDerivateToDelete] = useState(null);
     // Seta para aparecer a seção de formulários
     const [main, setMain] = useState(1)
-    
-    // Usado para aparição da NAVBAR
-    const [appearing, setAppearing] = useState(false);
 
     // Booleano usado para decidir se a função irá adicionar ou editar um formulário
     const [addForm, setAddForm] = useState(false);
@@ -48,7 +46,7 @@ export default function PaginaUsuario(){
     
     async function carregaForms(){
         console.log()
-        let res = await axios.get(baseUrl+"/users/"+sessionStorage.getItem("userId")+"/forms",{
+        await axios.get(baseUrl+"/users/"+sessionStorage.getItem("userId")+"/forms",{
             headers: {
                 'Content-Type' : 'application/json',
                 'Authorization': 'bearer ' + sessionStorage.getItem("token")
@@ -80,7 +78,7 @@ export default function PaginaUsuario(){
         var change = document.getElementById("form"+form.id);
         let dados={"titulo": change.value}
         if (addForm) {
-            if (change.value != '') {
+            if (change.value !== '') {
                 change.classList.remove("is-invalid");
                 await axios.post(baseUrl+"/users/"+sessionStorage.getItem("userId")+"/forms",dados,{
                     headers: {
@@ -104,7 +102,7 @@ export default function PaginaUsuario(){
                 change.classList.add("is-invalid");
             }
         }else{
-            if (change.value == form.titulo) {
+            if (change.value === form.titulo) {
                 change.classList.add("is-invalid");
             }
             else{
@@ -165,17 +163,6 @@ export default function PaginaUsuario(){
         }
         setDeletaFormulario(false)
     }
-
-    function ShowSidebar(id){
-        var v = document.getElementById(id);
-        if (appearing) {
-            v.classList.remove("d-block")
-            setAppearing(false)
-        }else{
-            v.classList.add("d-block")
-            setAppearing(true)
-        }
-    } 
 
     function toggleDerivados(id){
         let x = document.getElementById('icone'+id).aberto
@@ -259,15 +246,6 @@ export default function PaginaUsuario(){
         });
     }
 
-    function limit(element)
-    {
-        var max_chars = 250;
-            
-        if(element.value.length > max_chars) {
-            element.value = element.value.substr(0, max_chars);
-        }
-    }
-
     const secaoForms=<main className='mt-3 principal'>
         {Title("Formularios",carregaForms)}
         
@@ -313,7 +291,7 @@ export default function PaginaUsuario(){
     return(
         <section>
             {Sidebar(setMain,'forms')}
-            {Navbar(ShowSidebar)}
+            {Navbar()}
 
             {UserSection(main,secaoForms)}
         </section>

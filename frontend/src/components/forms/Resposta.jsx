@@ -15,8 +15,6 @@ export default function Resposta(){
 
     const [respostas,setRespostas] = useState([{}])
 
-    const [appearing, setAppearing] = useState(false)
-
     
     async function carregaResposta(){
         await axios.get(baseUrl+"/users/"+sessionStorage.getItem("userId")+"/forms/"+sessionStorage.getItem("formId")+"/respostas/"+sessionStorage.getItem("enviadoId"),{
@@ -42,7 +40,7 @@ export default function Resposta(){
         return respostas?.map(element => {
             console.log(respostas)
             return(
-                <>{element.type!==4?<MDBListGroupItem key={"r"+element.id} className={element?.type==9?'mt-3 rounded-3 opcao10':'mt-3 rounded-3'}>
+                <>{element.type!==4?<MDBListGroupItem key={"r"+element.id} className={element?.type===9?'mt-3 rounded-3 opcao10':'mt-3 rounded-3'}>
                     <div className='porcentagem'>{element.numero}) {element.enunciado}</div>
                     <hr className='mt-0 mb-2'></hr>
                     <div className='mx-2'>
@@ -104,22 +102,10 @@ export default function Resposta(){
     </main>
     // Secao Respostas
 
-    
-    function ShowSidebar(id){
-        var v = document.getElementById(id);
-        if (appearing) {
-            v.classList.remove("d-block")
-            setAppearing(false)
-        }else{
-            v.classList.add("d-block")
-            setAppearing(true)
-        }
-    }  
-
     return(
         <section>
             {Sidebar(setMain,'respostaDerivados')}
-            {Navbar(ShowSidebar)}
+            {Navbar()}
 
             {UserSection(main,secaoRespostas)}
         </section>

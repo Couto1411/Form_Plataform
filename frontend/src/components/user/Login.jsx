@@ -12,6 +12,7 @@ export default function Login (props) {
     
     const signIn = async (e) =>{
         e.preventDefault()
+        console.log(email,senha)
         await axios.post(baseUrl+"/signin",{
             "email":email,
             "senha":senha
@@ -23,12 +24,13 @@ export default function Login (props) {
             navigate('/user')
         })
         .catch((error) => {
+            console.log(error)
             if(error.response.status){
                 if(error.response.status===401){
-                    var v = document.getElementById("Senha");
+                    let v = document.getElementById("Senha");
                     v.classList.add("is-invalid");
                 }else if(error.response.status===400){
-                    var v = document.getElementById("Email");
+                    let v = document.getElementById("Email");
                     v.classList.add("is-invalid");
                 }else{
                     console.log(error)

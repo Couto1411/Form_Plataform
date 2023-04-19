@@ -1,4 +1,5 @@
 import React, {useEffect,useState}from 'react'
+import { limit } from '../../config/utils';
 import './Forms.css'
 import Questoes from './Questoes'
 import axios from "axios";
@@ -23,9 +24,6 @@ export default function Forms(){
     const [respondidoDerivado, setRespondidoDerivado] = useState(false);
     // Conta cliques para excluir email a ser enviado
     const [click, setClick] = useState([{id:''}]);
-    
-    // Usado para aparição da NAVBAR
-    const [appearing, setAppearing] = useState(false);
 
     // Aba de respostas da aplicação
     const [respostas, setRespostas] = useState(null);
@@ -1137,25 +1135,6 @@ export default function Forms(){
     </main>
     // Secao Respostas
 
-    function ShowSidebar(id){
-        var v = document.getElementById(id);
-        if (appearing) {
-            v.classList.remove("d-block")
-            setAppearing(false)
-        }else{
-            v.classList.add("d-block")
-            setAppearing(true)
-        }
-    }  
-
-    function limit(element)
-    {
-        var max_chars = 250;
-            
-        if(element.value.length > max_chars) {
-            element.value = element.value.substr(0, max_chars);
-        }
-    }
 
     function makeSecao() {
         if(secao===1){
@@ -1170,9 +1149,9 @@ export default function Forms(){
     return(
         <section>
             {Sidebar(setMain,'questoes',setsecao,setInput)}
-            {Navbar(ShowSidebar)}
+            {Navbar()}
 
-            {makeSecao()}
+            {makeSecao()} 
         </section>
     )
 }

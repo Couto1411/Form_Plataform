@@ -1,4 +1,5 @@
 import React, {useEffect,useState}from 'react'
+import { limit } from '../../config/utils'
 import './admin.css'
 import Title from '../template/Title'
 import Navbar from '../template/Navbar'
@@ -10,7 +11,7 @@ import {useNavigate} from 'react-router-dom'
 import {
     MDBInputGroup, MDBContainer, MDBRadio, MDBInput,
     MDBListGroup, MDBListGroupItem,
-    MDBBtn, MDBModal, MDBModalDialog, MDBModalContent, MDBModalHeader, MDBModalBody, MDBModalFooter} from 'mdb-react-ui-kit'
+    MDBBtn, MDBModal, MDBModalDialog, MDBModalContent, MDBModalHeader, MDBModalFooter} from 'mdb-react-ui-kit'
 
 export default function PaginaUsuario(){
     const navigate = useNavigate();
@@ -35,16 +36,13 @@ export default function PaginaUsuario(){
     const [deletaFormulario, setDeletaFormulario] = useState(false);
     // Hook para setar o id do Formulário a ser deletado
     const [formIdToDelete, setFormrIdToDelete] = useState(0);
-    
-    // Usado para aparição da NAVBAR
-    const [appearing, setAppearing] = useState(false);
 
 
     // Seta qual secao aparece, usuários ou formulários
     const [secao, setsecao] = useState(1)
 
     async function carregaUsuarios(){
-        let res = await axios.get(baseUrl+"/users/admin/"+sessionStorage.getItem("userId"),{
+        await axios.get(baseUrl+"/users/admin/"+sessionStorage.getItem("userId"),{
             headers: {
                 'Content-Type' : 'application/json',
                 'Authorization': 'bearer ' + sessionStorage.getItem("token")
@@ -62,7 +60,7 @@ export default function PaginaUsuario(){
     }
 
     async function carregaFormularios(){
-        let res = await axios.get(baseUrl+"/forms/admin/"+sessionStorage.getItem("userId"),{
+        await axios.get(baseUrl+"/forms/admin/"+sessionStorage.getItem("userId"),{
             headers: {
                 'Content-Type' : 'application/json',
                 'Authorization': 'bearer ' + sessionStorage.getItem("token")
@@ -385,17 +383,6 @@ export default function PaginaUsuario(){
     </main>
     // Formulários
 
-    function ShowSidebar(id){
-        var v = document.getElementById(id);
-        if (appearing) {
-            v.classList.remove("d-block")
-            setAppearing(false)
-        }else{
-            v.classList.add("d-block")
-            setAppearing(true)
-        }
-    }
-
     function makeSecao() {
         if(secao===1){
             return(UserSection(main,secaoUsers))
@@ -404,19 +391,10 @@ export default function PaginaUsuario(){
         }
     }
 
-    function limit(element)
-    {
-        var max_chars = 250;
-            
-        if(element.value.length > max_chars) {
-            element.value = element.value.substr(0, max_chars);
-        }
-    }
-
     return(
         <section>
             {Sidebar(setMain,'admin',setsecao)}
-            {Navbar(ShowSidebar)}
+            {Navbar()}
 
             {makeSecao()}
         </section>

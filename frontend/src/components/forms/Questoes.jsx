@@ -1,5 +1,6 @@
 import React, {useEffect,useState}from 'react'
 import axios from "axios";
+import { limit } from '../../config/utils';
 import baseUrl from "../../config/api";
 import {useNavigate} from 'react-router-dom';
 import {
@@ -13,7 +14,7 @@ export default function Forms(props){
     
     // Modifia visibilidade da area de nova questao - 1 parte tipo questao
     const [typeQuestion, setTypeQuestion] = useState(<></>);
-    // Modifia visibilidade da area de nova questao - 2 parte enunciado e opcao da questao
+    // Modifia visibilidade da area de nova questao - 2 parte enunciado e opcao da questao 
     const [newQuestion, setNewQuestion] = useState(<></>);
 
     // Regula novas opcões
@@ -26,7 +27,7 @@ export default function Forms(props){
     const opcoes = [1,2,3,4,5,6,7,8,9,10]
 
     async function carregaQuestoes(){
-        let res = await axios.get(baseUrl+"/questoes/"+sessionStorage.getItem("formId")+"/derivada/"+props.questao.id,{
+        await axios.get(baseUrl+"/questoes/"+sessionStorage.getItem("formId")+"/derivada/"+props.questao.id,{
             headers: {
                 'Content-Type' : 'application/json',
                 'Authorization': 'bearer ' + sessionStorage.getItem("token")
@@ -56,7 +57,7 @@ export default function Forms(props){
     }, []);
 
     function renderizaQuestoes(opcao,cor){
-        return questoes.filter(e=>e.derivadaDeOpcao==opcao)?.map(element => {
+        return questoes.filter(e=>e.derivadaDeOpcao===opcao)?.map(element => {
             switch (element.type) {
                 // Radiobox
                 case 1:
@@ -161,8 +162,8 @@ export default function Forms(props){
     function toggleShowExcluiSalva(id, show){
         let v= document.getElementById("questao"+id)
         v.disabled=!v.disabled
-        document.getElementById("exclui"+id).style.display=="none"?document.getElementById("exclui"+id).style.display="inline-block":document.getElementById("exclui"+id).style.display="none"
-        document.getElementById("salva"+id).style.display =="none"?document.getElementById("salva"+id).style.display="inline-block":document.getElementById("salva"+id).style.display="none"
+        document.getElementById("exclui"+id).style.display==="none"?document.getElementById("exclui"+id).style.display="inline-block":document.getElementById("exclui"+id).style.display="none"
+        document.getElementById("salva"+id).style.display ==="none"?document.getElementById("salva"+id).style.display="inline-block":document.getElementById("salva"+id).style.display="none"
     }
 
     async function addQuestao(opcao){
@@ -306,11 +307,11 @@ export default function Forms(props){
         novaQuestao.derivadaDeOpcao = opcao
         novaQuestao.derivadaDeId = props.questao.id
         if (novaQuestao.type===4) {
-            if(questoes.filter(e=>e.derivadaDeOpcao==opcao)[0]) novaQuestao.numero=questoes.filter(e=>e.derivadaDeOpcao==opcao).at(-1).numero
+            if(questoes.filter(e=>e.derivadaDeOpcao===opcao)[0]) novaQuestao.numero=questoes.filter(e=>e.derivadaDeOpcao===opcao).at(-1).numero
             else novaQuestao.numero=props.questao.numero
         }
         else{
-            if(questoes.filter(e=>e.derivadaDeOpcao==opcao)[0]) novaQuestao.numero=questoes.filter(e=>e.derivadaDeOpcao==opcao).at(-1).numero+1
+            if(questoes.filter(e=>e.derivadaDeOpcao===opcao)[0]) novaQuestao.numero=questoes.filter(e=>e.derivadaDeOpcao===opcao).at(-1).numero+1
             else novaQuestao.numero=props.questao.numero+1
         }
         setTypeQuestion(<></>)
@@ -389,19 +390,9 @@ export default function Forms(props){
     }
 
     function handleInput(id){
-        if (input.id && input.id==id) return input.content 
+        if (input.id && input.id===id) return input.content 
         else return <></>
     }
-
-    function limit(element)
-    {
-        var max_chars = 250;
-            
-        if(element.value.length > max_chars) {
-            element.value = element.value.substr(0, max_chars);
-        }
-    }
-
     return (<>{typeQuestion}{newQuestion}{opcoes.map(element =>{
         switch (element){
             case 1: return(

@@ -18,9 +18,6 @@ export default function FormsDerivados(){
 
     // Conta cliques para excluir email a ser enviado
     const [click, setClick] = useState([{id:''}]);
-    
-    // Usado para aparição da NAVBAR
-    const [appearing, setAppearing] = useState(false);
 
     // Aba de respostas da aplicação
     const [respostas, setRespostas] = useState(null);
@@ -440,17 +437,6 @@ export default function FormsDerivados(){
     </main>
     // Secao Respostas
 
-    function ShowSidebar(id){
-        var v = document.getElementById(id);
-        if (appearing) {
-            v.classList.remove("d-block")
-            setAppearing(false)
-        }else{
-            v.classList.add("d-block")
-            setAppearing(true)
-        }
-    }  
-
     function makeSecao() {
         if(secao===1){
             return(UserSection(main,secaoQuestoes))
@@ -464,7 +450,7 @@ export default function FormsDerivados(){
     return(
         <section>
             {Sidebar(setMain,'questoes',setsecao)}
-            {Navbar(ShowSidebar)}
+            {Navbar()}
 
             {makeSecao()}
         </section>

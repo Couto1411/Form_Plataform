@@ -2,8 +2,6 @@
 
 # dependencies
 frontend/node_modules
-frontend/.pnp
-frontend/.pnp.js
 
 # testing
 frontend/coverage
@@ -15,6 +13,7 @@ backendcsharp/backendcsharp/obj
 backendcsharp/backendcsharp/appsettings.json
 backendcsharp/APIs.Security.JWT/bin
 backendcsharp/APIs.Security.JWT/obj
+backendcsharp/backendcsharp/Properties/PublishProfiles
 
 # misc
 frontend/.DS_Store
@@ -31,7 +30,6 @@ secret.txt
 
 #Arquivos
 Arquivos
-
 
 npm-debug.log*
 yarn-debug.log*
@@ -55,10 +53,7 @@ frontend/.firebase/
 
 # Firebase config
 
-# Uncomment this if you'd like others to create their own Firebase project.
-# For a team working on the same Firebase project(s), it is recommended to leave
-# it commented so all members can deploy to the same project(s) in .firebaserc.
-# .firebaserc
+frontend/.firebaserc
 
 # Runtime data
 frontend/pids
@@ -83,12 +78,6 @@ frontend/bower_components
 
 # node-waf configuration
 frontend/.lock-wscript
-
-# Compiled binary addons (http://nodejs.org/api/addons.html)
-frontend/build/Release
-
-# Dependency directories
-frontend/node_modules/
 
 # Optional npm cache directory
 frontend/.npm

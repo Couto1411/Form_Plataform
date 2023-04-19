@@ -2,6 +2,7 @@ import React from "react"
 import './UserSection.css'
 import baseUrl from "../../config/api"
 import Title from "../template/Title"
+import { limit } from "../../config/utils"
 import axios from "axios"
 import { useState } from "react"
 import { 
@@ -25,7 +26,7 @@ export default function UserSection(main,secao,props){
     const [modalAjuda,setModalAjuda]= useState(false)
 
     async function carregaUsuario(){
-        let res = await axios.get(baseUrl+"/users/"+sessionStorage.getItem("userId"),{
+        await axios.get(baseUrl+"/users/"+sessionStorage.getItem("userId"),{
             headers: {
                 'Content-Type' : 'application/json',
                 'Authorization': 'bearer ' + sessionStorage.getItem("token")
@@ -82,7 +83,7 @@ export default function UserSection(main,secao,props){
                 if(appPassword.value){
                     user.appPassword = appPassword.value
                     if (senha.value) {
-                        if (senha.value==confsenha.value) {
+                        if (senha.value===confsenha.value) {
                             user.senha=senha.value
                         }else{
                             confsenha.classList.add('is-invalid')
@@ -112,10 +113,10 @@ export default function UserSection(main,secao,props){
     }
 
     async function addCursos(){
-        if (cursos.length==0){ document.getElementById("labelCurso").style.color='red' }
+        if (cursos.length===0){ document.getElementById("labelCurso").style.color='red' }
         else{
             document.getElementById("labelCurso").style.color='#4f4f4f'
-            if (tipoCursos.length==0) {document.getElementById("labelTipoCurso").style.color='red'}
+            if (tipoCursos.length===0) {document.getElementById("labelTipoCurso").style.color='red'}
             else{
                 document.getElementById("labelTipoCurso").style.color='#4f4f4f'
                 let objeto ={}
@@ -214,15 +215,6 @@ export default function UserSection(main,secao,props){
         }
     }
 
-    function limit(element,tamanho)
-    {
-        var max_chars = tamanho;
-            
-        if(element.value.length > max_chars) {
-            element.value = element.value.substr(0, max_chars);
-        }
-    }
-
     switch (main) {
         case 1:
             return(secao)
@@ -240,15 +232,15 @@ export default function UserSection(main,secao,props){
                                     Esta senha é utilizada para permitir que a plataforma possa enviar os emails aos destinatários. <br/>
                                     Caso não possua uma senha ou tenha perdido a informação siga os passos ou acesse: <a className="realLink" target="_blank" href="https://support.google.com/accounts/answer/185833?hl=pt-BR">Senha de aplicativo do Gmail</a><br/><br/>
                                     1. Acesse a aba <b>Gerenciar sua conta do Google</b> da sua conta do gmail:<br/><br/>
-                                    <div className="d-flex justify-content-center"><img src={require('./../imgs/settings.png')} className='img-fluid shadow-4'></img></div><br/><br/>
+                                    <div className="d-flex justify-content-center"><img alt="Configurações" src={require('./../imgs/settings.png')} className='img-fluid shadow-4'></img></div><br/><br/>
                                     2. Encontre a aba de <b>Segurança</b>, ative a verificação em duas etapas e clique em <b>Senhas de apps</b>:<br/><br/>
-                                    <div className="d-flex justify-content-center"><img src={require('./../imgs/seesettings.png')} className='img-fluid shadow-4'></img></div><br/><br/>
+                                    <div className="d-flex justify-content-center"><img alt="Ver Configurações"  src={require('./../imgs/seesettings.png')} className='img-fluid shadow-4'></img></div><br/><br/>
                                     3. Clique na seção <b>Selecionar app</b>:<br/><br/>
-                                    <div className="d-flex justify-content-center"><img src={require('./../imgs/senha.png')} className='img-fluid shadow-4'></img></div><br/><br/>
+                                    <div className="d-flex justify-content-center"><img alt="Senha"  src={require('./../imgs/senha.png')} className='img-fluid shadow-4'></img></div><br/><br/>
                                     4. Escolha a opção <b>Outro (nome personalizado)</b>, digite um nome para o acesso à plataforma e clique em <b>Gerar</b>:<br/><br/>
-                                    <div className="d-flex justify-content-center"><img src={require('./../imgs/outro.png')} className='img-fluid shadow-4'></img></div><br/><br/>
+                                    <div className="d-flex justify-content-center"><img alt="Geração" src={require('./../imgs/outro.png')} className='img-fluid shadow-4'></img></div><br/><br/>
                                     5. Selecione a chave gerada na área amarela:<br/><br/>
-                                    <div className="d-flex justify-content-center"><img src={require('./../imgs/seleciona.png')} className='img-fluid shadow-4'></img></div><br/><br/>
+                                    <div className="d-flex justify-content-center"><img alt="Copiar"  src={require('./../imgs/seleciona.png')} className='img-fluid shadow-4'></img></div><br/><br/>
                                     6. Cole o texto selecionado neste campo.
                                 </MDBModalBody>
                             </MDBModalContent>
@@ -362,11 +354,11 @@ export default function UserSection(main,secao,props){
                             <MDBBtn color='secondary' onClick={e=>{
                                 document.getElementById("novoCurso").style.display='none'
                                 document.getElementById("novoTipoCurso").style.display='none'
-                                setTipoCursos(tipoCursos.filter(x => x.novo!=true))
-                                setCursos(cursos.filter(x => x.novo!=true))
+                                setTipoCursos(tipoCursos.filter(x => x.novo!==true))
+                                setCursos(cursos.filter(x => x.novo!==true))
                                 }} className="ms-auto">Cancelar</MDBBtn>
                             <MDBBtn onClick={e=>addCursos()}>Salvar</MDBBtn>
-                        </div>
+                        </div> 
                     </MDBContainer>
 
                     {/* Botões de perfil administrador e logout */}

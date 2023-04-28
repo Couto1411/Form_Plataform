@@ -26,28 +26,28 @@ export default function Forms(props){
 
     const opcoes = [1,2,3,4,5,6,7,8,9,10]
 
-    async function carregaQuestoes(){
-        await axios.get(baseUrl+"/questoes/"+sessionStorage.getItem("formId")+"/derivada/"+props.questao.id,{
-            headers: {
-                'Content-Type' : 'application/json',
-                'Authorization': 'bearer ' + sessionStorage.getItem("token")
-            }
-        })
-        .then((response)=>{
-            response.data.sort((a,b) => a.numero - b.numero);
-            setQuestoes(response.data)
-        })
-        .catch((error) => {
-            if (error.response.status===401) {
-                navigate('/login')
-                console.warn("Faça o login")
-            }else{ console.log(error);setQuestoes([])}
-        })
-    }
 
     useEffect(() => {
         if (sessionStorage.getItem("token")){
-            carregaQuestoes()
+            async function CarregaQuestoes(){
+                await axios.get(baseUrl+"/questoes/"+sessionStorage.getItem("formId")+"/derivada/"+props.questao.id,{
+                    headers: {
+                        'Content-Type' : 'application/json',
+                        'Authorization': 'bearer ' + sessionStorage.getItem("token")
+                    }
+                })
+                .then((response)=>{
+                    response.data.sort((a,b) => a.numero - b.numero);
+                    setQuestoes(response.data)
+                })
+                .catch((error) => {
+                    if (error.response.status===401) {
+                        navigate('/login')
+                        console.warn("Faça o login")
+                    }else{ console.log(error);setQuestoes([])}
+                })
+            }
+            CarregaQuestoes()
         }
         else{
             console.warn("Faça o login")

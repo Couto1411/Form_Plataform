@@ -1,9 +1,9 @@
 import React, {useEffect,useState}from 'react'
 import './Forms.css'
-import Questoes from './Questoes'
 import axios from "axios";
 import baseUrl from "../../config/api";
 import {useNavigate} from 'react-router-dom';
+import { CarregaQuestoes, CarregaRespostas, CarregaEnvios } from '../../config/utils';
 import Title from '../template/Title'
 import Navbar from '../template/Navbar'
 import Sidebar from '../template/Sidebar'
@@ -26,8 +26,8 @@ export default function FormsDerivados(){
     // Aba de envios que mostra todos os emails a serem enviados do formulario
     const [contatos, setContatos] = useState([]);
     const [contatosDB, setContatosDB] = useState([]);
-    // Seta qual página aparece, questoes, repostas ou envios
-    const [main, setMain] = useState(1)
+    // Troca entre informações da página e do usúario
+    const [main, setMain] = useState(0)
 
     // Seta qual secao aparece, questoes, repostas ou envios
     const [secao, setsecao] = useState(2)
@@ -37,67 +37,11 @@ export default function FormsDerivados(){
 
     const [contatosPage, setContatosPage] = useState(1);
 
-
-    async function carregaEnvios(){
-        let reponse = await axios.get(baseUrl+"/users/"+sessionStorage.getItem("userId")+"/forms/"+sessionStorage.getItem("formDeId")+"/enviados",{
-            headers: {
-                'Content-Type' : 'application/json',
-                'Authorization': 'bearer ' + sessionStorage.getItem("token")
-            }
-        })
-        .then((response)=>{setContatos(response.data);setContatosDB(response.data)})
-        .catch((error) => {
-            if (error.response.status===401) {
-                navigate('/login')
-                console.warn("Faça o login")
-            }else{ console.log(error);setContatos([])}
-        }) 
-    }
-
-    async function carregaRespostas(){
-        let respon = await axios.get(baseUrl+"/users/"+sessionStorage.getItem("userId")+"/forms/"+sessionStorage.getItem("formDeId")+"/respostas",{
-            headers: {
-                'Content-Type' : 'application/json',
-                'Authorization': 'bearer ' + sessionStorage.getItem("token")
-            }
-        })
-        .then((response)=>{setRespostas(response.data)})
-        .catch((error) => {
-            if (error.response.status===401) {
-                navigate('/login')
-                console.warn("Faça o login")
-            }else{ console.log(error);setRespostas([])}
-        })
-    }
-    
-    async function carregaQuestoes(){
-        let res = await axios.get(baseUrl+"/questoes/"+sessionStorage.getItem("formId"),{
-            headers: {
-                'Content-Type' : 'application/json',
-                'Authorization': 'bearer ' + sessionStorage.getItem("token")
-            }
-        })
-        .then((response)=>{
-            response.data.sort((a,b) => a.numero - b.numero);
-            setQuestoes(response.data)
-        })
-        .catch((error) => {
-            if (error.response.status===401) {
-                navigate('/login')
-                console.warn("Faça o login")
-            }else{ console.log(error);setQuestoes([])}
-        })
-    }
-
-    async function load(){
-        carregaQuestoes()
-        carregaEnvios()
-        carregaRespostas()
-    }
-
     useEffect(() => {
         if (sessionStorage.getItem("token")){
-            load()
+            CarregaQuestoes(setQuestoes,navigate)
+            CarregaEnvios(setContatos,setContatosDB,navigate)
+            CarregaRespostas(setRespostas,navigate)
         }
         else{
             console.warn("Faça o login")
@@ -128,7 +72,7 @@ export default function FormsDerivados(){
 
     // Questões
     function renderizaQuestoes(listaQuestoes,opcao){
-        listaQuestoes?.length?listaQuestoes=listaQuestoes:listaQuestoes=questoes
+        if(!(listaQuestoes?.length))listaQuestoes=questoes
         let opcoes=[1,2,3,4,5,6,7,8,9,10]
         return listaQuestoes?.map(element => {
             switch (element.type) {
@@ -214,7 +158,7 @@ export default function FormsDerivados(){
                         {element?.derivadas?.length?opcoes.map(numero=>{
                             return (
                                 <MDBListGroup key={element.id+'respostasopcao'+numero} className='mt-1 rounded-3' >
-                                    {element.derivadas?.filter(s=>s.derivadaDeOpcao==numero).length?renderizaQuestoes(element.derivadas?.filter(s=>s.derivadaDeOpcao==numero),numero):null}
+                                    {element.derivadas?.filter(s=>s.derivadaDeOpcao===numero).length?renderizaQuestoes(element.derivadas?.filter(s=>s.derivadaDeOpcao===numero),numero):null}
                                 </MDBListGroup>)
                         }):null}
                     </div>)
@@ -227,7 +171,7 @@ export default function FormsDerivados(){
     }
 
     const secaoQuestoes = <main className='mt-3 principal'>
-        {Title("Questões",carregaQuestoes)}
+        {Title("Questões")}
 
         <MDBListGroup small className='mt-3' >
             {renderizaQuestoes()}
@@ -286,7 +230,7 @@ export default function FormsDerivados(){
     }
 
     const secaoContatos = <main className='mt-3 principal'> 
-        {Title("Contatos",carregaEnvios)}
+        {Title("Contatos")}
 
         
         <MDBContainer fluid className='mt-3 p-3 rounded-3 bg-light'>
@@ -310,7 +254,7 @@ export default function FormsDerivados(){
                                 <input className='form-control' type='text' defaultValue={element.email} disabled/>
                                 <div role='button' onClick={e=>{sessionStorage.setItem('enviadoId',element.id);navigate('/resposta')}} color='secondary' className='numQuestao borda-direita' id={'edit'+element.id}><i className='p-2 ms-auto fas fa-solid fa-eye'></i></div>
                             </MDBInputGroup>
-                            <div className='d-flex'><div className='text-danger p-1' id={'warning'+element.id} style={{display: 'none'}}>Todas as respostas desse email serão apagadas, se tiver certeza clique novamente</div><a role='button' onClick={e=>{handleClick(element.id,true)}} id={'cancel'+element.id} style={{display: 'none'}} className='p-1 ms-auto'>Cancelar</a></div>
+                            <div className='d-flex'><div className='text-danger p-1' id={'warning'+element.id} style={{display: 'none'}}>Todas as respostas desse email serão apagadas, se tiver certeza clique novamente</div><a href='/#' role='button' onClick={e=>{handleClick(element.id,true)}} id={'cancel'+element.id} style={{display: 'none'}} className='p-1 ms-auto'>Cancelar</a></div>
                         </MDBListGroupItem>
                     )
                 }else{
@@ -371,7 +315,6 @@ export default function FormsDerivados(){
     
     function renderizaRepostas(){
         return respostas?.map(element => {
-            console.log(element)
             return(
                 <div  key={element.id}>
                 <MDBListGroupItem className='shadow mt-3 rounded-3'>
@@ -391,13 +334,13 @@ export default function FormsDerivados(){
             )
         })
     }
+
     function renderizaRepostasDerivadas(derivadas, questaoOrig){
         let opcoes = [1,2,3,4,5,6,7,8,9,10]
         return opcoes.map(opcao=>{
             return (
                 <MDBListGroup key={questaoOrig.id+'respostasopcao'+opcao} className='mt-1 rounded-3' >
-                    {derivadas?.filter(s=>s.derivadaDeOpcao==opcao)?.map(element=>{
-                        console.log(element)
+                    {derivadas?.filter(s=>s.derivadaDeOpcao===opcao)?.map(element=>{
                         return (<MDBListGroupItem key={element.id} className={'mt-1 rounded-3 opcao'+opcao}>
                                     <div className='d-flex porcentagem'>{element.numero}) {element.enunciado}<div className='ms-auto'>{element.type===1?<MDBRadio disabled defaultChecked={true} className='mt-1' value='' inline/>:<MDBCheckbox disabled defaultChecked={true} className='mt-1' value='' inline/>}</div></div>
                                     <hr className='mt-0 mb-2'></hr>
@@ -413,24 +356,23 @@ export default function FormsDerivados(){
         let numero=0
         let sum = element.resposta.reduce((partialSum, a) => partialSum + a.quantidade, 0);
         let count=0
-        return element.resposta?.map((item,index)=>{
+        return element.resposta?.map((item)=>{
             numero+=1
             count+=1
             let parcial=Math.trunc((item.quantidade/sum)*100)
             if(!parcial) parcial=0
-            if(item.texto){
-                return(
-                    <div key={'Barra'+element.id+count} className='mb-2 porcentagem'> <div className={tipo?'rounded-3 opcao'+count:null}>{numero}) {item.texto}</div>
-                        <MDBProgress height='30' className='rounded-3'>
-                            <MDBProgressBar className='porcentagem' width={parcial} valuemin={0} valuemax={100}>{parcial}%</MDBProgressBar>
-                        </MDBProgress>
-                    </div>
-                )
-            }
+            return(
+                <div key={'Barra'+element.id+count} className='mb-2 porcentagem'> <div className={tipo?'rounded-3 opcao'+count:null}>{numero}) {item.texto}</div>
+                    <MDBProgress height='30' className='rounded-3'>
+                        <MDBProgressBar className='porcentagem' width={parcial} valuemin={0} valuemax={100}>{parcial}%</MDBProgressBar>
+                    </MDBProgress>
+                </div>
+            )
         })
     }
+
     const secaoRespostas = <main className='mt-3 principal'> 
-        {Title("Repostas",carregaRespostas)}
+        {Title("Repostas")}
         <MDBListGroup small className='mt-3' >
             {renderizaRepostas()}
         </MDBListGroup>
@@ -439,17 +381,19 @@ export default function FormsDerivados(){
 
     function makeSecao() {
         if(secao===1){
-            return(UserSection(main,secaoQuestoes))
+            return(secaoQuestoes)
         }else if(secao===2){
-            return(UserSection(main,secaoContatos))
+            return(secaoContatos)
         }else if(secao===3){
-            return(UserSection(main,secaoRespostas))
+            return(secaoRespostas)
+        }else{
+            return(<UserSection navigate={navigate}/>)
         }
     }
 
     return(
         <section>
-            {Sidebar(setMain,'questoes',setsecao)}
+            {Sidebar('questoes',setsecao)}
             {Navbar()}
 
             {makeSecao()}

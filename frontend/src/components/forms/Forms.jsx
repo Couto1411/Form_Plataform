@@ -1,5 +1,5 @@
 import React, {useEffect,useState}from 'react'
-import { limit } from '../../config/utils';
+import { limit, CarregaQuestoes, CarregaCursosUser, CarregaRespostas, CarregaEnvios } from '../../config/utils';
 import './Forms.css'
 import Questoes from './Questoes'
 import axios from "axios";
@@ -36,8 +36,6 @@ export default function Forms(){
     const [cursos, setCursos] = useState(null);
     // Regula novas opcões
     const [input, setInput] = useState({content:<></>});
-    // Seta qual página aparece, questoes, repostas ou envios
-    const [main, setMain] = useState(1)
 
     // Modifia visibilidade da area de novo envio
     const [newContato, setNewContato] = useState(<></>);
@@ -61,84 +59,12 @@ export default function Forms(){
     // Usado para busca de contatos
     const [nomeEmail, setNomeEmail] = useState(true);
 
-    async function carregaCursos(){
-        await axios.get(baseUrl+"/users/"+sessionStorage.getItem("userId")+"/cursos",{
-            headers: {
-                'Content-Type' : 'application/json',
-                'Authorization': 'bearer ' + sessionStorage.getItem("token")
-            }
-        })
-        .then(res=>{setCursos(res.data)})
-        .catch((error) => {
-            if (error.response.status===401) {
-                navigate('/login')
-                console.warn("Faça o login")
-            }else{ console.log(error)}
-        })
-    }
-
-    async function carregaEnvios(){
-        let reponse = await axios.get(baseUrl+"/users/"+sessionStorage.getItem("userId")+"/forms/"+sessionStorage.getItem("formId")+"/enviados",{
-            headers: {
-                'Content-Type' : 'application/json',
-                'Authorization': 'bearer ' + sessionStorage.getItem("token")
-            }
-        })
-        .then((response)=>{setContatos(response.data);setContatosDB(response.data)})
-        .catch((error) => {
-            if (error.response.status===401) {
-                navigate('/login')
-                console.warn("Faça o login")
-            }else{ console.log(error);setContatos([])}
-        }) 
-        carregaCursos()
-    }
-
-    async function carregaRespostas(){
-        let respon = await axios.get(baseUrl+"/users/"+sessionStorage.getItem("userId")+"/forms/"+sessionStorage.getItem("formId")+"/respostas",{
-            headers: {
-                'Content-Type' : 'application/json',
-                'Authorization': 'bearer ' + sessionStorage.getItem("token")
-            }
-        })
-        .then((response)=>{setRespostas(response.data)})
-        .catch((error) => {
-            if (error.response.status===401) {
-                navigate('/login')
-                console.warn("Faça o login")
-            }else{ console.log(error);setRespostas([])}
-        })
-    }
-    
-    async function carregaQuestoes(){
-        let res = await axios.get(baseUrl+"/questoes/"+sessionStorage.getItem("formId"),{
-            headers: {
-                'Content-Type' : 'application/json',
-                'Authorization': 'bearer ' + sessionStorage.getItem("token")
-            }
-        })
-        .then((response)=>{
-            response.data.sort((a,b) => a.numero - b.numero);
-            setQuestoes(response.data)
-        })
-        .catch((error) => {
-            if (error.response.status===401) {
-                navigate('/login')
-                console.warn("Faça o login")
-            }else{ console.log(error);setQuestoes([])}
-        })
-    }
-
-    async function load(){
-        carregaQuestoes()
-        carregaCursos()
-        carregaEnvios()
-        carregaRespostas()
-    }
-
     useEffect(() => {
         if (sessionStorage.getItem("token")){
-            load()
+            CarregaQuestoes(setQuestoes,navigate)
+            CarregaCursosUser(setCursos,navigate)
+            CarregaEnvios(setContatos,setContatosDB,navigate)
+            CarregaRespostas(setRespostas,navigate)
         }
         else{
             console.warn("Faça o login")
@@ -313,7 +239,6 @@ export default function Forms(){
                 }
             })
             .then(resposta=>{
-                console.log(resposta)
                 novaQuestao.id=resposta.data
                 setQuestoes([
                     ...questoes,
@@ -353,8 +278,8 @@ export default function Forms(){
     function toggleShowExcluiSalva(id, show){
         let v= document.getElementById("questao"+id)
         v.disabled=!v.disabled
-        document.getElementById("exclui"+id).style.display=="none"?document.getElementById("exclui"+id).style.display="inline-block":document.getElementById("exclui"+id).style.display="none"
-        document.getElementById("salva"+id).style.display =="none"?document.getElementById("salva"+id).style.display="inline-block":document.getElementById("salva"+id).style.display="none"
+        document.getElementById("exclui"+id).style.display==="none"?document.getElementById("exclui"+id).style.display="inline-block":document.getElementById("exclui"+id).style.display="none"
+        document.getElementById("salva"+id).style.display ==="none"?document.getElementById("salva"+id).style.display="inline-block":document.getElementById("salva"+id).style.display="none"
     }
 
     async function excluiQuestao(element){
@@ -526,12 +451,12 @@ export default function Forms(){
     }
 
     function handleInput(id){
-        if (input.id && input.id==id) return input.content 
+        if (input.id && input.id===id) return input.content 
         else return <></>
     }
 
     const secaoQuestoes = <main className='mt-3 principal'>
-        {Title("Questões",carregaQuestoes)}
+        {Title("Questões")}
 
         <MDBListGroup small className='mt-3' >
             {renderizaQuestoes()}
@@ -553,7 +478,7 @@ export default function Forms(){
                                 <input className='form-control' type='text' defaultValue={element.email} disabled/>
                                 <div role='button' onClick={e=>{sessionStorage.setItem('enviadoId',element.id);navigate('/resposta')}} color='secondary' className='numQuestao borda-direita' id={'edit'+element.id}><i className='p-2 ms-auto fas fa-solid fa-eye'></i></div>
                             </MDBInputGroup>
-                            <div className='d-flex'><div className='text-danger p-1' id={'warning'+element.id} style={{display: 'none'}}>Todas as respostas desse email serão apagadas, se tiver certeza clique novamente</div><a role='button' onClick={e=>{handleClick(element,true)}} id={'cancel'+element.id} style={{display: 'none'}} className='p-1 ms-auto'>Cancelar</a></div>
+                            <div className='d-flex'><div className='text-danger p-1' id={'warning'+element.id} style={{display: 'none'}}>Todas as respostas desse email serão apagadas, se tiver certeza clique novamente</div><a href='/#' role='button' onClick={e=>{handleClick(element,true)}} id={'cancel'+element.id} style={{display: 'none'}} className='p-1 ms-auto'>Cancelar</a></div>
                         </MDBListGroupItem>
                     )
                 }else{
@@ -655,15 +580,15 @@ export default function Forms(){
         novocontato.dataColacao=document.getElementById("novoContatoData").value
         if(novocontato.email){
             document.getElementById("novoContatoEmail").classList.remove("is-invalid")
-            if (novocontato.telefone1 && !/\(\d\d\)\s\d\d\d\d\d\-\d\d\d\d/.test(novocontato.telefone1)) {
+            if (novocontato.telefone1 && !/\(\d\d\)\s\d\d\d\d\d-\d\d\d\d/.test(novocontato.telefone1)) {
                 document.getElementById("novoContatoTelefone1").classList.add("is-invalid")
                 return
             }else{document.getElementById("novoContatoTelefone1").classList.remove("is-invalid")}
-            if (novocontato.telefone2 && !/\(\d\d\)\s\d\d\d\d\d\-\d\d\d\d/.test(novocontato.telefone2)) {
+            if (novocontato.telefone2 && !/\(\d\d\)\s\d\d\d\d\d-\d\d\d\d/.test(novocontato.telefone2)) {
                 document.getElementById("novoContatoTelefone2").classList.add("is-invalid")
                 return
             }else{document.getElementById("novoContatoTelefone2").classList.remove("is-invalid")}
-            if (novocontato.cpf && !/\d\d\d\.\d\d\d\.\d\d\d\-\d\d/.test(novocontato.cpf)) {
+            if (novocontato.cpf && !/\d\d\d\.\d\d\d\.\d\d\d-\d\d/.test(novocontato.cpf)) {
                 document.getElementById("novoContatoCpf").classList.add("is-invalid")
                 return
             }else{document.getElementById("novoContatoCpf").classList.remove("is-invalid")}
@@ -707,7 +632,7 @@ export default function Forms(){
             let erase=document.getElementById("erase"+id)
             erase.style.display==='none'?erase.style.display='block':erase.style.display='none'
             let send=document.getElementById("send"+id)
-            if(send.lastChild.nodeName=='SPAN'){
+            if(send.lastChild.nodeName==='SPAN'){
                 send.removeChild(send.lastChild)
             }else{
                 let spanBlock = document.createElement('span')
@@ -738,7 +663,7 @@ export default function Forms(){
             }
         })
         .then((response)=>{
-            if(contatos.map(a=>a.id).indexOf(id)%15==0) {
+            if(contatos.map(a=>a.id).indexOf(id)%15===0) {
                 setContatosPage(contatosPage-1)}
             setContatos(contatos.filter(a=> a.id !== id))
         })
@@ -868,7 +793,7 @@ export default function Forms(){
         let erase=document.getElementById("erase"+element.id)
         erase.style.display==='none'?erase.style.display='block':erase.style.display='none'
         let send=document.getElementById("send"+element.id)
-        if(send.lastChild.nodeName=='SPAN'){
+        if(send.lastChild.nodeName==='SPAN'){
             send.removeChild(send.lastChild)
         }else{
             let spanBlock = document.createElement('span')
@@ -935,7 +860,7 @@ export default function Forms(){
         if (selectedFiles.length>0) { 
             document.getElementById('cancelmodalimports').disabled=true
             var i,f;
-            for (i = 0, f = selectedFiles[i]; i != selectedFiles.length; ++i) {
+            for (i = 0, f = selectedFiles[i]; i !== selectedFiles.length; ++i) {
                 let reader = new FileReader();
                 reader.readAsArrayBuffer(f);
                 reader.onload = (e) => {
@@ -953,7 +878,8 @@ export default function Forms(){
                     })
                     .then(responsta=>{
                         document.getElementById('cancelmodalimports').disabled=false
-                        carregaEnvios()
+                        CarregaEnvios(setContatos,setContatosDB,navigate)
+                        CarregaCursosUser(setCursos,navigate)
                         setImportModal(false)
                     })
                     .catch((error) => {
@@ -970,7 +896,7 @@ export default function Forms(){
     }
 
     const secaoContatos = <main className='mt-3 principal'> 
-        {Title("Contatos",carregaEnvios)}
+        {Title("Contatos")}
 
         {/* Barra de busca */}
         <MDBContainer fluid className='shadow mt-3 p-3 rounded-3 bg-light'>
@@ -1088,13 +1014,13 @@ export default function Forms(){
             )
         })
     }
+
     function renderizaRepostasDerivadas(derivadas, questaoOrig){
         let opcoes = [1,2,3,4,5,6,7,8,9,10]
         return opcoes.map(opcao=>{
             return (
                 <MDBListGroup key={questaoOrig.id+'respostasopcao'+opcao} className='mt-1 rounded-3' >
-                    {derivadas?.filter(s=>s.derivadaDeOpcao==opcao)?.map(element=>{
-                        console.log(element)
+                    {derivadas?.filter(s=>s.derivadaDeOpcao===opcao)?.map(element=>{
                         return (<MDBListGroupItem key={element.id} className={'mt-1 rounded-3 opcao'+opcao}>
                                     <div className='d-flex porcentagem'>{element.numero}) {element.enunciado}<div className='ms-auto'>{element.type===1?<MDBRadio disabled defaultChecked={true} className='mt-1' value='' inline/>:<MDBCheckbox disabled defaultChecked={true} className='mt-1' value='' inline/>}</div></div>
                                     <hr className='mt-0 mb-2'></hr>
@@ -1115,20 +1041,18 @@ export default function Forms(){
             count+=1
             let parcial=Math.trunc((item.quantidade/sum)*100)
             if(!parcial) parcial=0
-            if(item.texto){
-                return(
-                    <div key={'Barra'+element.id+count} className='mb-2 porcentagem'> <div className={tipo?'rounded-3 opcao'+count:null}>{numero}) {item.texto}</div>
-                        <MDBProgress height='30' className='rounded-3'>
-                            <MDBProgressBar className='porcentagem' width={parcial} valuemin={0} valuemax={100}>{parcial}%</MDBProgressBar>
-                        </MDBProgress>
-                    </div>
-                )
-            }
+            return(
+                <div key={'Barra'+element.id+count} className='mb-2 porcentagem'> <div className={tipo?'rounded-3 opcao'+count:null}>{numero}) {item.texto}</div>
+                    <MDBProgress height='30' className='rounded-3'>
+                        <MDBProgressBar className='porcentagem' width={parcial} valuemin={0} valuemax={100}>{parcial}%</MDBProgressBar>
+                    </MDBProgress>
+                </div>
+            )
         })
     }
 
     const secaoRespostas = <main className='mt-3 principal'> 
-        {Title("Repostas",carregaRespostas)}
+        {Title("Repostas")}
         <MDBListGroup small className='mt-3' >
             {renderizaRepostas()}
         </MDBListGroup>
@@ -1138,17 +1062,19 @@ export default function Forms(){
 
     function makeSecao() {
         if(secao===1){
-            return(UserSection(main,secaoQuestoes))
+            return(secaoQuestoes)
         }else if(secao===2){
-            return(UserSection(main,secaoContatos))
+            return(secaoContatos)
         }else if(secao===3){
-            return(UserSection(main,secaoRespostas))
+            return(secaoRespostas)
+        }else{
+            return(<UserSection/>)
         }
     }
 
     return(
         <section>
-            {Sidebar(setMain,'questoes',setsecao,setInput)}
+            {Sidebar('questoes',setsecao)}
             {Navbar()}
 
             {makeSecao()} 

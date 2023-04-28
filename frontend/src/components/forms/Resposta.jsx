@@ -11,22 +11,21 @@ import { useNavigate } from 'react-router-dom';
 
 export default function Resposta(){
     const navigate = useNavigate()
+    // Troca entre informações da página e do usúario
     const [main, setMain] = useState(1)
 
     const [respostas,setRespostas] = useState([{}])
 
-    
-    async function carregaResposta(){
-        await axios.get(baseUrl+"/users/"+sessionStorage.getItem("userId")+"/forms/"+sessionStorage.getItem("formId")+"/respostas/"+sessionStorage.getItem("enviadoId"),{
-            headers: {
-                'Content-Type' : 'application/json',
-                'Authorization': 'bearer ' + sessionStorage.getItem("token")
-            }
-        }).then(response => setRespostas(response.data))
-    }
-
     useEffect(() => {
         if (sessionStorage.getItem("token")){
+            async function carregaResposta(){
+                await axios.get(baseUrl+"/users/"+sessionStorage.getItem("userId")+"/forms/"+sessionStorage.getItem("formId")+"/respostas/"+sessionStorage.getItem("enviadoId"),{
+                    headers: {
+                        'Content-Type' : 'application/json',
+                        'Authorization': 'bearer ' + sessionStorage.getItem("token")
+                    }
+                }).then(response => setRespostas(response.data))
+            }
             carregaResposta()
         }
         else{
@@ -38,15 +37,14 @@ export default function Resposta(){
 
     function renderizaRepostas(){
         return respostas?.map(element => {
-            console.log(respostas)
             return(
-                <>{element.type!==4?<MDBListGroupItem key={"r"+element.id} className={element?.type===9?'mt-3 rounded-3 opcao10':'mt-3 rounded-3'}>
+                <div key={"r"+element.id}>{element.type!==4?<MDBListGroupItem className={element?.type===9?'mt-3 rounded-3 opcao10':'mt-3 rounded-3'}>
                     <div className='porcentagem'>{element.numero}) {element.enunciado}</div>
                     <hr className='mt-0 mb-2'></hr>
                     <div className='mx-2'>
                         {element?makeResp(element):<></>}
                     </div>
-                </MDBListGroupItem>:<></>}</>
+                </MDBListGroupItem>:<></>}</div>
             )
         })
     }
@@ -102,12 +100,21 @@ export default function Resposta(){
     </main>
     // Secao Respostas
 
+    
+    function makeSecao() {
+        if(main===1){
+            return(secaoRespostas)
+        }else{
+            (<UserSection/>)
+        }
+    }
+
     return(
         <section>
-            {Sidebar(setMain,'respostaDerivados')}
+            {Sidebar('respostaDerivados',setMain)}
             {Navbar()}
 
-            {UserSection(main,secaoRespostas)}
+            {makeSecao()}
         </section>
     )
 }

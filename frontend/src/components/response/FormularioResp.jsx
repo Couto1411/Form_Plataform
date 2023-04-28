@@ -19,13 +19,13 @@ export default function FormularioResposta(){
 
 
     useEffect(() => {
-        async function carregaQuestoes(){
+        async function CarregaQuestoes(){
             let res = await axios.get(baseUrl+"/questoes/"+formId)
             .catch((error) => {console.log(error)})
             res.data.sort((a,b) => a.numero - b.numero);
             setQuestoes(res.data)
         }
-        carregaQuestoes()
+        CarregaQuestoes()
 
     }, []);
 

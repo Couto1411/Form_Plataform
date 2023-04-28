@@ -13,7 +13,7 @@ import {
     MDBListGroup, MDBListGroupItem,
     MDBBtn, MDBModal, MDBModalDialog, MDBModalContent, MDBModalHeader, MDBModalFooter} from 'mdb-react-ui-kit'
 
-export default function PaginaUsuario(){
+export default function Admin(){
     const navigate = useNavigate();
 
     // Utilizado para não existirem usuarios com a mesma chave
@@ -41,46 +41,45 @@ export default function PaginaUsuario(){
     // Seta qual secao aparece, usuários ou formulários
     const [secao, setsecao] = useState(1)
 
-    async function carregaUsuarios(){
-        await axios.get(baseUrl+"/users/admin/"+sessionStorage.getItem("userId"),{
-            headers: {
-                'Content-Type' : 'application/json',
-                'Authorization': 'bearer ' + sessionStorage.getItem("token")
-            }
-        })
-        .then(response => {
-            setUsers(response.data)
-        })
-        .catch((error) => {
-            if (error.response.status===401) {
-                navigate('/login')
-                console.warn("Faça o login")
-            }else{ console.log(error)}
-        })
-    }
-
-    async function carregaFormularios(){
-        await axios.get(baseUrl+"/forms/admin/"+sessionStorage.getItem("userId"),{
-            headers: {
-                'Content-Type' : 'application/json',
-                'Authorization': 'bearer ' + sessionStorage.getItem("token")
-            }
-        })
-        .then(response => {
-            setForms(response.data)
-        })
-        .catch((error) => {
-            if (error.response.status===401) {
-                navigate('/login')
-                console.warn("Faça o login")
-            }else{ console.log(error)}
-        })
-    }
-
     useEffect(() => {
         if (sessionStorage.getItem("token")){
-            carregaUsuarios()
-            carregaFormularios()
+            async function CarregaUsuarios(){
+                await axios.get(baseUrl+"/users/admin/"+sessionStorage.getItem("userId"),{
+                    headers: {
+                        'Content-Type' : 'application/json',
+                        'Authorization': 'bearer ' + sessionStorage.getItem("token")
+                    }
+                })
+                .then(response => {
+                    setUsers(response.data)
+                })
+                .catch((error) => {
+                    if (error.response.status===401) {
+                        navigate('/login')
+                        console.warn("Faça o login")
+                    }else{ console.log(error)}
+                })
+            }
+        
+            async function CarregaFormularios(){
+                await axios.get(baseUrl+"/forms/admin/"+sessionStorage.getItem("userId"),{
+                    headers: {
+                        'Content-Type' : 'application/json',
+                        'Authorization': 'bearer ' + sessionStorage.getItem("token")
+                    }
+                })
+                .then(response => {
+                    setForms(response.data)
+                })
+                .catch((error) => {
+                    if (error.response.status===401) {
+                        navigate('/login')
+                        console.warn("Faça o login")
+                    }else{ console.log(error)}
+                })
+            }
+            CarregaUsuarios()
+            CarregaFormularios()
         }
         else{
             console.warn("Usuário não é administrador")
@@ -165,7 +164,6 @@ export default function PaginaUsuario(){
                     document.getElementById("novoUsuarioNome").classList.remove("is-invalid")
                     if(novoUsuario.senha){
                         document.getElementById("novoUsuarioSenha").classList.remove("is-invalid")
-                        console.log(novoUsuario)
                         await axios.post(baseUrl+"/users/"+sessionStorage.getItem("userId"),novoUsuario,{
                             headers: {
                                 'Authorization': 'bearer ' + sessionStorage.getItem("token")
@@ -297,7 +295,7 @@ export default function PaginaUsuario(){
     }
 
     const secaoUsers=<main className='mt-3 principal'>
-        {Title("Usuários",carregaUsuarios)}
+        {Title("Usuários")}
         
         <MDBListGroup small className='mt-3' >
             {renderizaUsers()}
@@ -360,7 +358,7 @@ export default function PaginaUsuario(){
     }
 
     const secaoForms=<main className='mt-3 principal'>
-        {Title("Formulários",carregaFormularios)}
+        {Title("Formulários")}
 
         <MDBListGroup small className='mt-3' >
             {renderizaForms()}
@@ -385,15 +383,17 @@ export default function PaginaUsuario(){
 
     function makeSecao() {
         if(secao===1){
-            return(UserSection(main,secaoUsers))
+            return(secaoUsers)
         }else if(secao===2){
-            return(UserSection(main,secaoForms))
+            return(secaoForms)
+        }else{
+            return(<UserSection navigate={navigate}/>)
         }
     }
 
     return(
         <section>
-            {Sidebar(setMain,'admin',setsecao)}
+            {Sidebar('admin',setsecao)}
             {Navbar()}
 
             {makeSecao()}

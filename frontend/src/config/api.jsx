@@ -1,3 +1,3 @@
-const baseURL= "http://localhost:3001"
+const baseURL= "http://192.168.0.190:3001"
 
 export default baseURL;

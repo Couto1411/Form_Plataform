@@ -1,7 +1,8 @@
 import React, {useEffect,useState}from 'react'
+import Dashboard from '../dashboard/dashboard'
 import './FormsUser.css'
 import Title from '../template/Title'
-import { limit } from '../../config/utils'
+import { limit, CarregaForms } from '../../config/utils'
 import Navbar from '../template/Navbar'
 import Sidebar from '../template/Sidebar'
 import UserSection from './UserSection'
@@ -24,8 +25,6 @@ export default function PaginaUsuario(){
     const [idToDelete, setIdToDelete] = useState(0);
     // Hook para dizer se o formulário a ser deletado é derivado
     const [idDerivateToDelete, setIdDerivateToDelete] = useState(null);
-    // Seta para aparecer a seção de formulários
-    const [main, setMain] = useState(1)
 
     // Booleano usado para decidir se a função irá adicionar ou editar um formulário
     const [addForm, setAddForm] = useState(false);
@@ -33,6 +32,8 @@ export default function PaginaUsuario(){
     // Lista de formulários do usuário
     const [forms, setforms] = useState([]);
     const [form, setform] = useState({id: null, titulo:null});
+
+    const [secao, setSecao] = useState(1)
 
     const [count, setCount] = useState(0);
 
@@ -44,28 +45,10 @@ export default function PaginaUsuario(){
         change.classList.remove("is-invalid");
     };
     
-    async function carregaForms(){
-        console.log()
-        await axios.get(baseUrl+"/users/"+sessionStorage.getItem("userId")+"/forms",{
-            headers: {
-                'Content-Type' : 'application/json',
-                'Authorization': 'bearer ' + sessionStorage.getItem("token")
-            }
-        })
-        .then(response => {
-            setforms(response.data)
-        })
-        .catch((error) => {
-            if (error.response.status===401) {
-                navigate('/login')
-                console.warn("Faça o login")
-            }else{ console.log(error)}
-        })
-    }
 
     useEffect(() => {
         if (sessionStorage.getItem("token")){
-            carregaForms()
+            CarregaForms(setforms, navigate)
         }
         else{
             console.warn("Faça o login")
@@ -229,7 +212,7 @@ export default function PaginaUsuario(){
                                     return (
                                         <MDBListGroupItem key={'formderivado'+item.id} className='pb-0 formsDuplicates d-flex'>
                                             {item.id[0]?<>{item.titulo}</>:<Link className='formsDuplicates zoom' to={"/forms/"+item.id} onClick={e=>{sessionStorage.setItem("formId",element.id);sessionStorage.setItem("formDeId",item.id)}}>{item.titulo}{item.dataEnviado?<i>({item.dataEnviado.toLocaleString('en-GB', { timeZone: 'UTC' })})</i>:<></>}</Link>}
-                                            {item.id[0]?<i onClick={e=>{carregaForms()}} className="pt-1 ms-auto fa-solid fa-arrows-rotate"></i>:<i className="ms-auto trashcan pt-1 fas fa-trash-can" onClick={e=>{
+                                            {item.id[0]?<i onClick={e=>{CarregaForms(setforms)}} className="pt-1 ms-auto fa-solid fa-arrows-rotate"></i>:<i className="ms-auto trashcan pt-1 fas fa-trash-can" onClick={e=>{
                                                 setIdToDelete(element.id)
                                                 setIdDerivateToDelete(item.id)
                                                 setDeletaFormulario(true)
@@ -247,7 +230,7 @@ export default function PaginaUsuario(){
     }
 
     const secaoForms=<main className='mt-3 principal'>
-        {Title("Formularios",carregaForms)}
+        {Title("Formularios")}
         
         <MDBListGroup small className='shadow mt-3 rounded-3 bg-light' >
             {renderizaForms()}
@@ -287,13 +270,23 @@ export default function PaginaUsuario(){
                 </MDBModalDialog>
             </MDBModal>
     </main>
+       
+    function makeSecao() {
+        if(secao===1){
+            return(secaoForms)
+        }else if(secao===2){
+            return (<Dashboard />)
+        }else{
+            return (<UserSection navigate={navigate}/>)
+        }
+    }
 
     return(
         <section>
-            {Sidebar(setMain,'forms')}
+            {Sidebar('forms',setSecao)}
             {Navbar()}
 
-            {UserSection(main,secaoForms)}
+            {makeSecao()}
         </section>
     )
 }

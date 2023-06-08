@@ -1,0 +1,21 @@
+.opcao1{background-color: #ccfcfc ;}
+.opcao2{background-color: #C7ECEE;}
+.opcao3{background-color: #B2EBF2 ;}
+.opcao4{background-color: #A0CFEC ;}
+.opcao5{background-color: #7FB3D5 ;}
+.opcao6{background-color: #77BFC7 ;}
+.opcao7{background-color: #87CEFA;}
+.opcao8{background-color: #87CEEB ;}
+.opcao9{background-color: #ADD8E6 ;}
+.opcao10{background-color: #BFEFFF ;}
+
+.formsselect{
+    max-height: 10em;
+}
+.formsselectbig{
+    max-height: 20em;
+}
+
+.graficos{
+    max-height: 30em;
+}

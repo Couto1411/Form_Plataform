@@ -26,8 +26,6 @@ export default function FormsDerivados(){
     // Aba de envios que mostra todos os emails a serem enviados do formulario
     const [contatos, setContatos] = useState([]);
     const [contatosDB, setContatosDB] = useState([]);
-    // Troca entre informações da página e do usúario
-    const [main, setMain] = useState(0)
 
     // Seta qual secao aparece, questoes, repostas ou envios
     const [secao, setsecao] = useState(2)
@@ -316,7 +314,7 @@ export default function FormsDerivados(){
     function renderizaRepostas(){
         return respostas?.map(element => {
             return(
-                <div  key={element.id}>
+                <div  key={element.id} className='col-md-6 col-xxl-4'>
                 <MDBListGroupItem className='shadow mt-3 rounded-3'>
                     <div className='d-flex porcentagem'>{element.numero}) {element.enunciado}
                         <div className='ms-auto'>
@@ -363,7 +361,7 @@ export default function FormsDerivados(){
             if(!parcial) parcial=0
             return(
                 <div key={'Barra'+element.id+count} className='mb-2 porcentagem'> <div className={tipo?'rounded-3 opcao'+count:null}>{numero}) {item.texto}</div>
-                    <MDBProgress height='30' className='rounded-3'>
+                    <MDBProgress height='20' className='rounded-3'>
                         <MDBProgressBar className='porcentagem' width={parcial} valuemin={0} valuemax={100}>{parcial}%</MDBProgressBar>
                     </MDBProgress>
                 </div>
@@ -374,7 +372,9 @@ export default function FormsDerivados(){
     const secaoRespostas = <main className='mt-3 principal'> 
         {Title("Repostas")}
         <MDBListGroup small className='mt-3' >
-            {renderizaRepostas()}
+            <div className='row'>
+                {renderizaRepostas()}
+            </div>
         </MDBListGroup>
     </main>
     // Secao Respostas

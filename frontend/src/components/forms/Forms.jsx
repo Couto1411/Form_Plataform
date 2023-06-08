@@ -221,7 +221,7 @@ export default function Forms(){
     async function addQuestao(){
         novaQuestao.enunciado=document.getElementById("novaQuestaoEnunciado").value
         if(novaQuestao.enunciado){
-            if (novaQuestao.type===1||novaQuestao.type===3) {
+            if (novaQuestao.type===1||novaQuestao.type===3||novaQuestao.type===9) {
                 novaQuestao.opcao1=document.getElementById("option1").value
                 novaQuestao.opcao2=document.getElementById("option2").value
                 novaQuestao.opcao3=document.getElementById("option3").value
@@ -996,7 +996,7 @@ export default function Forms(){
     function renderizaRepostas(){
         return respostas?.map(element => {
             return(
-                <div  key={element.id}>
+                <div key={element.id} className='col-md-6 col-xxl-4'>
                 <MDBListGroupItem className='shadow mt-3 rounded-3'>
                     <div className='d-flex porcentagem'>{element.numero}) {element.enunciado}
                         <div className='ms-auto'>
@@ -1043,7 +1043,7 @@ export default function Forms(){
             if(!parcial) parcial=0
             return(
                 <div key={'Barra'+element.id+count} className='mb-2 porcentagem'> <div className={tipo?'rounded-3 opcao'+count:null}>{numero}) {item.texto}</div>
-                    <MDBProgress height='30' className='rounded-3'>
+                    <MDBProgress height='20' className='rounded-3'>
                         <MDBProgressBar className='porcentagem' width={parcial} valuemin={0} valuemax={100}>{parcial}%</MDBProgressBar>
                     </MDBProgress>
                 </div>
@@ -1054,7 +1054,9 @@ export default function Forms(){
     const secaoRespostas = <main className='mt-3 principal'> 
         {Title("Repostas")}
         <MDBListGroup small className='mt-3' >
-            {renderizaRepostas()}
+            <div className='row'>
+                {renderizaRepostas()}
+            </div>
         </MDBListGroup>
     </main>
     // Secao Respostas

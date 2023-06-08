@@ -4,6 +4,7 @@ using backendcsharp.Handles;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Xml.Linq;
 
 namespace backendcsharp.Controllers
 {
@@ -200,6 +201,74 @@ namespace backendcsharp.Controllers
             }
         }
 
+        // Selecionar questões por ID do Usuário
+        [HttpGet("questoes/user/{UserId}")]
+        [Authorize("Bearer")]
+        public async Task<ActionResult<List<QuestoesDTO>>> GetQuestaoByUserId([FromRoute] int UserId)
+        {
+            try
+            {
+                Handlers.ExistsOrError(UserId.ToString(), "Id do formulário não informado");
+                Handlers.IdNegative(UserId, "Id do formulário inválido");
+                var Questoes = await
+                    (from questao in ProjetoDbContext.Questoes
+                    join formulario in ProjetoDbContext.Formularios on questao.FormId equals formulario.Id
+                    join user in ProjetoDbContext.Users on formulario.ResponsavelId equals user.Id
+                    where user.Id == UserId && questao.DerivadaDeId == null && questao.Type!=2 && questao.Type!=4
+                    select new QuestoesDTO
+                    {
+                        id = questao.Id,
+                        numero = questao.Numero,
+                        type = questao.Type,
+                        formId = questao.FormId,
+                        enunciado = questao.Enunciado,
+                        derivadaDeOpcao = questao.DerivadaDeOpcao,
+                        opcao1 = questao.Opcao1,
+                        opcao2 = questao.Opcao2,
+                        opcao3 = questao.Opcao3,
+                        opcao4 = questao.Opcao4,
+                        opcao5 = questao.Opcao5,
+                        opcao6 = questao.Opcao6,
+                        opcao7 = questao.Opcao7,
+                        opcao8 = questao.Opcao8,
+                        opcao9 = questao.Opcao9,
+                        opcao10 = questao.Opcao10
+                    }).ToListAsync();
+                foreach (var item in Questoes)
+                {
+                    item.derivadas = item.derivadaDeId is not null ? new List<QuestoesDTO>() : await ProjetoDbContext.Questoes
+                    .Select(s => new QuestoesDTO
+                    {
+                        id = s.Id,
+                        numero = s.Numero,
+                        type = s.Type,
+                        formId = s.FormId,
+                        enunciado = s.Enunciado,
+                        derivadaDeId = s.DerivadaDeId,
+                        derivadaDeOpcao = s.DerivadaDeOpcao,
+                        opcao1 = s.Opcao1,
+                        opcao2 = s.Opcao2,
+                        opcao3 = s.Opcao3,
+                        opcao4 = s.Opcao4,
+                        opcao5 = s.Opcao5,
+                        opcao6 = s.Opcao6,
+                        opcao7 = s.Opcao7,
+                        opcao8 = s.Opcao8,
+                        opcao9 = s.Opcao9,
+                        opcao10 = s.Opcao10
+                    })
+                    .Where(s => s.derivadaDeId == item.id)
+                    .ToListAsync();
+                }
+                if (Questoes.Count < 0) return NotFound();
+                else return Questoes;
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
 
         // Selecionar questões derivadas de outras questões por ID do formulário
         [HttpGet("questoes/{FormId}/derivada/{QuestaoId}")]
@@ -263,6 +332,7 @@ namespace backendcsharp.Controllers
                 Handlers.IdNegative(QuestaoId, "Id da questão inválido");
                 switch (Questao.type)
                 {
+                    case 9:
                     case 1:
                         ProjetoDbContext.Radioboxes.RemoveRange(ProjetoDbContext.Radioboxes.Where(s => s.QuestaoId == QuestaoId));
                         break;

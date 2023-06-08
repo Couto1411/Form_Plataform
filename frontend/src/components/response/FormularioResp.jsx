@@ -134,14 +134,14 @@ export default function FormularioResposta(){
     function showDerivada(questaoId,opcao){
         let opcoes = [1,2,3,4,5,6,7,8,9,10]
         document.getElementById(questaoId+'opcao'+opcao).style.display='block'
-        opcoes.filter(e=>e!=opcao).map(element=>{document.getElementById(questaoId+'opcao'+element).style.display='none'})
+        opcoes.filter(e=>e!==opcao).forEach(element=>{document.getElementById(questaoId+'opcao'+element).style.display='none'})
     }
     function renderizaDerivadas(questao){
         let opcoes = [1,2,3,4,5,6,7,8,9,10]
         return opcoes.map(element=> { 
             return(
                 <MDBListGroup id={questao.id+'opcao'+element} key={questao.id+'opcao'+element} style={{display: 'none'}} small>
-                    {questao.derivadas?.filter(s=>s.derivadaDeOpcao==element)?.length?renderizaQuestoes(questao.derivadas?.filter(s=>s.derivadaDeOpcao==element),true):null}
+                    {questao.derivadas?.filter(s=>s.derivadaDeOpcao===element)?.length?renderizaQuestoes(questao.derivadas?.filter(s=>s.derivadaDeOpcao===element),true):null}
                 </MDBListGroup>
             )
         })
@@ -161,7 +161,7 @@ export default function FormularioResposta(){
     async function sendResposta(){
         let respostas=[]
         let enviar=true
-        questoes?.map(element=>{
+        questoes?.forEach(element=>{
             if(!element.semQuestao){
                 switch (element.type) {
                     case 1:
@@ -215,7 +215,7 @@ export default function FormularioResposta(){
                                 id: element.id,
                                 radio: +questao.value
                             })
-                            element.derivadas?.filter(e=>e.derivadaDeOpcao==questao.value)?.map(item=>{
+                            element.derivadas?.filter(e=>e.derivadaDeOpcao==questao.value)?.forEach(item=>{
                                 switch (item.type) {
                                     case 1:
                                         let radio= document.querySelector(`input[name="radioNoLabel${item.id}"]:checked`)
@@ -259,6 +259,8 @@ export default function FormularioResposta(){
                                             document.getElementById(item.id).style.border='1px solid rgb(255, 43, 43)'
                                             enviar=false
                                         }
+                                        break
+                                    default:
                                         break
                                     }
                             })

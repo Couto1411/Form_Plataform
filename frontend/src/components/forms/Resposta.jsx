@@ -111,7 +111,7 @@ export default function Resposta(){
 
     return(
         <section>
-            {Sidebar('respostaDerivados',setMain)}
+            {sessionStorage.getItem("formDeId")?Sidebar('respostaDerivados',setMain):Sidebar('resposta',setMain)}
             {Navbar()}
 
             {makeSecao()}

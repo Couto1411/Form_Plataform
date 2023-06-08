@@ -28,7 +28,6 @@ export default function Sidebar(area, setSecao) {
                 <MDBListGroup className="rounded-0" id='sidebar'>
                     <MDBListGroupItem tag='a' action id='Forms' className='px-3 sidebarItem' onClick={e => { updateSelected(e.target.id); setSecao(1) }}>Forms</MDBListGroupItem>
                     <MDBListGroupItem tag='a' action id='Dashboard' className='px-3 sidebarItem' onClick={e => { updateSelected(e.target.id); setSecao(2) }}>Dashboard</MDBListGroupItem>
-                    <MDBListGroupItem tag='a' action id='VoltarForms' className='px-3 sidebarItem' onClick={e => { updateSelected(e.target.id) }}>...</MDBListGroupItem>
                 </MDBListGroup>
             )
         } else if (area === 'questoes') {

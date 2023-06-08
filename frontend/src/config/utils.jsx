@@ -32,6 +32,24 @@ export async function CarregaQuestoes(setQuestoes){
     })
 }
 
+export async function CarregaQuestoesUser(setQuestoes,navigate){
+    await axios.get(baseUrl+"/questoes/user/"+sessionStorage.getItem("userId"),{
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'bearer ' + sessionStorage.getItem("token")
+        }
+    })
+    .then((response)=>{
+        response.data.sort((a,b) => a.numero - b.numero);
+        setQuestoes(response.data)
+    })
+    .catch((error) => { 
+        if (error.response.status === 401) {
+            navigate('/login')
+            console.warn("Faça o login")
+        } else { console.log(error) }
+    })
+}
 
 export async function CarregaUsuario(setUser,navigate){
     await axios.get(baseUrl + "/users/" + sessionStorage.getItem("userId"), {
@@ -115,6 +133,22 @@ export async function CarregaRespostas(setRespostas,navigate){
             navigate('/login')
             console.warn("Faça o login")
         }else{ console.log(error);setRespostas([])}
+    })
+}
+
+export async function CarregaDashboard(setDatasets,setLabels,navigate,id,forms,questoes){
+    await axios.get(baseUrl+"/users/dashboard?formId="+id+"&&derivados="+forms+"&&questoes="+questoes,{
+        headers: {
+            'Content-Type' : 'application/json',
+            'Authorization': 'bearer ' + sessionStorage.getItem("token")
+        }
+    })
+    .then((response)=>{setDatasets(response.data.data);setLabels(response.data.labels)})
+    .catch((error) => {
+        if (error.response.status===401) {
+            navigate('/login')
+            console.warn("Faça o login")
+        }else{ console.log(error);setDatasets([])}
     })
 }
 

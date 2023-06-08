@@ -27,8 +27,6 @@ export default function Admin(){
     const [deletaUsuario, setDeletaUsuario] = useState(false);
     // Hook para setar o id do Usuário a ser deletado
     const [userIdToDelete, setUserIdToDelete] = useState(0);
-    // Seta para aparecer a seção de formulários
-    const [main, setMain] = useState(1)
     
     // Lista de usuários
     const [forms, setForms] = useState([]);

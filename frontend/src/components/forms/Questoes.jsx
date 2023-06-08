@@ -465,6 +465,7 @@ export default function Forms(props){
                     {props.questao.opcao10?
                     <MDBBtn onClick={e=>{handleNewTypeQuestion(10)}} className='opcao10 border-1 btn-secondary'><i className="edit fas fa-regular fa-plus fa-2x"></i></MDBBtn>
                     :null}</div>)
+            default: return(<></>)
         }
     })}</>)
 }

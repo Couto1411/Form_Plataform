@@ -14,7 +14,7 @@ public partial class FormularioDTO
 
     public virtual ICollection<EnviadoDTO> enviados { get; } = new List<EnviadoDTO>();
 
-    public virtual ICollection<QuestoesDTO> questoes { get; } = new List<QuestoesDTO>();
+    public virtual ICollection<QuestoesDTO> questoes { get; set; } = new List<QuestoesDTO>();
 
     public virtual FormularioDTO? formularioOrig { get; set; } = null!;
 

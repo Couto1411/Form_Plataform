@@ -53,6 +53,10 @@ export default function PaginaUsuario(){
         else{
             alert("Faça o login")
             navigate('/login')
+            sessionStorage.removeItem('token')
+            sessionStorage.removeItem('enviadoId')
+            sessionStorage.removeItem('formDeId')
+            sessionStorage.removeItem('formId')
         }
 
     }, []);
@@ -77,6 +81,10 @@ export default function PaginaUsuario(){
                 .catch((error) => {
                     if (error.response.status===401) {
                         navigate('/login')
+                        sessionStorage.removeItem('token')
+                        sessionStorage.removeItem('enviadoId')
+                        sessionStorage.removeItem('formDeId')
+                        sessionStorage.removeItem('formId')
                         alert("Faça o login")
                     }else{ console.log(error)}
                 })
@@ -101,6 +109,10 @@ export default function PaginaUsuario(){
                 .catch((error) => {
                     if (error.response.status===401) {
                         navigate('/login')
+                        sessionStorage.removeItem('token')
+                        sessionStorage.removeItem('enviadoId')
+                        sessionStorage.removeItem('formDeId')
+                        sessionStorage.removeItem('formId')
                         alert("Faça o login")
                     }else{ console.log(error)}
                 })
@@ -124,6 +136,10 @@ export default function PaginaUsuario(){
             .catch((error) => {
                 if (error.response.status===401) {
                     navigate('/login')
+                    sessionStorage.removeItem('token')
+                    sessionStorage.removeItem('enviadoId')
+                    sessionStorage.removeItem('formDeId')
+                    sessionStorage.removeItem('formId')
                     alert("Faça o login")
                 }else{ console.log(error)}
             })
@@ -140,6 +156,10 @@ export default function PaginaUsuario(){
             .catch((error) => {
                 if (error.response.status===401) {
                     navigate('/login')
+                    sessionStorage.removeItem('token')
+                    sessionStorage.removeItem('enviadoId')
+                    sessionStorage.removeItem('formDeId')
+                    sessionStorage.removeItem('formId')
                     alert("Faça o login")
                 }else{ console.log(error)}
             })
@@ -175,6 +195,10 @@ export default function PaginaUsuario(){
         .catch((error) => {
             if (error.response.status===401) {
                 navigate('/login')
+                sessionStorage.removeItem('token')
+                sessionStorage.removeItem('enviadoId')
+                sessionStorage.removeItem('formDeId')
+                sessionStorage.removeItem('formId')
                 alert("Faça o login")
             }else{ console.log(error)}
         })
@@ -191,7 +215,7 @@ export default function PaginaUsuario(){
             return(
                 <div key={element.id} className={forms.length>numero?'border-bottom':''}>
                     <MDBListGroupItem noBorders className='d-flex rounded-2 align-items-center'>
-                        {numero}. <Link className='zoom' to="/forms" onClick={e=>{sessionStorage.setItem("formId",element.id);sessionStorage.removeItem("formDeId")}}>{element.titulo} {element.dataEnviado?<i>({tempDate.toLocaleDateString('en-GB')})</i>:<></>}</Link>{element.derivados?.length?<i id={'icone'+element.id} aberto='F' onClick={e=>{toggleDerivados(element.id)}} className=" mx-2 fas fa-regular fa-angle-down"></i>:null}
+                        {numero}. <Link className='zoom' style={{}} to="/forms" onClick={e=>{sessionStorage.setItem("formId",element.id);sessionStorage.removeItem("formDeId")}}>{element.titulo} {element.dataEnviado?<i>({tempDate.toLocaleDateString('en-GB')})</i>:<></>}</Link>{element.derivados?.length?<i id={'icone'+element.id} aberto='F' onClick={e=>{toggleDerivados(element.id)}} className=" mx-2 fas fa-regular fa-angle-down"></i>:null}
                         
                         <i title='Adicionar novo envio de formulário' className="edit pt-1 ms-auto fas fa-light fa-plus" onClick={e=>{addDerivado(element)}}></i>
                         <i title='Editar Formulário' className="edit mx-2 pt-1 fas fa-pen-to-square" onClick={e=>{

@@ -64,6 +64,10 @@ export default function Dashboard(){
         else{
             alert("Faça o login")
             navigate('/login')
+            sessionStorage.removeItem('token')
+            sessionStorage.removeItem('enviadoId')
+            sessionStorage.removeItem('formDeId')
+            sessionStorage.removeItem('formId')
         }
 
     }, []);

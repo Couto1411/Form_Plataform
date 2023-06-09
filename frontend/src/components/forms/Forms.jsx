@@ -69,6 +69,10 @@ export default function Forms(){
         else{
             alert("Faça o login")
             navigate('/login')
+            sessionStorage.removeItem('token')
+            sessionStorage.removeItem('enviadoId')
+            sessionStorage.removeItem('formDeId')
+            sessionStorage.removeItem('formId')
         }
 
     }, []);
@@ -250,6 +254,10 @@ export default function Forms(){
             .catch((error) => {
                 if (error.response.status===401) {
                     navigate('/login')
+                    sessionStorage.removeItem('token')
+                    sessionStorage.removeItem('enviadoId')
+                    sessionStorage.removeItem('formDeId')
+                    sessionStorage.removeItem('formId')
                     alert("Faça o login")
                 }else{ console.log(error)}
             })
@@ -271,6 +279,10 @@ export default function Forms(){
         }).catch((error) => {
             if (error.response.status===401) {
                 navigate('/login')
+                sessionStorage.removeItem('token')
+                sessionStorage.removeItem('enviadoId')
+                sessionStorage.removeItem('formDeId')
+                sessionStorage.removeItem('formId')
                 alert("Faça o login")
             }else{ console.log(error)}
         })
@@ -297,6 +309,10 @@ export default function Forms(){
         .catch((error) => {
             if (error.response.status===401) {
                 navigate('/login')
+                sessionStorage.removeItem('token')
+                sessionStorage.removeItem('enviadoId')
+                sessionStorage.removeItem('formDeId')
+                sessionStorage.removeItem('formId')
                 alert("Faça o login")
             }else{ console.log(error)}
         })
@@ -433,14 +449,14 @@ export default function Forms(){
     function handleNewTypeQuestion(){
         setTypeQuestion(
             <MDBListGroupItem noBorders key={"typequestion"} className='shadow rounded-3 mb-3'>
-                <div className='d-flex justify-content-around align-items-center'>
-                    <div className='enunciado'>Tipo da Questão:</div>
-                    <MDBRadio onClick={e=>{novaQuestao.type=3}} inline name='tipoQuestao' label='Caixa de seleção'></MDBRadio>
-                    <MDBRadio onClick={e=>{novaQuestao.type=1}} inline name='tipoQuestao' label='Múltipla Escolha'></MDBRadio>
-                    <MDBRadio onClick={e=>{novaQuestao.type=2}} inline name='tipoQuestao' label='Aberta'></MDBRadio>
-                    <MDBRadio onClick={e=>{novaQuestao.type=4}} inline name='tipoQuestao' label='Descrição'></MDBRadio>
-                    <MDBRadio onClick={e=>{novaQuestao.type=9}} inline name='tipoQuestao' label='Funcional'></MDBRadio>
-                </div>
+                <div className='d-flex justify-content-around align-items-center'><div className='row w-100'>
+                    <div className='enunciado col-sm-2'>Tipo da Questão:</div>
+                    <div className='mx-2 mx-sm-0 col-sm-2 d-flex align-items-center'><MDBRadio  onClick={e=>{novaQuestao.type=3}} inline name='tipoQuestao' label='Caixa de seleção'></MDBRadio></div>
+                    <div className='mx-2 mx-sm-0 col-sm-2 d-flex align-items-center'><MDBRadio  onClick={e=>{novaQuestao.type=1}} inline name='tipoQuestao' label='Múltipla Escolha'></MDBRadio></div>
+                    <div className='mx-2 mx-sm-0 col-sm-2 d-flex align-items-center'><MDBRadio  onClick={e=>{novaQuestao.type=2}} inline name='tipoQuestao' label='Aberta'></MDBRadio></div>
+                    <div className='mx-2 mx-sm-0 col-sm-2 d-flex align-items-center'><MDBRadio  onClick={e=>{novaQuestao.type=4}} inline name='tipoQuestao' label='Descrição'></MDBRadio></div>
+                    <div className='mx-2 mx-sm-0 col-sm-2 d-flex align-items-center'><MDBRadio  onClick={e=>{novaQuestao.type=9}} inline name='tipoQuestao' label='Funcional'></MDBRadio></div>
+                </div></div>
                 <hr className='mt-1 mb-1'></hr>
                 <div className='d-flex'>
                     <MDBBtn onClick={e=>{setTypeQuestion(<></>)}} color='danger' className='ms-auto me-2'>Excluir</MDBBtn>
@@ -610,6 +626,10 @@ export default function Forms(){
             .catch((error) => {
                 if (error.response.status===401) {
                     navigate('/login')
+                    sessionStorage.removeItem('token')
+                    sessionStorage.removeItem('enviadoId')
+                    sessionStorage.removeItem('formDeId')
+                    sessionStorage.removeItem('formId')
                     alert("Faça o login")
                 }else{ console.log(error)}
             })
@@ -648,6 +668,10 @@ export default function Forms(){
         .catch((error) => {
             if (error.response.status===401) {
                 navigate('/login')
+                sessionStorage.removeItem('token')
+                sessionStorage.removeItem('enviadoId')
+                sessionStorage.removeItem('formDeId')
+                sessionStorage.removeItem('formId')
                 alert("Faça o login")
             }else if(error.response.status===402){
                 setRespondidoDerivado(true)
@@ -670,6 +694,10 @@ export default function Forms(){
         .catch((error) => {
             if (error.response.status===401) {
                 navigate('/login')
+                sessionStorage.removeItem('token')
+                sessionStorage.removeItem('enviadoId')
+                sessionStorage.removeItem('formDeId')
+                sessionStorage.removeItem('formId')
                 alert("Faça o login")
             }else{ console.log(error)}
         })
@@ -691,6 +719,10 @@ export default function Forms(){
         .catch((error) => {
             if (error.response.status===401) {
                 navigate('/login')
+                sessionStorage.removeItem('token')
+                sessionStorage.removeItem('enviadoId')
+                sessionStorage.removeItem('formDeId')
+                sessionStorage.removeItem('formId')
                 alert("Faça o login")
             }else{ console.log(error)}
         })
@@ -775,7 +807,7 @@ export default function Forms(){
                             </MDBInputGroup>
                         </div> {/* Data Colação */}
                     </div>
-                    <div className='d-flex'>
+                    <div className='d-flex mt-2 mt-md-0'>
                         <MDBBtn onClick={e=>{setNewContato(<></>)}} color='danger' className='ms-auto me-2'>Excluir</MDBBtn>
                         <MDBBtn onClick={e=>{addContato()}}>Salvar</MDBBtn>
                     </div>
@@ -834,6 +866,10 @@ export default function Forms(){
         .catch((error) => {
             if (error.response.status===401) {
                 navigate('/login')
+                sessionStorage.removeItem('token')
+                sessionStorage.removeItem('enviadoId')
+                sessionStorage.removeItem('formDeId')
+                sessionStorage.removeItem('formId')
                 alert("Faça o login")
             }else if(error.response.status===402){alert("Usuário não possui uma senha de aplicativo de gmail. Acesse a página do usuário para saber mais.")}
             else{ console.log(error)}
@@ -849,6 +885,10 @@ export default function Forms(){
         .catch((error) => {
             if (error.response.status===401) {
                 navigate('/login')
+                sessionStorage.removeItem('token')
+                sessionStorage.removeItem('enviadoId')
+                sessionStorage.removeItem('formDeId')
+                sessionStorage.removeItem('formId')
                 alert("Faça o login")
             }else if(error.response.status===402){alert("Usuário não possui uma senha de aplicativo de gmail. Acesse a página do usuário para saber mais.")}
             else{ console.log(error)}
@@ -861,33 +901,42 @@ export default function Forms(){
             document.getElementById('cancelmodalimports').disabled=true
             var i,f;
             for (i = 0, f = selectedFiles[i]; i !== selectedFiles.length; ++i) {
-                let reader = new FileReader();
-                reader.readAsArrayBuffer(f);
-                reader.onload = (e) => {
-                    let binarystr = new Uint8Array(e.target.result);
-                    let wb = XLSX.read(binarystr, {cellDates:true});
-                    let wsname = wb.SheetNames[0];
-                    let data = XLSX.utils.sheet_to_json(wb.Sheets[wsname]);
-                    let json = JSON.stringify(data)
-                    json = json.replace(/":\s*[^"0-9.]*([0-9.Z]+)/g, '":"$1"');
-                    json = JSON.parse(json)
-                    axios.post(baseUrl+"/users/"+sessionStorage.getItem("userId")+"/forms/"+sessionStorage.getItem("formId")+"/cefetModel",json,{
-                        headers: {
-                            'Authorization': 'bearer ' + sessionStorage.getItem("token")
-                        }
-                    })
-                    .then(responsta=>{
-                        document.getElementById('cancelmodalimports').disabled=false
-                        CarregaEnvios(setContatos,setContatosDB,navigate)
-                        CarregaCursosUser(setCursos,navigate)
-                        setImportModal(false)
-                    })
-                    .catch((error) => {
-                        if (error.response.status===401) {
-                            navigate('/login')
-                            alert("Faça o login")
-                        }else{ console.log(error)}
-                    })
+                if(f.name.substr(f.name.length-5,5).toLowerCase()==='.xlsx'){
+                    let reader = new FileReader();
+                    reader.readAsArrayBuffer(f);
+                    reader.onload = (e) => {
+                        let binarystr = new Uint8Array(e.target.result);
+                        let wb = XLSX.read(binarystr, {cellDates:true});
+                        let wsname = wb.SheetNames[0];
+                        let data = XLSX.utils.sheet_to_json(wb.Sheets[wsname]);
+                        let json = JSON.stringify(data)
+                        json = json.replace(/":\s*[^"0-9.]*([0-9.Z]+)/g, '":"$1"');
+                        json = JSON.parse(json)
+                        axios.post(baseUrl+"/users/"+sessionStorage.getItem("userId")+"/forms/"+sessionStorage.getItem("formId")+"/cefetModel",json,{
+                            headers: {
+                                'Authorization': 'bearer ' + sessionStorage.getItem("token")
+                            }
+                        })
+                        .then(responsta=>{
+                            document.getElementById('cancelmodalimports').disabled=false
+                            CarregaEnvios(setContatos,setContatosDB,navigate)
+                            CarregaCursosUser(setCursos,navigate)
+                            setImportModal(false)
+                        })
+                        .catch((error) => {
+                            if (error.response.status===401) {
+                                navigate('/login')
+                                sessionStorage.removeItem('token')
+                                sessionStorage.removeItem('enviadoId')
+                                sessionStorage.removeItem('formDeId')
+                                sessionStorage.removeItem('formId')
+                                alert("Faça o login")
+                            }else{ console.log(error)}
+                        })
+                    }
+                }else{
+                    document.getElementById('formFile').classList.add("is-invalid")
+                    break;
                 }
             }
         }else{
@@ -929,7 +978,7 @@ export default function Forms(){
             <MDBModalDialog centered>
                 <MDBModalContent>
                     <MDBModalHeader className='py-2'>
-                        Importar envios de arquivo (csv, xsl, xslx)
+                        Importar envios de arquivo (xslx)
                     </MDBModalHeader>
                     <MDBModalBody>
                         <MDBFile label='Insira seu arquivo' size='lg' id='formFile' />

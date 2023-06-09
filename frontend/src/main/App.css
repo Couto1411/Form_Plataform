@@ -21,6 +21,14 @@ main{
 
 .zoom{
     transition:font-size .2s;
+    display: block;
+    max-width: 70em;
+    overflow:auto;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+.zoom::-webkit-scrollbar {
+    display: none;
 }
 .zoom:hover{
     font-size: 1.2em;

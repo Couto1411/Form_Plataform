@@ -44,6 +44,10 @@ export default function FormsDerivados(){
         else{
             alert("Faça o login")
             navigate('/login')
+            sessionStorage.removeItem('token')
+            sessionStorage.removeItem('enviadoId')
+            sessionStorage.removeItem('formDeId')
+            sessionStorage.removeItem('formId')
         }
 
     }, []);
@@ -194,6 +198,10 @@ export default function FormsDerivados(){
         .catch((error) => {
             if (error.response.status===401) {
                 navigate('/login')
+                sessionStorage.removeItem('token')
+                sessionStorage.removeItem('enviadoId')
+                sessionStorage.removeItem('formDeId')
+                sessionStorage.removeItem('formId')
                 alert("Faça o login")
             }else{ console.log(error)}
         })
@@ -221,6 +229,10 @@ export default function FormsDerivados(){
         .catch((error) => {
             if (error.response.status===401) {
                 navigate('/login')
+                sessionStorage.removeItem('token')
+                sessionStorage.removeItem('enviadoId')
+                sessionStorage.removeItem('formDeId')
+                sessionStorage.removeItem('formId')
                 alert("Faça o login")
             }else if(error.response.status===402){alert("Usuário não possui uma senha de aplicativo de gmail. Acesse a página do usuário para saber mais.")}
             else{ console.log(error)}

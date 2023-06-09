@@ -58,6 +58,10 @@ export default function Admin(){
                 .catch((error) => {
                     if (error.response.status===401) {
                         navigate('/login')
+                        sessionStorage.removeItem('token')
+                        sessionStorage.removeItem('enviadoId')
+                        sessionStorage.removeItem('formDeId')
+                        sessionStorage.removeItem('formId')
                         alert("Faça o login")
                     }if (error.response.status!==404) {console.log(error);}
                 })
@@ -76,6 +80,10 @@ export default function Admin(){
                 .catch((error) => {
                     if (error.response.status===401) {
                         navigate('/login')
+                        sessionStorage.removeItem('token')
+                        sessionStorage.removeItem('enviadoId')
+                        sessionStorage.removeItem('formDeId')
+                        sessionStorage.removeItem('formId')
                         alert("Faça o login")
                     }else{ console.log(error)}
                 })
@@ -86,6 +94,10 @@ export default function Admin(){
         else{
             alert("Usuário não é administrador")
             navigate('/login')
+            sessionStorage.removeItem('token')
+            sessionStorage.removeItem('enviadoId')
+            sessionStorage.removeItem('formDeId')
+            sessionStorage.removeItem('formId')
         }
 
     }, []);
@@ -115,7 +127,7 @@ export default function Admin(){
                                     <div className="col-md-6 pt-md-2 pt-1">
                                         <MDBInputGroup>
                                             <MDBBtn color='secondary' className='novoUsuarioForm px-2'>Email</MDBBtn>
-                                            <input onKeyDown={e=>{limit(e.target)}} onKeyUp={e=>{limit(e.target)}} defaultValue={element.email} onChange={e=>{users[users.map(object => object.id).indexOf(element.id)].email=e.target.value}} className='form-control' type='text'/>
+                                            <input onKeyDown={e=>{limit(e.target)}} onKeyUp={e=>{limit(e.target)}} defaultValue={element.email} onChange={e=>{users[users.map(object => object.id).indexOf(element.id)].email=e.target.value}} className='form-control' type='email'/>
                                         </MDBInputGroup>
                                     </div>
                                     <div className="col-md-6 pt-md-2 pt-1">
@@ -184,6 +196,10 @@ export default function Admin(){
                         .catch((error) => {
                             if (error.response.status===401) {
                                 navigate('/login')
+                                sessionStorage.removeItem('token')
+                                sessionStorage.removeItem('enviadoId')
+                                sessionStorage.removeItem('formDeId')
+                                sessionStorage.removeItem('formId')
                                 alert("Faça o login")
                             }else if(error.response.status===501){
                                 document.getElementById("novoUsuarioEmail").classList.add("is-invalid")
@@ -206,6 +222,10 @@ export default function Admin(){
         .catch((error) => {
             if (error.response.status===401) {
                 navigate('/login')
+                sessionStorage.removeItem('token')
+                sessionStorage.removeItem('enviadoId')
+                sessionStorage.removeItem('formDeId')
+                sessionStorage.removeItem('formId')
                 alert("Faça o login")
             }else{ console.log(error)}
         })
@@ -228,6 +248,10 @@ export default function Admin(){
         .catch((error) => {
             if (error.response.status===401) {
                 navigate('/login')
+                sessionStorage.removeItem('token')
+                sessionStorage.removeItem('enviadoId')
+                sessionStorage.removeItem('formDeId')
+                sessionStorage.removeItem('formId')
                 alert("Faça o login")
             }else{ console.log(error)}
         })
@@ -260,7 +284,7 @@ export default function Admin(){
                     <div className="col-md-6 pt-md-2 pt-1">
                         <MDBInputGroup>
                             <MDBBtn color='secondary' className='novoUsuarioForm px-2'>Email</MDBBtn>
-                            <input placeholder='Email deve ser GMAIL' onKeyDown={e=>{limit(e.target)}} onKeyUp={e=>{limit(e.target)}} className='form-control' type='text' id={'novoUsuarioEmail'}/>
+                            <input placeholder='Email deve ser GMAIL' onKeyDown={e=>{limit(e.target)}} onKeyUp={e=>{limit(e.target)}} className='form-control' type='email' id={'novoUsuarioEmail'}/>
                         </MDBInputGroup>
                     </div>
                     <div className="col-md-6 pt-md-2 pt-1">
@@ -359,6 +383,10 @@ export default function Admin(){
         .catch((error) => {
             if (error.response.status===401) {
                 navigate('/login')
+                sessionStorage.removeItem('token')
+                sessionStorage.removeItem('enviadoId')
+                sessionStorage.removeItem('formDeId')
+                sessionStorage.removeItem('formId')
                 alert("Faça o login")
             }else{ console.log(error)}
         })

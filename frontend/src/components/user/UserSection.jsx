@@ -56,6 +56,10 @@ export default function UserSection() {
                         .catch((error) => {
                             if (error.response.status === 401) {
                                 navigate('/login')
+                                sessionStorage.removeItem('token')
+                                sessionStorage.removeItem('enviadoId')
+                                sessionStorage.removeItem('formDeId')
+                                sessionStorage.removeItem('formId')
                                 alert("Faça o login")
                             } else { console.log(error) }
                         })
@@ -83,6 +87,10 @@ export default function UserSection() {
                     .catch((error) => {
                         if (error.response.status === 401) {
                             navigate('/login')
+                            sessionStorage.removeItem('token')
+                            sessionStorage.removeItem('enviadoId')
+                            sessionStorage.removeItem('formDeId')
+                            sessionStorage.removeItem('formId')
                             alert("Faça o login")
                         } else console.log(error)
                     })
@@ -102,6 +110,10 @@ export default function UserSection() {
                 .catch((error) => {
                     if (error.response.status === 401) {
                         navigate('/login')
+                        sessionStorage.removeItem('token')
+                        sessionStorage.removeItem('enviadoId')
+                        sessionStorage.removeItem('formDeId')
+                        sessionStorage.removeItem('formId')
                         alert("Faça o login")
                     } else console.log(error)
                 })
@@ -117,6 +129,10 @@ export default function UserSection() {
                 .catch((error) => {
                     if (error.response.status === 401) {
                         navigate('/login')
+                        sessionStorage.removeItem('token')
+                        sessionStorage.removeItem('enviadoId')
+                        sessionStorage.removeItem('formDeId')
+                        sessionStorage.removeItem('formId')
                         alert("Faça o login")
                     } else console.log(error)
                 })
@@ -136,6 +152,10 @@ export default function UserSection() {
                 .catch((error) => {
                     if (error.response.status === 401) {
                         navigate('/login')
+                        sessionStorage.removeItem('token')
+                        sessionStorage.removeItem('enviadoId')
+                        sessionStorage.removeItem('formDeId')
+                        sessionStorage.removeItem('formId')
                         alert("Faça o login")
                     } else console.log(error)
                 })
@@ -152,6 +172,10 @@ export default function UserSection() {
                 .catch((error) => {
                     if (error.response.status === 401) {
                         navigate('/login')
+                        sessionStorage.removeItem('token')
+                        sessionStorage.removeItem('enviadoId')
+                        sessionStorage.removeItem('formDeId')
+                        sessionStorage.removeItem('formId')
                         alert("Faça o login")
                     } else console.log(error)
                 })
@@ -319,7 +343,12 @@ export default function UserSection() {
                 {/* Botões de perfil administrador e logout */}
                 <div className="d-flex mt-2">
                     <div className="ms-auto">{admin()}</div>
-                    <MDBBtn color="danger" onClick={e => { navigate('/login') }}>Logout</MDBBtn>
+                    <MDBBtn color="danger" onClick={e => { 
+                        navigate('/login')
+                        sessionStorage.removeItem('token')
+                        sessionStorage.removeItem('enviadoId')
+                        sessionStorage.removeItem('formDeId')
+                        sessionStorage.removeItem('formId') }}>Logout</MDBBtn>
                 </div>
 
             </main>

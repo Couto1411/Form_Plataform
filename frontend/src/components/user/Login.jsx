@@ -23,7 +23,7 @@ export default function Login (props) {
             navigate('/user')
         })
         .catch((error) => {
-            if(error.response.status){
+            if(error.response){
                 if(error.response.status===401){
                     let v = document.getElementById("Senha");
                     v.classList.add("is-invalid");

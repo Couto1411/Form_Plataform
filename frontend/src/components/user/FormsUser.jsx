@@ -51,7 +51,7 @@ export default function PaginaUsuario(){
             CarregaForms(setforms, navigate)
         }
         else{
-            console.warn("Faça o login")
+            alert("Faça o login")
             navigate('/login')
         }
 
@@ -77,7 +77,7 @@ export default function PaginaUsuario(){
                 .catch((error) => {
                     if (error.response.status===401) {
                         navigate('/login')
-                        console.warn("Faça o login")
+                        alert("Faça o login")
                     }else{ console.log(error)}
                 })
             }
@@ -101,7 +101,7 @@ export default function PaginaUsuario(){
                 .catch((error) => {
                     if (error.response.status===401) {
                         navigate('/login')
-                        console.warn("Faça o login")
+                        alert("Faça o login")
                     }else{ console.log(error)}
                 })
             }
@@ -124,7 +124,7 @@ export default function PaginaUsuario(){
             .catch((error) => {
                 if (error.response.status===401) {
                     navigate('/login')
-                    console.warn("Faça o login")
+                    alert("Faça o login")
                 }else{ console.log(error)}
             })
         }else{
@@ -140,7 +140,7 @@ export default function PaginaUsuario(){
             .catch((error) => {
                 if (error.response.status===401) {
                     navigate('/login')
-                    console.warn("Faça o login")
+                    alert("Faça o login")
                 }else{ console.log(error)}
             })
         }
@@ -175,7 +175,7 @@ export default function PaginaUsuario(){
         .catch((error) => {
             if (error.response.status===401) {
                 navigate('/login')
-                console.warn("Faça o login")
+                alert("Faça o login")
             }else{ console.log(error)}
         })
         novoDerivado.id = 'novoderivado'+count

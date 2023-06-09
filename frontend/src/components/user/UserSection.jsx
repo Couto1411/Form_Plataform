@@ -56,7 +56,7 @@ export default function UserSection() {
                         .catch((error) => {
                             if (error.response.status === 401) {
                                 navigate('/login')
-                                console.warn("Faça o login")
+                                alert("Faça o login")
                             } else { console.log(error) }
                         })
                 } else appPassword.classList.add('is-invalid')
@@ -83,7 +83,7 @@ export default function UserSection() {
                     .catch((error) => {
                         if (error.response.status === 401) {
                             navigate('/login')
-                            console.warn("Faça o login")
+                            alert("Faça o login")
                         } else console.log(error)
                     })
             }
@@ -102,7 +102,7 @@ export default function UserSection() {
                 .catch((error) => {
                     if (error.response.status === 401) {
                         navigate('/login')
-                        console.warn("Faça o login")
+                        alert("Faça o login")
                     } else console.log(error)
                 })
         }
@@ -117,7 +117,7 @@ export default function UserSection() {
                 .catch((error) => {
                     if (error.response.status === 401) {
                         navigate('/login')
-                        console.warn("Faça o login")
+                        alert("Faça o login")
                     } else console.log(error)
                 })
         }
@@ -136,7 +136,7 @@ export default function UserSection() {
                 .catch((error) => {
                     if (error.response.status === 401) {
                         navigate('/login')
-                        console.warn("Faça o login")
+                        alert("Faça o login")
                     } else console.log(error)
                 })
         }
@@ -152,7 +152,7 @@ export default function UserSection() {
                 .catch((error) => {
                     if (error.response.status === 401) {
                         navigate('/login')
-                        console.warn("Faça o login")
+                        alert("Faça o login")
                     } else console.log(error)
                 })
         }
@@ -260,7 +260,7 @@ export default function UserSection() {
                                     textAfter={<div onClick={e => { deleteCursos(true, item) }}><i className="trashcan pt-1 fas fa-trash-can"></i></div>}>
                                     <input
                                         onKeyDown={e => { limit(e.target, 250) }} onKeyUp={e => { limit(e.target, 250) }}
-                                        id={"cursonome" + item.id} defaultValue={item.curso} className='form-control' type='text' />
+                                        id={"cursonome" + item.id} defaultValue={item?.curso} className='form-control' type='text' />
                                 </MDBInputGroup>)
                             }
                         })}
@@ -289,7 +289,7 @@ export default function UserSection() {
                                     textAfter={<div onClick={e => { deleteCursos(false, item) }}><i className="trashcan pt-1 fas fa-trash-can"></i></div>}>
                                     <input
                                         onKeyDown={e => { limit(e.target, 250) }} onKeyUp={e => { limit(e.target, 250) }}
-                                        id={"tipocursonome" + item.id} defaultValue={item.tipoCurso} className='form-control' type='text' />
+                                        id={"tipocursonome" + item.id} defaultValue={item?.tipoCurso} className='form-control' type='text' />
                                 </MDBInputGroup>)
                             }
                         })}

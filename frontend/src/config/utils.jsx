@@ -14,8 +14,8 @@ export async function CarregaForms(setforms,navigate){
     .catch((error) => {
         if (error.response.status===401) {
             navigate('/login')
-            console.warn("Faça o login")
-        }else{ console.log(error)}
+            alert("Faça o login")
+        }else if (error.response.status!==404){ console.log(error)}
     })
 }
 
@@ -28,7 +28,8 @@ export async function CarregaQuestoes(setQuestoes){
         setQuestoes(response.data)
     })
     .catch((error) => { 
-        console.log(error);setQuestoes([])
+        setQuestoes([])
+        if (error.response.status!==404) {console.log(error);}
     })
 }
 
@@ -46,8 +47,8 @@ export async function CarregaQuestoesUser(setQuestoes,navigate){
     .catch((error) => { 
         if (error.response.status === 401) {
             navigate('/login')
-            console.warn("Faça o login")
-        } else { console.log(error) }
+            alert("Faça o login")
+        } else if (error.response.status!==404){ console.log(error)}
     })
 }
 
@@ -64,8 +65,8 @@ export async function CarregaUsuario(setUser,navigate){
     .catch((error) => {
         if (error.response.status === 401) {
             navigate('/login')
-            console.warn("Faça o login")
-        } else { console.log(error) }
+            alert("Faça o login")
+        } else if (error.response.status!==404){ console.log(error)}
     })
 }
 
@@ -83,8 +84,8 @@ export async function CarregaCursos(setCursos,setTipoCursos,navigate){
     .catch((error) => {
         if (error.response.status === 401) {
             navigate('/login')
-            console.warn("Faça o login")
-        } else { console.log(error) }
+            alert("Faça o login")
+        } else if (error.response.status!==404){ console.log(error)}
     })
 }
 
@@ -99,8 +100,8 @@ export async function CarregaCursosUser(setCursos,navigate){
     .catch((error) => {
         if (error.response.status===401) {
             navigate('/login')
-            console.warn("Faça o login")
-        }else{ console.log(error)}
+            alert("Faça o login")
+        }else if (error.response.status!==404){ console.log(error)}
     })
 }
 
@@ -115,8 +116,9 @@ export async function CarregaEnvios(setContatos,setContatosDB,navigate){
     .catch((error) => {
         if (error.response.status===401) {
             navigate('/login')
-            console.warn("Faça o login")
-        }else{ console.log(error);setContatos([])}
+            alert("Faça o login")
+        }else if (error.response.status===404){setContatos([])}
+        else { console.log(error);setContatos([])}
     }) 
 }
 
@@ -131,8 +133,9 @@ export async function CarregaRespostas(setRespostas,navigate){
     .catch((error) => {
         if (error.response.status===401) {
             navigate('/login')
-            console.warn("Faça o login")
-        }else{ console.log(error);setRespostas([])}
+            alert("Faça o login")
+        }else if (error.response.status===404){setRespostas([])}
+        else{ console.log(error);setRespostas([])}
     })
 }
 
@@ -147,8 +150,9 @@ export async function CarregaDashboard(setDatasets,setLabels,navigate,id,forms,q
     .catch((error) => {
         if (error.response.status===401) {
             navigate('/login')
-            console.warn("Faça o login")
-        }else{ console.log(error);setDatasets([])}
+            alert("Faça o login")
+        }else if (error.response.status===404){setDatasets([])}
+        else{ console.log(error);setDatasets([])}
     })
 }
 

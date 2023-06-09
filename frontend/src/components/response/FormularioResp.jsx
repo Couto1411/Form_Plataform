@@ -21,7 +21,9 @@ export default function FormularioResposta(){
     useEffect(() => {
         async function CarregaQuestoes(){
             let res = await axios.get(baseUrl+"/questoes/"+formId)
-            .catch((error) => {console.log(error)})
+            .catch((error) => {
+                if (error.response.status!==404) {console.log(error)}
+            })
             res.data.sort((a,b) => a.numero - b.numero);
             setQuestoes(res.data)
         }

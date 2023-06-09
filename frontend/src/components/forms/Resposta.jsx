@@ -29,7 +29,7 @@ export default function Resposta(){
             carregaResposta()
         }
         else{
-            console.warn("Faça o login")
+            alert("Faça o login")
             navigate('/login')
         }
 

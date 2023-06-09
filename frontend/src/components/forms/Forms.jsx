@@ -67,7 +67,7 @@ export default function Forms(){
             CarregaRespostas(setRespostas,navigate)
         }
         else{
-            console.warn("Faça o login")
+            alert("Faça o login")
             navigate('/login')
         }
 
@@ -250,7 +250,7 @@ export default function Forms(){
             .catch((error) => {
                 if (error.response.status===401) {
                     navigate('/login')
-                    console.warn("Faça o login")
+                    alert("Faça o login")
                 }else{ console.log(error)}
             })
         }else{
@@ -271,7 +271,7 @@ export default function Forms(){
         }).catch((error) => {
             if (error.response.status===401) {
                 navigate('/login')
-                console.warn("Faça o login")
+                alert("Faça o login")
             }else{ console.log(error)}
         })
     }
@@ -297,7 +297,7 @@ export default function Forms(){
         .catch((error) => {
             if (error.response.status===401) {
                 navigate('/login')
-                console.warn("Faça o login")
+                alert("Faça o login")
             }else{ console.log(error)}
         })
     }
@@ -610,7 +610,7 @@ export default function Forms(){
             .catch((error) => {
                 if (error.response.status===401) {
                     navigate('/login')
-                    console.warn("Faça o login")
+                    alert("Faça o login")
                 }else{ console.log(error)}
             })
         }else{
@@ -648,7 +648,7 @@ export default function Forms(){
         .catch((error) => {
             if (error.response.status===401) {
                 navigate('/login')
-                console.warn("Faça o login")
+                alert("Faça o login")
             }else if(error.response.status===402){
                 setRespondidoDerivado(true)
             }
@@ -670,7 +670,7 @@ export default function Forms(){
         .catch((error) => {
             if (error.response.status===401) {
                 navigate('/login')
-                console.warn("Faça o login")
+                alert("Faça o login")
             }else{ console.log(error)}
         })
     }
@@ -691,7 +691,7 @@ export default function Forms(){
         .catch((error) => {
             if (error.response.status===401) {
                 navigate('/login')
-                console.warn("Faça o login")
+                alert("Faça o login")
             }else{ console.log(error)}
         })
     }
@@ -834,7 +834,7 @@ export default function Forms(){
         .catch((error) => {
             if (error.response.status===401) {
                 navigate('/login')
-                console.warn("Faça o login")
+                alert("Faça o login")
             }else if(error.response.status===402){alert("Usuário não possui uma senha de aplicativo de gmail. Acesse a página do usuário para saber mais.")}
             else{ console.log(error)}
         })
@@ -849,7 +849,7 @@ export default function Forms(){
         .catch((error) => {
             if (error.response.status===401) {
                 navigate('/login')
-                console.warn("Faça o login")
+                alert("Faça o login")
             }else if(error.response.status===402){alert("Usuário não possui uma senha de aplicativo de gmail. Acesse a página do usuário para saber mais.")}
             else{ console.log(error)}
         })
@@ -885,7 +885,7 @@ export default function Forms(){
                     .catch((error) => {
                         if (error.response.status===401) {
                             navigate('/login')
-                            console.warn("Faça o login")
+                            alert("Faça o login")
                         }else{ console.log(error)}
                     })
                 }

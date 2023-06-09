@@ -62,7 +62,7 @@ export default function Dashboard(){
             CarregaQuestoesUser(setQuestoes,navigate)
         }
         else{
-            console.warn("Faça o login")
+            alert("Faça o login")
             navigate('/login')
         }
 

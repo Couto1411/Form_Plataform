@@ -5,6 +5,8 @@ import Title from '../template/Title'
 import Navbar from '../template/Navbar'
 import Sidebar from '../template/Sidebar'
 import UserSection from './UserSection'
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
 import axios from "axios"
 import baseUrl from "../../config/api"
 import {useNavigate} from 'react-router-dom'
@@ -35,9 +37,11 @@ export default function Admin(){
     // Hook para setar o id do Formulário a ser deletado
     const [formIdToDelete, setFormrIdToDelete] = useState(0);
 
-
     // Seta qual secao aparece, usuários ou formulários
     const [secao, setsecao] = useState(1)
+
+    // Seta a aparição dos warnings;
+    const [warning, setWarning] = useState(false);
 
     useEffect(() => {
         if (sessionStorage.getItem("token")){
@@ -54,8 +58,8 @@ export default function Admin(){
                 .catch((error) => {
                     if (error.response.status===401) {
                         navigate('/login')
-                        console.warn("Faça o login")
-                    }else{ console.log(error)}
+                        alert("Faça o login")
+                    }if (error.response.status!==404) {console.log(error);}
                 })
             }
         
@@ -72,7 +76,7 @@ export default function Admin(){
                 .catch((error) => {
                     if (error.response.status===401) {
                         navigate('/login')
-                        console.warn("Faça o login")
+                        alert("Faça o login")
                     }else{ console.log(error)}
                 })
             }
@@ -80,7 +84,7 @@ export default function Admin(){
             CarregaFormularios()
         }
         else{
-            console.warn("Usuário não é administrador")
+            alert("Usuário não é administrador")
             navigate('/login')
         }
 
@@ -129,8 +133,8 @@ export default function Admin(){
                                     <div className="col-md-6 pt-md-2 pt-1">
                                         <MDBInputGroup>
                                             <MDBBtn color='secondary' className='admin novoUsuarioForm px-2'>Admin</MDBBtn>
-                                            <MDBRadio defaultChecked className='mt-2' id={'admintrue'+element.id} onClick={e=>{users[users.map(object => object.id).indexOf(element.id)].admin=true}} inline name={'Admin'+element.id} label={<div className='minfont'>Sim</div>}></MDBRadio>
-                                            <MDBRadio defaultChecked className='mt-2' id={'adminfalse'+element.id} onClick={e=>{users[users.map(object => object.id).indexOf(element.id)].admin=false}} inline name={'Admin'+element.id} label={<div className='minfont'>Não</div>}></MDBRadio>
+                                            <MDBRadio defaultChecked className='mt-2' id={'admintrue'+element.id} onClick={e=>{users[users.map(object => object.id).indexOf(element.id)].admin=true}} inline name={'Admin'+element.id} label={<div className='pt-1'>Sim</div>}></MDBRadio>
+                                            <MDBRadio defaultChecked className='mt-2' id={'adminfalse'+element.id} onClick={e=>{users[users.map(object => object.id).indexOf(element.id)].admin=false}} inline name={'Admin'+element.id} label={<div className='pt-1'>Não</div>}></MDBRadio>
                                         </MDBInputGroup>
                                     </div>
                                     <MDBInputGroup className='col-md-12 pt-md-2 pt-sm-1' 
@@ -180,9 +184,10 @@ export default function Admin(){
                         .catch((error) => {
                             if (error.response.status===401) {
                                 navigate('/login')
-                                console.warn("Faça o login")
+                                alert("Faça o login")
                             }else if(error.response.status===501){
                                 document.getElementById("novoUsuarioEmail").classList.add("is-invalid")
+                                setWarning(true);
                             }else{ console.log(error)}
                         })
                     }else document.getElementById("novoUsuarioSenha").classList.add("is-invalid")
@@ -201,7 +206,7 @@ export default function Admin(){
         .catch((error) => {
             if (error.response.status===401) {
                 navigate('/login')
-                console.warn("Faça o login")
+                alert("Faça o login")
             }else{ console.log(error)}
         })
         document.getElementById("userName"+id).disabled=true
@@ -223,7 +228,7 @@ export default function Admin(){
         .catch((error) => {
             if (error.response.status===401) {
                 navigate('/login')
-                console.warn("Faça o login")
+                alert("Faça o login")
             }else{ console.log(error)}
         })
         setDeletaUsuario(false)
@@ -273,8 +278,8 @@ export default function Admin(){
                     <div className="col-md-6 pt-md-2 pt-1">
                         <MDBInputGroup>
                             <MDBBtn color='secondary' className='admin novoUsuarioForm px-2'>Admin</MDBBtn>
-                            <MDBRadio value={true} name='adminNovo' className='mt-2' id={'admintruenovo'} label={<div className='minfont'>Sim</div>}></MDBRadio>
-                            <MDBRadio value={false} name='adminNovo' className='mt-2' id={'adminfalsenovo'} label={<div className='minfont'>Não</div>} defaultChecked></MDBRadio>
+                            <MDBRadio value={true} name='adminNovo' className='mt-2' id={'admintruenovo'} label={<div className='pt-1'>Sim</div>}></MDBRadio>
+                            <MDBRadio value={false} name='adminNovo' className='mt-2' id={'adminfalsenovo'} label={<div className='pt-1'>Não</div>} defaultChecked></MDBRadio>
                         </MDBInputGroup>
                     </div>
                     <MDBInputGroup className='col-md-12 pt-md-2 pt-sm-1' 
@@ -317,6 +322,11 @@ export default function Admin(){
                 </MDBModalContent>
             </MDBModalDialog>
         </MDBModal>
+        <Snackbar anchorOrigin={{ vertical: 'top', horizontal: 'center' }} open={warning}>
+            <MuiAlert severity='error' elevation={6} variant="filled" onClose={()=>{setWarning(false)}} sx={{ width: '100%' }}>
+                Email deve ser do tipo GMAIL.
+            </MuiAlert>
+        </Snackbar>
     </main>
     // Usuários
 
@@ -349,7 +359,7 @@ export default function Admin(){
         .catch((error) => {
             if (error.response.status===401) {
                 navigate('/login')
-                console.warn("Faça o login")
+                alert("Faça o login")
             }else{ console.log(error)}
         })
         setDeletaFormulario(false)

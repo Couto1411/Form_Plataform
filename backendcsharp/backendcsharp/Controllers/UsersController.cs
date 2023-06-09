@@ -55,7 +55,7 @@ namespace backendcsharp.Controllers
                             admin = s.Admin,
                             universidade = s.Universidade
                         }
-                    ).ToListAsync();
+                    ).Where(x=>x.id!=1).ToListAsync();
                     if (List.Count < 0) return NotFound();
                     else return List;
                 }else return StatusCode(401);

@@ -2,7 +2,7 @@ import React, {useState,useEffect} from "react"
 import './UserSection.css'
 import baseUrl from "../../config/api"
 import Title from "../template/Title"
-import { limit, CarregaCursos, CarregaUsuario } from "../../config/utils"
+import { limit, CarregaCursos, CarregaUsuario, RemoveSessao } from "../../config/utils"
 import axios from "axios"
 import {
     MDBInput, MDBBtn, MDBContainer, MDBInputGroup,
@@ -56,10 +56,7 @@ export default function UserSection() {
                         .catch((error) => {
                             if (error.response.status === 401) {
                                 navigate('/login')
-                                sessionStorage.removeItem('token')
-                                sessionStorage.removeItem('enviadoId')
-                                sessionStorage.removeItem('formDeId')
-                                sessionStorage.removeItem('formId')
+                                RemoveSessao()
                                 alert("Faça o login")
                             } else { console.log(error) }
                         })
@@ -87,10 +84,7 @@ export default function UserSection() {
                     .catch((error) => {
                         if (error.response.status === 401) {
                             navigate('/login')
-                            sessionStorage.removeItem('token')
-                            sessionStorage.removeItem('enviadoId')
-                            sessionStorage.removeItem('formDeId')
-                            sessionStorage.removeItem('formId')
+                            RemoveSessao()
                             alert("Faça o login")
                         } else console.log(error)
                     })
@@ -110,10 +104,7 @@ export default function UserSection() {
                 .catch((error) => {
                     if (error.response.status === 401) {
                         navigate('/login')
-                        sessionStorage.removeItem('token')
-                        sessionStorage.removeItem('enviadoId')
-                        sessionStorage.removeItem('formDeId')
-                        sessionStorage.removeItem('formId')
+                        RemoveSessao()
                         alert("Faça o login")
                     } else console.log(error)
                 })
@@ -129,10 +120,7 @@ export default function UserSection() {
                 .catch((error) => {
                     if (error.response.status === 401) {
                         navigate('/login')
-                        sessionStorage.removeItem('token')
-                        sessionStorage.removeItem('enviadoId')
-                        sessionStorage.removeItem('formDeId')
-                        sessionStorage.removeItem('formId')
+                        RemoveSessao()
                         alert("Faça o login")
                     } else console.log(error)
                 })
@@ -152,10 +140,7 @@ export default function UserSection() {
                 .catch((error) => {
                     if (error.response.status === 401) {
                         navigate('/login')
-                        sessionStorage.removeItem('token')
-                        sessionStorage.removeItem('enviadoId')
-                        sessionStorage.removeItem('formDeId')
-                        sessionStorage.removeItem('formId')
+                        RemoveSessao()
                         alert("Faça o login")
                     } else console.log(error)
                 })
@@ -172,10 +157,7 @@ export default function UserSection() {
                 .catch((error) => {
                     if (error.response.status === 401) {
                         navigate('/login')
-                        sessionStorage.removeItem('token')
-                        sessionStorage.removeItem('enviadoId')
-                        sessionStorage.removeItem('formDeId')
-                        sessionStorage.removeItem('formId')
+                        RemoveSessao()
                         alert("Faça o login")
                     } else console.log(error)
                 })
@@ -345,10 +327,7 @@ export default function UserSection() {
                     <div className="ms-auto">{admin()}</div>
                     <MDBBtn color="danger" onClick={e => { 
                         navigate('/login')
-                        sessionStorage.removeItem('token')
-                        sessionStorage.removeItem('enviadoId')
-                        sessionStorage.removeItem('formDeId')
-                        sessionStorage.removeItem('formId') }}>Logout</MDBBtn>
+                        RemoveSessao() }}>Logout</MDBBtn>
                 </div>
 
             </main>

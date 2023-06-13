@@ -1,5 +1,5 @@
 import React, {useEffect,useState}from 'react'
-import { limit, CarregaQuestoes, CarregaCursosUser, CarregaRespostas, CarregaEnvios } from '../../config/utils';
+import { limit, CarregaQuestoes, CarregaCursosUser, CarregaRespostas, CarregaEnvios, RemoveSessao } from '../../config/utils';
 import './Forms.css'
 import Questoes from './Questoes'
 import axios from "axios";
@@ -69,10 +69,7 @@ export default function Forms(){
         else{
             alert("Faça o login")
             navigate('/login')
-            sessionStorage.removeItem('token')
-            sessionStorage.removeItem('enviadoId')
-            sessionStorage.removeItem('formDeId')
-            sessionStorage.removeItem('formId')
+            RemoveSessao()
         }
 
     }, []);
@@ -254,10 +251,7 @@ export default function Forms(){
             .catch((error) => {
                 if (error.response.status===401) {
                     navigate('/login')
-                    sessionStorage.removeItem('token')
-                    sessionStorage.removeItem('enviadoId')
-                    sessionStorage.removeItem('formDeId')
-                    sessionStorage.removeItem('formId')
+                    RemoveSessao()
                     alert("Faça o login")
                 }else{ console.log(error)}
             })
@@ -279,10 +273,7 @@ export default function Forms(){
         }).catch((error) => {
             if (error.response.status===401) {
                 navigate('/login')
-                sessionStorage.removeItem('token')
-                sessionStorage.removeItem('enviadoId')
-                sessionStorage.removeItem('formDeId')
-                sessionStorage.removeItem('formId')
+                RemoveSessao()
                 alert("Faça o login")
             }else{ console.log(error)}
         })
@@ -309,10 +300,7 @@ export default function Forms(){
         .catch((error) => {
             if (error.response.status===401) {
                 navigate('/login')
-                sessionStorage.removeItem('token')
-                sessionStorage.removeItem('enviadoId')
-                sessionStorage.removeItem('formDeId')
-                sessionStorage.removeItem('formId')
+                RemoveSessao()
                 alert("Faça o login")
             }else{ console.log(error)}
         })
@@ -626,10 +614,7 @@ export default function Forms(){
             .catch((error) => {
                 if (error.response.status===401) {
                     navigate('/login')
-                    sessionStorage.removeItem('token')
-                    sessionStorage.removeItem('enviadoId')
-                    sessionStorage.removeItem('formDeId')
-                    sessionStorage.removeItem('formId')
+                    RemoveSessao()
                     alert("Faça o login")
                 }else{ console.log(error)}
             })
@@ -668,10 +653,7 @@ export default function Forms(){
         .catch((error) => {
             if (error.response.status===401) {
                 navigate('/login')
-                sessionStorage.removeItem('token')
-                sessionStorage.removeItem('enviadoId')
-                sessionStorage.removeItem('formDeId')
-                sessionStorage.removeItem('formId')
+                RemoveSessao()
                 alert("Faça o login")
             }else if(error.response.status===402){
                 setRespondidoDerivado(true)
@@ -694,10 +676,7 @@ export default function Forms(){
         .catch((error) => {
             if (error.response.status===401) {
                 navigate('/login')
-                sessionStorage.removeItem('token')
-                sessionStorage.removeItem('enviadoId')
-                sessionStorage.removeItem('formDeId')
-                sessionStorage.removeItem('formId')
+                RemoveSessao()
                 alert("Faça o login")
             }else{ console.log(error)}
         })
@@ -719,10 +698,7 @@ export default function Forms(){
         .catch((error) => {
             if (error.response.status===401) {
                 navigate('/login')
-                sessionStorage.removeItem('token')
-                sessionStorage.removeItem('enviadoId')
-                sessionStorage.removeItem('formDeId')
-                sessionStorage.removeItem('formId')
+                RemoveSessao()
                 alert("Faça o login")
             }else{ console.log(error)}
         })
@@ -866,10 +842,7 @@ export default function Forms(){
         .catch((error) => {
             if (error.response.status===401) {
                 navigate('/login')
-                sessionStorage.removeItem('token')
-                sessionStorage.removeItem('enviadoId')
-                sessionStorage.removeItem('formDeId')
-                sessionStorage.removeItem('formId')
+                RemoveSessao()
                 alert("Faça o login")
             }else if(error.response.status===402){alert("Usuário não possui uma senha de aplicativo de gmail. Acesse a página do usuário para saber mais.")}
             else{ console.log(error)}
@@ -885,10 +858,7 @@ export default function Forms(){
         .catch((error) => {
             if (error.response.status===401) {
                 navigate('/login')
-                sessionStorage.removeItem('token')
-                sessionStorage.removeItem('enviadoId')
-                sessionStorage.removeItem('formDeId')
-                sessionStorage.removeItem('formId')
+                RemoveSessao()
                 alert("Faça o login")
             }else if(error.response.status===402){alert("Usuário não possui uma senha de aplicativo de gmail. Acesse a página do usuário para saber mais.")}
             else{ console.log(error)}
@@ -926,10 +896,7 @@ export default function Forms(){
                         .catch((error) => {
                             if (error.response.status===401) {
                                 navigate('/login')
-                                sessionStorage.removeItem('token')
-                                sessionStorage.removeItem('enviadoId')
-                                sessionStorage.removeItem('formDeId')
-                                sessionStorage.removeItem('formId')
+                                RemoveSessao()
                                 alert("Faça o login")
                             }else{ console.log(error)}
                         })

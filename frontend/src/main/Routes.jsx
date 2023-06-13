@@ -20,6 +20,6 @@ export default function Props(){
         <Route path='/forms/:formDeId' element={<FormsDerivado  navigate={navigate}/>} exact/>
         <Route path='/user' element={<FormsUser  navigate={navigate}/>} exact/>
         <Route path='/login' element={<Login  navigate={navigate}/>} exact/>
-        <Route path="*" element={<Navigate to="/login" replace   navigate={navigate}/>}/>
+        <Route path="*" element={<Navigate to="/login" replace navigate={navigate}/>}/>
     </Routes>
 }

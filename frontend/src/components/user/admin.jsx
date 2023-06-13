@@ -1,5 +1,5 @@
 import React, {useEffect,useState}from 'react'
-import { limit } from '../../config/utils'
+import { limit, RemoveSessao } from '../../config/utils'
 import './admin.css'
 import Title from '../template/Title'
 import Navbar from '../template/Navbar'
@@ -58,10 +58,7 @@ export default function Admin(){
                 .catch((error) => {
                     if (error.response.status===401) {
                         navigate('/login')
-                        sessionStorage.removeItem('token')
-                        sessionStorage.removeItem('enviadoId')
-                        sessionStorage.removeItem('formDeId')
-                        sessionStorage.removeItem('formId')
+                        RemoveSessao()
                         alert("Faça o login")
                     }if (error.response.status!==404) {console.log(error);}
                 })
@@ -80,10 +77,7 @@ export default function Admin(){
                 .catch((error) => {
                     if (error.response.status===401) {
                         navigate('/login')
-                        sessionStorage.removeItem('token')
-                        sessionStorage.removeItem('enviadoId')
-                        sessionStorage.removeItem('formDeId')
-                        sessionStorage.removeItem('formId')
+                        RemoveSessao()
                         alert("Faça o login")
                     }else{ console.log(error)}
                 })
@@ -94,10 +88,7 @@ export default function Admin(){
         else{
             alert("Usuário não é administrador")
             navigate('/login')
-            sessionStorage.removeItem('token')
-            sessionStorage.removeItem('enviadoId')
-            sessionStorage.removeItem('formDeId')
-            sessionStorage.removeItem('formId')
+            RemoveSessao()
         }
 
     }, []);
@@ -196,10 +187,7 @@ export default function Admin(){
                         .catch((error) => {
                             if (error.response.status===401) {
                                 navigate('/login')
-                                sessionStorage.removeItem('token')
-                                sessionStorage.removeItem('enviadoId')
-                                sessionStorage.removeItem('formDeId')
-                                sessionStorage.removeItem('formId')
+                                RemoveSessao()
                                 alert("Faça o login")
                             }else if(error.response.status===501){
                                 document.getElementById("novoUsuarioEmail").classList.add("is-invalid")
@@ -222,10 +210,7 @@ export default function Admin(){
         .catch((error) => {
             if (error.response.status===401) {
                 navigate('/login')
-                sessionStorage.removeItem('token')
-                sessionStorage.removeItem('enviadoId')
-                sessionStorage.removeItem('formDeId')
-                sessionStorage.removeItem('formId')
+                RemoveSessao()
                 alert("Faça o login")
             }else{ console.log(error)}
         })
@@ -248,10 +233,7 @@ export default function Admin(){
         .catch((error) => {
             if (error.response.status===401) {
                 navigate('/login')
-                sessionStorage.removeItem('token')
-                sessionStorage.removeItem('enviadoId')
-                sessionStorage.removeItem('formDeId')
-                sessionStorage.removeItem('formId')
+                RemoveSessao()
                 alert("Faça o login")
             }else{ console.log(error)}
         })
@@ -383,10 +365,7 @@ export default function Admin(){
         .catch((error) => {
             if (error.response.status===401) {
                 navigate('/login')
-                sessionStorage.removeItem('token')
-                sessionStorage.removeItem('enviadoId')
-                sessionStorage.removeItem('formDeId')
-                sessionStorage.removeItem('formId')
+                RemoveSessao()
                 alert("Faça o login")
             }else{ console.log(error)}
         })

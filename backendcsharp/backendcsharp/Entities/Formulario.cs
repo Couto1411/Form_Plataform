@@ -12,6 +12,7 @@ public partial class Formulario
     public uint? ResponsavelId { get; set; }
     public uint? DerivadoDeId { get; set; } = null!;
     public DateTime? DataEnviado { get; set; } = null!;
+    public string? MsgEmail { get; set; } = null!;
 
     public virtual ICollection<Formulario> Derivados { get; } = new List<Formulario>();
 

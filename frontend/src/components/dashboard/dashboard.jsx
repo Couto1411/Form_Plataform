@@ -3,7 +3,7 @@ import './dashboard.css'
 import { Chart as ChartJS, Colors, ArcElement, Title, Tooltip, Legend } from 'chart.js';
 import { Pie } from 'react-chartjs-2';
 import Titulo from '../template/Title'
-import {  CarregaForms, CarregaQuestoesUser, CarregaDashboard} from '../../config/utils'
+import {  CarregaForms, CarregaQuestoesUser, CarregaDashboard, RemoveSessao} from '../../config/utils'
 import {useNavigate} from 'react-router-dom'
 import {
     MDBBtn, MDBContainer, MDBCheckbox, MDBRadio,
@@ -64,10 +64,7 @@ export default function Dashboard(){
         else{
             alert("Faça o login")
             navigate('/login')
-            sessionStorage.removeItem('token')
-            sessionStorage.removeItem('enviadoId')
-            sessionStorage.removeItem('formDeId')
-            sessionStorage.removeItem('formId')
+            RemoveSessao()
         }
 
     }, []);

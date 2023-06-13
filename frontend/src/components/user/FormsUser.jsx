@@ -2,7 +2,7 @@ import React, {useEffect,useState}from 'react'
 import Dashboard from '../dashboard/dashboard'
 import './FormsUser.css'
 import Title from '../template/Title'
-import { limit, CarregaForms } from '../../config/utils'
+import { limit, CarregaForms, RemoveSessao } from '../../config/utils'
 import Navbar from '../template/Navbar'
 import Sidebar from '../template/Sidebar'
 import UserSection from './UserSection'
@@ -10,7 +10,7 @@ import axios from "axios"
 import baseUrl from "../../config/api"
 import {useNavigate, Link} from 'react-router-dom'
 import {
-    MDBInput,
+    MDBInput, MDBTextArea,
     MDBListGroup, MDBListGroupItem,
     MDBBtn, MDBModal, MDBModalDialog, MDBModalContent, MDBModalHeader, MDBModalBody, MDBModalFooter} from 'mdb-react-ui-kit'
 
@@ -31,20 +31,51 @@ export default function PaginaUsuario(){
 
     // Lista de formulários do usuário
     const [forms, setforms] = useState([]);
-    const [form, setform] = useState({id: null, titulo:null});
+    const [form, setform] = useState({id: null, titulo:'', msgEmail: ''});
 
     const [secao, setSecao] = useState(1)
 
     const [count, setCount] = useState(0);
 
+    const changeActive = (e) => {
+        if(e.target.id==='formModal')limit(e.target)
+        if(e.target.value==='') e.target.classList.remove('active')
+        else e.target.classList.add('active')
+    };
     
     const toggleShow = (element) => {
         setCentredModal(!centredModal)
         setform(element)
-        var change = document.getElementById("form"+form.id);
-        change.classList.remove("is-invalid");
+        document.getElementById("formModal").classList.remove("is-invalid");
+        document.getElementById("msgEmailModal").classList.remove("is-invalid");
     };
-    
+
+    function onClickEditForm(element) {
+        setAddForm(false)
+        toggleShow(element)
+        document.getElementById('formModal').value=element.titulo
+        if(element.derivadoDeId) document.getElementById('formModal').readOnly = true
+        else document.getElementById('formModal').readOnly = false
+        document.getElementById('linkForm').value='https://formplataform-4ac81.web.app/'+element.id
+        if(element.msgEmail){
+            let mensagemIndex=element.msgEmail.indexOf(" \{replaceStringHere\} ")
+            if(element.msgEmail.substring(0,mensagemIndex)){
+                document.getElementById('msgEmailModal').value=element.msgEmail.substring(0,mensagemIndex)
+            } 
+            else{
+                document.getElementById('msgEmailModal').value=''
+            } 
+            if(element.msgEmail.substring(mensagemIndex+21)){
+                document.getElementById('rodEmailModal').value=element.msgEmail.substring(mensagemIndex+21)
+            } 
+            else{
+                document.getElementById('rodEmailModal').value=''
+            }
+        } else{
+            document.getElementById('msgEmailModal').value=''
+            document.getElementById('rodEmailModal').value=''
+        }
+    };
 
     useEffect(() => {
         if (sessionStorage.getItem("token")){
@@ -53,20 +84,19 @@ export default function PaginaUsuario(){
         else{
             alert("Faça o login")
             navigate('/login')
-            sessionStorage.removeItem('token')
-            sessionStorage.removeItem('enviadoId')
-            sessionStorage.removeItem('formDeId')
-            sessionStorage.removeItem('formId')
+            RemoveSessao()
         }
 
     }, []);
 
     async function editForm(){
-        var change = document.getElementById("form"+form.id);
-        let dados={"titulo": change.value}
+        var change = document.getElementById("formModal");
+        var changeMsg = document.getElementById("msgEmailModal").value+" \{replaceStringHere\} "+document.getElementById('rodEmailModal').value;
+        let dados={"titulo": change.value, "msgEmail": changeMsg}
         if (addForm) {
             if (change.value !== '') {
                 change.classList.remove("is-invalid");
+                document.getElementById("msgEmailModal").classList.remove("is-invalid");
                 await axios.post(baseUrl+"/users/"+sessionStorage.getItem("userId")+"/forms",dados,{
                     headers: {
                         'Authorization': 'bearer ' + sessionStorage.getItem("token")
@@ -75,50 +105,50 @@ export default function PaginaUsuario(){
                 .then((response)=>{
                     setforms([
                         ...forms,
-                        {id: response.data, titulo: change.value, derivados:[]}
+                        {id: response.data, titulo: change.value, msgEmail:changeMsg, derivados:[]}
                     ])
                 })
                 .catch((error) => {
                     if (error.response.status===401) {
                         navigate('/login')
-                        sessionStorage.removeItem('token')
-                        sessionStorage.removeItem('enviadoId')
-                        sessionStorage.removeItem('formDeId')
-                        sessionStorage.removeItem('formId')
+                        RemoveSessao()
                         alert("Faça o login")
                     }else{ console.log(error)}
                 })
+                toggleShow({id: null, titulo:'', msgEmail: ''});
             }
             else{
                 change.classList.add("is-invalid");
             }
         }else{
-            if (change.value === form.titulo) {
-                change.classList.add("is-invalid");
-            }
-            else{
-                change.classList.remove("is-invalid");
-                await axios.put(baseUrl+"/users/"+sessionStorage.getItem("userId")+"/forms/"+form.id,dados,{
-                    headers: {
-                        'Authorization': 'bearer ' + sessionStorage.getItem("token")
-                    }
-                })
-                .then((response)=>{
-                    forms[forms.map(object => object.id).indexOf(form.id)].titulo=change.value
-                })
-                .catch((error) => {
-                    if (error.response.status===401) {
-                        navigate('/login')
-                        sessionStorage.removeItem('token')
-                        sessionStorage.removeItem('enviadoId')
-                        sessionStorage.removeItem('formDeId')
-                        sessionStorage.removeItem('formId')
-                        alert("Faça o login")
-                    }else{ console.log(error)}
-                })
-            }
+            change.classList.remove("is-invalid");
+            document.getElementById("msgEmailModal").classList.remove("is-invalid");
+            await axios.put(baseUrl+"/users/"+sessionStorage.getItem("userId")+"/forms/"+form.id,dados,{
+                headers: {
+                    'Authorization': 'bearer ' + sessionStorage.getItem("token")
+                }
+            })
+            .then((response)=>{
+                let especifico;
+                if (form.derivadoDeId){
+                    let temp = forms[forms.map(object => object.id).indexOf(form.derivadoDeId)]
+                    especifico = temp.derivados[temp.derivados.map(object=>object.id).indexOf(form.id)]
+                }
+                else{
+                    especifico = forms[forms.map(object => object.id).indexOf(form.id)]
+                    especifico.titulo=change.value
+                }
+                especifico.msgEmail=changeMsg
+            })
+            .catch((error) => {
+                if (error.response.status===401) {
+                    navigate('/login')
+                    RemoveSessao()
+                    alert("Faça o login")
+                }else{ console.log(error)}
+            })
+            toggleShow({id: null, titulo:'', msgEmail: ''});
         }
-        toggleShow({id: null, titulo:null});
     }
 
     async function deleteForm(){
@@ -136,10 +166,7 @@ export default function PaginaUsuario(){
             .catch((error) => {
                 if (error.response.status===401) {
                     navigate('/login')
-                    sessionStorage.removeItem('token')
-                    sessionStorage.removeItem('enviadoId')
-                    sessionStorage.removeItem('formDeId')
-                    sessionStorage.removeItem('formId')
+                    RemoveSessao()
                     alert("Faça o login")
                 }else{ console.log(error)}
             })
@@ -156,10 +183,7 @@ export default function PaginaUsuario(){
             .catch((error) => {
                 if (error.response.status===401) {
                     navigate('/login')
-                    sessionStorage.removeItem('token')
-                    sessionStorage.removeItem('enviadoId')
-                    sessionStorage.removeItem('formDeId')
-                    sessionStorage.removeItem('formId')
+                    RemoveSessao()
                     alert("Faça o login")
                 }else{ console.log(error)}
             })
@@ -186,6 +210,7 @@ export default function PaginaUsuario(){
     async function addDerivado(element){
         let novoDerivado = {}
         novoDerivado.titulo = element.titulo
+        novoDerivado.msgEmail = element.msgEmail
         novoDerivado.derivadoDeId = element.id
         await axios.post(baseUrl+"/users/"+sessionStorage.getItem("userId")+"/forms",novoDerivado,{
             headers: {
@@ -195,10 +220,7 @@ export default function PaginaUsuario(){
         .catch((error) => {
             if (error.response.status===401) {
                 navigate('/login')
-                sessionStorage.removeItem('token')
-                sessionStorage.removeItem('enviadoId')
-                sessionStorage.removeItem('formDeId')
-                sessionStorage.removeItem('formId')
+                RemoveSessao()
                 alert("Faça o login")
             }else{ console.log(error)}
         })
@@ -215,13 +237,10 @@ export default function PaginaUsuario(){
             return(
                 <div key={element.id} className={forms.length>numero?'border-bottom':''}>
                     <MDBListGroupItem noBorders className='d-flex rounded-2 align-items-center'>
-                        {numero}. <Link className='zoom' style={{}} to="/forms" onClick={e=>{sessionStorage.setItem("formId",element.id);sessionStorage.removeItem("formDeId")}}>{element.titulo} {element.dataEnviado?<i>({tempDate.toLocaleDateString('en-GB')})</i>:<></>}</Link>{element.derivados?.length?<i id={'icone'+element.id} aberto='F' onClick={e=>{toggleDerivados(element.id)}} className=" mx-2 fas fa-regular fa-angle-down"></i>:null}
+                        {numero}. <Link className='zoom' style={{color:'black'}} to="/forms" onClick={e=>{sessionStorage.setItem("formId",element.id);sessionStorage.removeItem("formDeId")}}>{element.titulo} {element.dataEnviado?<i>({tempDate.toLocaleDateString('en-GB')})</i>:<></>}</Link>{element.derivados?.length?<i id={'icone'+element.id} aberto='F' onClick={e=>{toggleDerivados(element.id)}} className=" mx-2 fas fa-regular fa-angle-down"></i>:null}
                         
                         <i title='Adicionar novo envio de formulário' className="edit pt-1 ms-auto fas fa-light fa-plus" onClick={e=>{addDerivado(element)}}></i>
-                        <i title='Editar Formulário' className="edit mx-2 pt-1 fas fa-pen-to-square" onClick={e=>{
-                            setAddForm(false)
-                            toggleShow(element)
-                            }}></i>
+                        <i title='Editar Formulário' className="edit mx-2 pt-1 fas fa-pen-to-square" onClick={()=>onClickEditForm(element)}></i>
                         <i title='Excluir Formulário' className="trashcan pt-1 fas fa-trash-can" onClick={e=>{
                             setIdToDelete(element.id)
                             setIdDerivateToDelete(null)
@@ -236,11 +255,14 @@ export default function PaginaUsuario(){
                                     return (
                                         <MDBListGroupItem key={'formderivado'+item.id} className='pb-0 formsDuplicates d-flex'>
                                             {item.id[0]?<>{item.titulo}</>:<Link className='formsDuplicates zoom' to={"/forms/"+item.id} onClick={e=>{sessionStorage.setItem("formId",element.id);sessionStorage.setItem("formDeId",item.id)}}>{item.titulo}{item.dataEnviado?<i>({item.dataEnviado.toLocaleString('en-GB', { timeZone: 'UTC' })})</i>:<></>}</Link>}
-                                            {item.id[0]?<i onClick={e=>{CarregaForms(setforms)}} className="pt-1 ms-auto fa-solid fa-arrows-rotate"></i>:<i className="ms-auto trashcan pt-1 fas fa-trash-can" onClick={e=>{
+                                            {item.id[0]?<i onClick={e=>{CarregaForms(setforms)}} className="pt-1 ms-auto fa-solid fa-arrows-rotate"></i>:
+                                            <div className='ms-auto'>
+                                                <i title='Editar Formulário' className="edit mx-2 pt-1 fas fa-pen-to-square" onClick={()=>onClickEditForm(item)}></i>
+                                                <i className="trashcan pt-1 fas fa-trash-can" onClick={e=>{
                                                 setIdToDelete(element.id)
                                                 setIdDerivateToDelete(item.id)
                                                 setDeletaFormulario(true)
-                                                }}></i>}
+                                                }}></i></div>}
                                             <hr></hr>
                                         </MDBListGroupItem>
                                     )
@@ -261,18 +283,26 @@ export default function PaginaUsuario(){
         </MDBListGroup>
         <MDBBtn onClick={e=>{
             setAddForm(true)
-            toggleShow({id: 'novo', titulo:null})
+            toggleShow({id: '', titulo:'', msgEmail: ''})
+            document.getElementById('formModal').value=null
+            document.getElementById('msgEmailModal').value=null
+            document.getElementById('linkForm').value=null
+            document.getElementById('rodEmailModal').value=null
+            document.getElementById('formModal').readOnly = false
             }} outline color='dark' className='border-1 bg-light contatoBotoes mt-3'><i className="edit fas fa-light fa-plus fa-2x"></i></MDBBtn>
     
             {/* Modal de Adicionar Form */}
-            <MDBModal tabIndex='-1' show={centredModal} setShow={setCentredModal}>
+            <MDBModal staticBackdrop tabIndex='-1' show={centredModal} setShow={setCentredModal}>
                 <MDBModalDialog centered>
                     <MDBModalContent>
                         <MDBModalBody>
-                            <MDBInput onKeyDown={e=>{limit(e.target)}} onKeyUp={e=>{limit(e.target)}} label='Titulo' id={"form"+form.id} type='text'/>
+                            <MDBInput onKeyDown={changeActive} onKeyUp={changeActive} label='Titulo' id="formModal" type='text' className='active'/>
+                            <MDBTextArea onKeyDown={changeActive} onKeyUp={changeActive} rows={4} label='Mensagem do Email' id="msgEmailModal" className='mt-2 active' type='text'/>
+                            <MDBInput tabIndex='-1' label='Link do Formulário' className='mt-2 active' id="linkForm" readOnly/>
+                            <MDBTextArea onKeyDown={changeActive} onKeyUp={changeActive} rows={4} label='Rodapé do Email' id="rodEmailModal" className='mt-2 active' type='text'/>
                         </MDBModalBody>
                         <MDBModalFooter>
-                            <MDBBtn color='secondary' onClick={e=>{toggleShow({id: null, titulo:null})}}> Cancelar </MDBBtn>
+                            <MDBBtn color='secondary' onClick={e=>{toggleShow({id: null, titulo:'', msgEmail: ''})}}> Cancelar </MDBBtn>
                             <MDBBtn onClick={e=>{editForm()}}>Salvar mudanças</MDBBtn>
                         </MDBModalFooter>
                     </MDBModalContent>
@@ -280,7 +310,7 @@ export default function PaginaUsuario(){
             </MDBModal>
             
             {/* Modal de excluir Form */}
-            <MDBModal tabIndex='-1' show={deletaFormulario} setShow={setDeletaFormulario}>
+            <MDBModal staticBackdrop tabIndex='-1' show={deletaFormulario} setShow={setDeletaFormulario}>
                 <MDBModalDialog centered>
                     <MDBModalContent>
                         <MDBModalHeader className='py-2'>

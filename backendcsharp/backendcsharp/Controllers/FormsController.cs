@@ -33,10 +33,12 @@ namespace backendcsharp.Controllers
                 {
                     var entity = new Formulario()
                     {
-                        Titulo = Form.titulo,
+                        Titulo = Form.titulo is null?"":Form.titulo,
                         ResponsavelId = (uint) Id,
+                        MsgEmail = Form.msgEmail,
                         DerivadoDeId= Form.derivadoDeId
                     };
+                    if (entity.MsgEmail is not null && !entity.MsgEmail.Contains(@" {replaceStringHere} ")) throw new Exception("Mensagem de Email não corresponde ao padrão");
                     ProjetoDbContext.Formularios.Add(entity);
                     await ProjetoDbContext.SaveChangesAsync();
                     if (entity.DerivadoDeId is not null)
@@ -91,9 +93,12 @@ namespace backendcsharp.Controllers
                     var entity = await ProjetoDbContext.Formularios.FirstOrDefaultAsync(s => s.Id == FormId);
                     if (entity != null)
                     {
-                        entity.Titulo = Form.titulo;
-                        entity.ResponsavelId = Form.responsavelId;
-                        entity.DataEnviado = Form.dataEnviado;
+                        if(entity.DerivadoDeId is null)
+                        {
+                            entity.Titulo = Form.titulo is null ? "" : Form.titulo;
+                        }
+                        entity.MsgEmail = Form.msgEmail;
+                        if (entity.MsgEmail is not null && !entity.MsgEmail.Contains(@" {replaceStringHere} ")) throw new Exception("Mensagem de Email não corresponde ao padrão");
                         await ProjetoDbContext.SaveChangesAsync();
                         return StatusCode(204);
                     }
@@ -134,6 +139,7 @@ namespace backendcsharp.Controllers
                         {
                             id = s.Id,
                             responsavelId = s.ResponsavelId,
+                            msgEmail = s.MsgEmail,
                             dataEnviado = s.DataEnviado,
                             titulo = s.Titulo,
                         }
@@ -165,6 +171,7 @@ namespace backendcsharp.Controllers
                         id = s.Id,
                         titulo = s.Titulo,
                         derivadoDeId = s.DerivadoDeId,
+                        msgEmail = s.MsgEmail,
                         dataEnviado = s.DataEnviado,
                         responsavelId = s.ResponsavelId
                     })
@@ -178,6 +185,7 @@ namespace backendcsharp.Controllers
                             id = s.Id,
                             titulo = s.Titulo,
                             derivadoDeId = s.DerivadoDeId,
+                            msgEmail = s.MsgEmail,
                             dataEnviado = s.DataEnviado,
                             responsavelId = s.ResponsavelId
                         })

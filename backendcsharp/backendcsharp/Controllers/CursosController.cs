@@ -89,7 +89,7 @@ namespace backendcsharp.Controllers
                     var entity = await ProjetoDbContext.Cursos.FirstOrDefaultAsync(s => s.Id == CursoId);
                     if (entity != null)
                     {
-                        entity.Curso = Curso.curso;
+                        entity.Curso = Curso.curso is null?"": Curso.curso;
                         entity.ResponsavelId = Curso.responsavelId;
                         await ProjetoDbContext.SaveChangesAsync();
                         return StatusCode(204);
@@ -123,7 +123,7 @@ namespace backendcsharp.Controllers
                     var entity = await ProjetoDbContext.TiposCursos.FirstOrDefaultAsync(s => s.Id == CursoId);
                     if (entity != null)
                     {
-                        entity.TipoCurso = Curso.tipoCurso;
+                        entity.TipoCurso = Curso.tipoCurso is null ? "" : Curso.tipoCurso;
                         entity.ResponsavelId = Curso.responsavelId;
                         await ProjetoDbContext.SaveChangesAsync();
                         return StatusCode(204);

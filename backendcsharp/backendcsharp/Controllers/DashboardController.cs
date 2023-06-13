@@ -149,8 +149,8 @@ namespace backendcsharp.Controllers
                         .GroupBy(X => new { X.questaoId, X.radio})
                         .Select(t => new
                         {
-                            questaoId = t.Key.questaoId,
-                            radio = t.Key.radio,
+                            t.Key.questaoId,
+                            t.Key.radio,
                             quantidade = t.Count()
                         }).ToList();
 

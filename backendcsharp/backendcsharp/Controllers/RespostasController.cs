@@ -63,7 +63,7 @@ namespace backendcsharp.Controllers
                     })
                     .Where(s => (s.formId == FormId && s.email == Resp.email && s.respondido == false))
                     .FirstOrDefaultAsync();
-                if (enviado is not null) {
+                if (Form is not null && enviado is not null) {
                     FormId = Form.derivadoDeId is not null? (int)Form.derivadoDeId:FormId;
                     foreach (var item in Resp.respostas)
                     {
@@ -617,7 +617,7 @@ namespace backendcsharp.Controllers
                                    questaoId = radiobox.QuestaoId
                                };
                         // Adiciona texto e quantidade de respostas na estrutura "QuantidadeResposta"
-                        questao.resposta.Add(new TextQuant(item.opcao1, questaoDB.Where(s => s.radio == 1).Count()));
+                        if (item.opcao1 is not null) questao.resposta.Add(new TextQuant(item.opcao1, questaoDB.Where(s => s.radio == 1).Count()));
                         if (item.opcao2 is not null) questao.resposta.Add(new TextQuant(item.opcao2, questaoDB.Where(s => s.radio == 2).Count()));
                         if (item.opcao3 is not null) questao.resposta.Add(new TextQuant(item.opcao3, questaoDB.Where(s => s.radio == 3).Count()));
                         if (item.opcao4 is not null) questao.resposta.Add(new TextQuant(item.opcao4, questaoDB.Where(s => s.radio == 4).Count()));

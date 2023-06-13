@@ -8,6 +8,7 @@ import Sidebar from '../template/Sidebar'
 import UserSection from '../user/UserSection'
 import {MDBListGroup,MDBListGroupItem, MDBRadio,MDBBtn,MDBInputGroup, MDBTextArea,MDBCheckbox} from 'mdb-react-ui-kit';
 import { useNavigate } from 'react-router-dom';
+import { RemoveSessao } from '../../config/utils';
 
 export default function Resposta(){
     const navigate = useNavigate()
@@ -31,10 +32,7 @@ export default function Resposta(){
         else{
             alert("Faça o login")
             navigate('/login')
-            sessionStorage.removeItem('token')
-            sessionStorage.removeItem('enviadoId')
-            sessionStorage.removeItem('formDeId')
-            sessionStorage.removeItem('formId')
+            RemoveSessao()
         }
 
     }, []);

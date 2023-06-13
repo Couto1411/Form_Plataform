@@ -1,6 +1,13 @@
 import baseUrl from "./api"
 import axios from "axios"
 
+export function RemoveSessao(){
+    sessionStorage.removeItem('token')
+    sessionStorage.removeItem('enviadoId')
+    sessionStorage.removeItem('formDeId')
+    sessionStorage.removeItem('formId')
+}
+
 export async function CarregaForms(setforms,navigate){
     await axios.get(baseUrl+"/users/"+sessionStorage.getItem("userId")+"/forms",{
         headers: {
@@ -14,10 +21,7 @@ export async function CarregaForms(setforms,navigate){
     .catch((error) => {
         if (error.response.status===401) {
             navigate('/login')
-            sessionStorage.removeItem('token')
-            sessionStorage.removeItem('enviadoId')
-            sessionStorage.removeItem('formDeId')
-            sessionStorage.removeItem('formId')
+            RemoveSessao()
             alert("Faça o login")
         }else if (error.response.status!==404){ console.log(error)}
     })
@@ -51,10 +55,7 @@ export async function CarregaQuestoesUser(setQuestoes,navigate){
     .catch((error) => { 
         if (error.response.status === 401) {
             navigate('/login')
-            sessionStorage.removeItem('token')
-            sessionStorage.removeItem('enviadoId')
-            sessionStorage.removeItem('formDeId')
-            sessionStorage.removeItem('formId')
+            RemoveSessao()
             alert("Faça o login")
         } else if (error.response.status!==404){ console.log(error)}
     })
@@ -73,10 +74,7 @@ export async function CarregaUsuario(setUser,navigate){
     .catch((error) => {
         if (error.response.status === 401) {
             navigate('/login')
-            sessionStorage.removeItem('token')
-            sessionStorage.removeItem('enviadoId')
-            sessionStorage.removeItem('formDeId')
-            sessionStorage.removeItem('formId')
+            RemoveSessao()
             alert("Faça o login")
         } else if (error.response.status!==404){ console.log(error)}
     })
@@ -96,10 +94,7 @@ export async function CarregaCursos(setCursos,setTipoCursos,navigate){
     .catch((error) => {
         if (error.response.status === 401) {
             navigate('/login')
-            sessionStorage.removeItem('token')
-            sessionStorage.removeItem('enviadoId')
-            sessionStorage.removeItem('formDeId')
-            sessionStorage.removeItem('formId')
+            RemoveSessao()
             alert("Faça o login")
         } else if (error.response.status!==404){ console.log(error)}
     })
@@ -116,10 +111,7 @@ export async function CarregaCursosUser(setCursos,navigate){
     .catch((error) => {
         if (error.response.status===401) {
             navigate('/login')
-            sessionStorage.removeItem('token')
-            sessionStorage.removeItem('enviadoId')
-            sessionStorage.removeItem('formDeId')
-            sessionStorage.removeItem('formId')
+            RemoveSessao()
             alert("Faça o login")
         }else if (error.response.status!==404){ console.log(error)}
     })
@@ -136,10 +128,7 @@ export async function CarregaEnvios(setContatos,setContatosDB,navigate){
     .catch((error) => {
         if (error.response.status===401) {
             navigate('/login')
-            sessionStorage.removeItem('token')
-            sessionStorage.removeItem('enviadoId')
-            sessionStorage.removeItem('formDeId')
-            sessionStorage.removeItem('formId')
+            RemoveSessao()
             alert("Faça o login")
         }else if (error.response.status===404){setContatos([])}
         else { console.log(error);setContatos([])}
@@ -157,10 +146,7 @@ export async function CarregaRespostas(setRespostas,navigate){
     .catch((error) => {
         if (error.response.status===401) {
             navigate('/login')
-            sessionStorage.removeItem('token')
-            sessionStorage.removeItem('enviadoId')
-            sessionStorage.removeItem('formDeId')
-            sessionStorage.removeItem('formId')
+            RemoveSessao()
             alert("Faça o login")
         }else if (error.response.status===404){setRespostas([])}
         else{ console.log(error);setRespostas([])}
@@ -178,10 +164,7 @@ export async function CarregaDashboard(setDatasets,setLabels,navigate,id,forms,q
     .catch((error) => {
         if (error.response.status===401) {
             navigate('/login')
-            sessionStorage.removeItem('token')
-            sessionStorage.removeItem('enviadoId')
-            sessionStorage.removeItem('formDeId')
-            sessionStorage.removeItem('formId')
+            RemoveSessao()
             alert("Faça o login")
         }else if (error.response.status===404){setDatasets([])}
         else{ console.log(error);setDatasets([])}

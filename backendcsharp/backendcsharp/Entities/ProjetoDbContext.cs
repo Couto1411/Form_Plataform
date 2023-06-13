@@ -151,6 +151,9 @@ public partial class ProjetoDbContext : DbContext
                 .HasMaxLength(255)
                 .HasColumnName("titulo");
             entity.Property(e => e.DataEnviado).HasColumnName("dataEnviado");
+            entity.Property(e => e.MsgEmail)
+                .HasColumnType("longtext")
+                .HasColumnName("msgEmail");
 
             entity.HasOne(d => d.Responsavel).WithMany(p => p.Formularios)
                 .HasForeignKey(d => d.ResponsavelId)

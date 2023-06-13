@@ -3,7 +3,7 @@ import './Forms.css'
 import axios from "axios";
 import baseUrl from "../../config/api";
 import {useNavigate} from 'react-router-dom';
-import { CarregaQuestoes, CarregaRespostas, CarregaEnvios } from '../../config/utils';
+import { CarregaQuestoes, CarregaRespostas, CarregaEnvios, RemoveSessao } from '../../config/utils';
 import Title from '../template/Title'
 import Navbar from '../template/Navbar'
 import Sidebar from '../template/Sidebar'
@@ -44,10 +44,7 @@ export default function FormsDerivados(){
         else{
             alert("Faça o login")
             navigate('/login')
-            sessionStorage.removeItem('token')
-            sessionStorage.removeItem('enviadoId')
-            sessionStorage.removeItem('formDeId')
-            sessionStorage.removeItem('formId')
+            RemoveSessao()
         }
 
     }, []);
@@ -198,10 +195,7 @@ export default function FormsDerivados(){
         .catch((error) => {
             if (error.response.status===401) {
                 navigate('/login')
-                sessionStorage.removeItem('token')
-                sessionStorage.removeItem('enviadoId')
-                sessionStorage.removeItem('formDeId')
-                sessionStorage.removeItem('formId')
+                RemoveSessao()
                 alert("Faça o login")
             }else{ console.log(error)}
         })
@@ -229,10 +223,7 @@ export default function FormsDerivados(){
         .catch((error) => {
             if (error.response.status===401) {
                 navigate('/login')
-                sessionStorage.removeItem('token')
-                sessionStorage.removeItem('enviadoId')
-                sessionStorage.removeItem('formDeId')
-                sessionStorage.removeItem('formId')
+                RemoveSessao()
                 alert("Faça o login")
             }else if(error.response.status===402){alert("Usuário não possui uma senha de aplicativo de gmail. Acesse a página do usuário para saber mais.")}
             else{ console.log(error)}

@@ -63,16 +63,20 @@ namespace backendcsharp.Controllers
                         var Form = await ProjetoDbContext.Formularios
                             .Where(s => s.Id == model.FormId)
                             .FirstOrDefaultAsync();
+                        if (Form == null) throw new Exception("Formulário não encontrado");
 
                         // Configura SMTP
-                        SmtpClient SmtpServer = new SmtpClient("smtp.gmail.com", 587);
-                        SmtpServer.DeliveryMethod = SmtpDeliveryMethod.Network;
-                        MailMessage email = new MailMessage();
+                        SmtpClient SmtpServer = new("smtp.gmail.com", 587)
+                        {
+                            DeliveryMethod = SmtpDeliveryMethod.Network
+                        };
+                        MailMessage email = new();
 
                         // Começo da configuração do EMAIL
 
                         // Seta remetente
-                        email.From = new MailAddress(User.email);
+                        if(User.email is not null) email.From = new MailAddress(User.email);
+                        else throw new Exception("Sem email de remetente");
 
                         // Seta destinatários
                         foreach (var item in Envios)
@@ -89,7 +93,7 @@ namespace backendcsharp.Controllers
                         // Seta o título do formulário como assunto
                         email.Subject = Form.Titulo;
                         // Seta a mensagem do email
-                        email.Body = "Olá, <br/> Você foi selecionado para responder uma pesquisa do(a) "+User.universidade+",<br/><br/>A pesquisa é sobre:<br/><br/>"+"---"+"<br/><br/>Segue link para resposta:<br/>"+"---"+"<br/><br/>"+User.nome+",<br/>"+User.universidade+", "+ DateTime.Now.ToString("dddd, dd MMMM yyyy", new CultureInfo("pt-BR"));
+                        email.Body = Form.MsgEmail.Replace(@" {replaceStringHere} ", @"<br/><br/>https://formplataform-4ac81.web.app/" + Form.Id+ "<br/><br/>").Replace("\n", @"<br/>");
                         //END
                         email.IsBodyHtml = true;
                         SmtpServer.Timeout = 5000;
@@ -136,10 +140,12 @@ namespace backendcsharp.Controllers
                             .Select(s => new FormularioDTO
                             {
                                 id = s.Id,
+                                msgEmail = s.MsgEmail,
                                 titulo = s.Titulo,
                             })
                             .Where(s => s.id == model.FormId)
                             .FirstOrDefaultAsync();
+                        if (Form == null) throw new Exception("Formulário não encontrado");
 
                         // Configura SMTP
                         SmtpClient SmtpServer = new SmtpClient("smtp.gmail.com", 587);
@@ -149,11 +155,12 @@ namespace backendcsharp.Controllers
                         // Começo da configuração do EMAIL
 
                         // Seta remetente
-                        email.From = new MailAddress(User.email);
+                        if (User.email is not null) email.From = new MailAddress(User.email);
+                        else throw new Exception("Sem email de remetente");
 
                         // Seta destinatário
                         var enviado = await ProjetoDbContext.Enviados.Where(s => s.Id == model.EmailId).FirstOrDefaultAsync();
-                        if (Handlers.IsValidEmail(enviado.Email)) email.To.Add(enviado.Email);
+                        if (enviado is not null && Handlers.IsValidEmail(enviado.Email)) email.To.Add(enviado.Email);
                         //email.To.Add("gabriel.couto14@hotmail.com");
 
                         // Faz cópia do email para o remetente
@@ -162,7 +169,7 @@ namespace backendcsharp.Controllers
                         // Seta o título do formulário como assunto
                         email.Subject = Form.titulo;
                         // Seta a mensagem do email
-                        email.Body = "Olá, <br/> Você foi selecionado para responder uma pesquisa do(a) " + User.universidade + ",<br/><br/>A pesquisa é sobre:<br/><br/>" + "---" + "<br/><br/>Segue link para resposta:<br/>" + "---" + "<br/><br/>" + User.nome + ",<br/>" + User.universidade + ", " + DateTime.Now.ToString("dddd, dd MMMM yyyy", new CultureInfo("pt-BR"));
+                        email.Body = Form.msgEmail.Replace(@" {replaceStringHere} ", @"<br/><br/>https://formplataform-4ac81.web.app/" + Form.id + "<br/><br/>").Replace("\n",@"<br/>");
                         //END
                         email.IsBodyHtml = true;
                         SmtpServer.Timeout = 5000;

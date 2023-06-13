@@ -93,7 +93,7 @@ namespace backendcsharp.Controllers
                         // Seta o título do formulário como assunto
                         email.Subject = Form.Titulo;
                         // Seta a mensagem do email
-                        email.Body = Form.MsgEmail.Replace(@" {replaceStringHere} ", @"<br/><br/>https://formplataform-4ac81.web.app/" + Form.Id+ "<br/><br/>").Replace("\n", @"<br/>");
+                        email.Body = Form.MsgEmail is not null? Form.MsgEmail.Replace(@" {replaceStringHere} ", @"<br/><br/>https://formplataform-4ac81.web.app/" + Form.Id+ "<br/><br/>").Replace("\n", @"<br/>"):"";
                         //END
                         email.IsBodyHtml = true;
                         SmtpServer.Timeout = 5000;
@@ -148,9 +148,11 @@ namespace backendcsharp.Controllers
                         if (Form == null) throw new Exception("Formulário não encontrado");
 
                         // Configura SMTP
-                        SmtpClient SmtpServer = new SmtpClient("smtp.gmail.com", 587);
-                        SmtpServer.DeliveryMethod = SmtpDeliveryMethod.Network;
-                        MailMessage email = new MailMessage();
+                        SmtpClient SmtpServer = new("smtp.gmail.com", 587)
+                        {
+                            DeliveryMethod = SmtpDeliveryMethod.Network
+                        };
+                        MailMessage email = new();
 
                         // Começo da configuração do EMAIL
 
@@ -169,7 +171,7 @@ namespace backendcsharp.Controllers
                         // Seta o título do formulário como assunto
                         email.Subject = Form.titulo;
                         // Seta a mensagem do email
-                        email.Body = Form.msgEmail.Replace(@" {replaceStringHere} ", @"<br/><br/>https://formplataform-4ac81.web.app/" + Form.id + "<br/><br/>").Replace("\n",@"<br/>");
+                        email.Body = Form.msgEmail is not null?Form.msgEmail.Replace(@" {replaceStringHere} ", @"<br/><br/>https://formplataform-4ac81.web.app/" + Form.id + "<br/><br/>").Replace("\n",@"<br/>"):"";
                         //END
                         email.IsBodyHtml = true;
                         SmtpServer.Timeout = 5000;

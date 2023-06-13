@@ -21,18 +21,18 @@ namespace backendcsharp.Controllers
 
         public class Questao
         {
-            public int numero { get; set; } = 0;
-            public List<string> opcoes { get; set; } = new List<string>();
+            public int Numero { get; set; } = 0;
+            public List<string> Opcoes { get; set; } = new();
         }
 
         public class DataGraphics
         {
-            public List<Questao> labels { get; set; } = new List<Questao>();
-            public List<List<List<int>>> data { get; set; } = new List<List<List<int>>>();
+            public List<Questao> Labels { get; set; } = new();
+            public List<List<List<int>>> Data { get; set; } = new();
             public DataGraphics(List<Questao> labels, List<List<List<int>>> data)
             {
-                this.labels = labels;
-                this.data = data;
+                this.Labels = labels;
+                this.Data = data;
             }
 
         }
@@ -45,18 +45,21 @@ namespace backendcsharp.Controllers
         {
             try
             {
-                List<List<List<int>>> DataSets = new List<List<List<int>>>();
-                List<int> derivadosId = new List<int>();
+                List<List<List<int>>> DataSets = new();
+                List<int>? derivadosId = new();
                 if (derivados is not null)
                 {
                     derivadosId = JsonConvert.DeserializeObject<List<int>>(derivados);
                 }
-                derivadosId.Insert(0,(int)formId);
-                List<int> questoesId = new List<int>();
-                if (derivados is not null)
+                derivadosId ??= new();
+                if (formId is null) throw new Exception("Id do Formulário não informado na query");
+                derivadosId.Insert(0, (int)formId);
+                List<int>? questoesId = new();
+                if (questoes is not null)
                 {
                     questoesId = JsonConvert.DeserializeObject<List<int>>(questoes);
                 }
+                questoesId ??= new();
 
                 var questoesOpcoes = await
                     (from questao in ProjetoDbContext.Questoes
@@ -66,37 +69,37 @@ namespace backendcsharp.Controllers
                          questaoId = questao.Id,
                          numero = questao.Numero,
                          tipo = questao.Type,
-                         opcao1 = questao.Opcao1 == null ? "" : questao.Opcao1,
-                         opcao2 = questao.Opcao2 == null ? "" : questao.Opcao2,
-                         opcao3 = questao.Opcao3 == null ? "" : questao.Opcao3,
-                         opcao4 = questao.Opcao4 == null ? "" : questao.Opcao4,
-                         opcao5 = questao.Opcao5 == null ? "" : questao.Opcao5,
-                         opcao6 = questao.Opcao6 == null ? "" : questao.Opcao6,
-                         opcao7 = questao.Opcao7 == null ? "" : questao.Opcao7,
-                         opcao8 = questao.Opcao8 == null ? "" : questao.Opcao8,
-                         opcao9 = questao.Opcao9 == null ? "" : questao.Opcao9,
-                         opcao10 = questao.Opcao10 == null ? "" : questao.Opcao10
+                         opcao1 = questao.Opcao1 ?? "",
+                         opcao2 = questao.Opcao2 ?? "",
+                         opcao3 = questao.Opcao3 ?? "",
+                         opcao4 = questao.Opcao4 ?? "",
+                         opcao5 = questao.Opcao5 ?? "",
+                         opcao6 = questao.Opcao6 ?? "",
+                         opcao7 = questao.Opcao7 ?? "",
+                         opcao8 = questao.Opcao8 ?? "",
+                         opcao9 = questao.Opcao9 ?? "",
+                         opcao10 = questao.Opcao10 ?? ""
                      }).ToListAsync();
-                List<Questao> labels= new List<Questao>();
+                List<Questao> labels= new();
                 foreach (var item in questoesOpcoes)
                 {
-                    Questao quest = new Questao();
-                    if (item.opcao1.Length > 0) quest.opcoes.Add("Opção1 " + item.opcao1);
-                    if (item.opcao2.Length > 0) quest.opcoes.Add("Opção2 " + item.opcao2);
-                    if (item.opcao3.Length > 0) quest.opcoes.Add("Opção3 " + item.opcao3);
-                    if (item.opcao4.Length > 0) quest.opcoes.Add("Opção4 " + item.opcao4);
-                    if (item.opcao5.Length > 0) quest.opcoes.Add("Opção5 " + item.opcao5);
-                    if (item.opcao6.Length > 0) quest.opcoes.Add("Opção6 " + item.opcao6);
-                    if (item.opcao7.Length > 0) quest.opcoes.Add("Opção7 " + item.opcao7);
-                    if (item.opcao8.Length > 0) quest.opcoes.Add("Opção8 " + item.opcao8);
-                    if (item.opcao9.Length > 0) quest.opcoes.Add("Opção9 " + item.opcao9);
-                    if (item.opcao10.Length > 0) quest.opcoes.Add("Opção10 " + item.opcao10);
-                    quest.numero = (int)item.numero;
+                    Questao quest = new();
+                    if (item.opcao1.Length > 0) quest.Opcoes.Add("Opção1 " + item.opcao1);
+                    if (item.opcao2.Length > 0) quest.Opcoes.Add("Opção2 " + item.opcao2);
+                    if (item.opcao3.Length > 0) quest.Opcoes.Add("Opção3 " + item.opcao3);
+                    if (item.opcao4.Length > 0) quest.Opcoes.Add("Opção4 " + item.opcao4);
+                    if (item.opcao5.Length > 0) quest.Opcoes.Add("Opção5 " + item.opcao5);
+                    if (item.opcao6.Length > 0) quest.Opcoes.Add("Opção6 " + item.opcao6);
+                    if (item.opcao7.Length > 0) quest.Opcoes.Add("Opção7 " + item.opcao7);
+                    if (item.opcao8.Length > 0) quest.Opcoes.Add("Opção8 " + item.opcao8);
+                    if (item.opcao9.Length > 0) quest.Opcoes.Add("Opção9 " + item.opcao9);
+                    if (item.opcao10.Length > 0) quest.Opcoes.Add("Opção10 " + item.opcao10);
+                    quest.Numero = (int)item.numero;
                     labels.Add(quest);
                 }
                 foreach (var form in derivadosId)
                 {
-                    List<List<int>> Dados = new List<List<int>>();
+                    List<List<int>> Dados = new();
                     var respostasCheck = (await
                         (
                             from check in ProjetoDbContext.Checkboxes
@@ -122,16 +125,16 @@ namespace backendcsharp.Controllers
                         .Select(t => new
                         {
                             questaoId = t.Key,
-                            opcao1 = t.Count(ta=>(bool)ta.opcao1),
-                            opcao2 = t.Count(ta=>(bool)ta.opcao2),
-                            opcao3 = t.Count(ta=>(bool)ta.opcao3),
-                            opcao4 = t.Count(ta=>(bool)ta.opcao4),
-                            opcao5 = t.Count(ta=>(bool)ta.opcao5),
-                            opcao6 = t.Count(ta=>(bool)ta.opcao6),
-                            opcao7 = t.Count(ta=>(bool)ta.opcao7),
-                            opcao8 = t.Count(ta=>(bool)ta.opcao8),
-                            opcao9 = t.Count(ta=>(bool)ta.opcao9),
-                            opcao10 = t.Count(ta=>(bool)ta.opcao10)
+                            opcao1 = t.Count(ta=>ta.opcao1.HasValue && ta.opcao1.Value),
+                            opcao2 = t.Count(ta=> ta.opcao2.HasValue && ta.opcao2.Value),
+                            opcao3 = t.Count(ta=>ta.opcao3.HasValue && ta.opcao3.Value),
+                            opcao4 = t.Count(ta=>ta.opcao4.HasValue && ta.opcao4.Value),
+                            opcao5 = t.Count(ta=>ta.opcao5.HasValue && ta.opcao5.Value),
+                            opcao6 = t.Count(ta=>ta.opcao6.HasValue && ta.opcao6.Value),
+                            opcao7 = t.Count(ta=>ta.opcao7.HasValue && ta.opcao7.Value),
+                            opcao8 = t.Count(ta=>ta.opcao8.HasValue && ta.opcao8.Value),
+                            opcao9 = t.Count(ta=>ta.opcao9.HasValue && ta.opcao9.Value),
+                            opcao10 = t.Count(ta=>ta.opcao10.HasValue && ta.opcao10.Value)
                         }).ToList();
 
                     var respostasRadio = (await
@@ -156,7 +159,7 @@ namespace backendcsharp.Controllers
 
                     foreach (var item in questoesOpcoes)
                     {
-                        List<int> Dado = new List<int>();
+                        List<int> Dado = new();
                         if (item.tipo == 3)
                         {
                             var respostasQuestao = respostasCheck.Find(x => x.questaoId == item.questaoId);

@@ -58,7 +58,7 @@ export default function PaginaUsuario(){
         else document.getElementById('formModal').readOnly = false
         document.getElementById('linkForm').value='https://formplataform-4ac81.web.app/'+element.id
         if(element.msgEmail){
-            let mensagemIndex=element.msgEmail.indexOf(" \{replaceStringHere\} ")
+            let mensagemIndex=element.msgEmail.indexOf(" {replaceStringHere} ")
             if(element.msgEmail.substring(0,mensagemIndex)){
                 document.getElementById('msgEmailModal').value=element.msgEmail.substring(0,mensagemIndex)
             } 
@@ -91,7 +91,7 @@ export default function PaginaUsuario(){
 
     async function editForm(){
         var change = document.getElementById("formModal");
-        var changeMsg = document.getElementById("msgEmailModal").value+" \{replaceStringHere\} "+document.getElementById('rodEmailModal').value;
+        var changeMsg = document.getElementById("msgEmailModal").value+" {replaceStringHere} "+document.getElementById('rodEmailModal').value;
         let dados={"titulo": change.value, "msgEmail": changeMsg}
         if (addForm) {
             if (change.value !== '') {
@@ -293,7 +293,7 @@ export default function PaginaUsuario(){
     
             {/* Modal de Adicionar Form */}
             <MDBModal staticBackdrop tabIndex='-1' show={centredModal} setShow={setCentredModal}>
-                <MDBModalDialog centered>
+                <MDBModalDialog centered size='lg'>
                     <MDBModalContent>
                         <MDBModalBody>
                             <MDBInput onKeyDown={changeActive} onKeyUp={changeActive} label='Titulo' id="formModal" type='text' className='active'/>

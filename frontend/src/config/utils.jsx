@@ -27,8 +27,6 @@ export async function CarregaForms(setforms,navigate){
     })
 }
 
-
-
 export async function CarregaQuestoes(setQuestoes){
     await axios.get(baseUrl+"/questoes/"+sessionStorage.getItem("formId"))
     .then((response)=>{

@@ -74,7 +74,7 @@ namespace backendcsharp.Controllers
                             var entityDerivado = new Enviado()
                             {
                                 Respondido = Envio.respondido,
-                                FormId = ((uint)item.id),
+                                FormId = item.id,
                                 Nome = Envio.nome,
                                 Email = Envio.email,
                                 Matricula = Envio.matricula,

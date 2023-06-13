@@ -40,7 +40,7 @@ namespace backendcsharp.Controllers
                         Numero = Quest.numero,
                         Type = Quest.type,
                         FormId = Quest.formId,
-                        Enunciado = Quest.enunciado,
+                        Enunciado = Quest.enunciado is null?"":Quest.enunciado,
                         DerivadaDeId = Quest.derivadaDeId,
                         DerivadaDeOpcao = Quest.derivadaDeOpcao,
                         Opcao1 = Quest.opcao1,
@@ -93,7 +93,7 @@ namespace backendcsharp.Controllers
                         entity.Numero = Quest.numero;
                         entity.Type = Quest.type;
                         entity.FormId = Quest.formId;
-                        entity.Enunciado = Quest.enunciado;
+                        entity.Enunciado = Quest.enunciado is null?"":Quest.enunciado;
                         entity.Opcao1 = Quest.opcao1;
                         entity.Opcao2 = Quest.opcao2;
                         entity.Opcao3 = Quest.opcao3;
@@ -143,6 +143,7 @@ namespace backendcsharp.Controllers
                     })
                     .Where(s => s.id == FormId)
                     .FirstOrDefaultAsync();
+                if (Form is null) throw new Exception("Não encontrou formulário");
                 FormId = Form.derivadoDeId is not null? (int)Form.derivadoDeId:FormId;
                 var Questoes = await ProjetoDbContext.Questoes
                     .Select(s => new QuestoesDTO
@@ -288,6 +289,7 @@ namespace backendcsharp.Controllers
                     })
                     .Where(s => s.id == FormId)
                     .FirstOrDefaultAsync();
+                if (Form is null) throw new Exception("Não encontrou formulário");
                 FormId = Form.derivadoDeId is not null ? (int)Form.derivadoDeId : FormId;
                 var Questoes = await ProjetoDbContext.Questoes
                     .Select(s => new QuestoesDTO

@@ -174,16 +174,16 @@ namespace backendcsharp.Controllers
                 if (Admin.admin)
                 {
                     Handlers.ExistsOrError(User.id.ToString(), "Id do responsável não informado");
-                    Handlers.IdNegative((int)User.id, "Id do usuário inválido");
+                    Handlers.IdNegative(User.id is not null ? (int)User.id : throw new Exception("Usuário Encontrado, porém não id, entrar em contato"), "Id do usuário inválido");
                     var entity = await ProjetoDbContext.Users.FirstOrDefaultAsync(s => s.Id == User.id);
                     if (entity != null)
                     {
-                        entity.Nome = User.nome != null ? User.nome : entity.Nome;
-                        entity.Universidade = User.universidade != null ? User.universidade : entity.Universidade;
-                        entity.Email = User.email != null ? User.email : entity.Email;
+                        entity.Nome = User.nome ?? entity.Nome;
+                        entity.Universidade = User.universidade ?? entity.Universidade;
+                        entity.Email = User.email ?? entity.Email;
                         entity.Admin = User.admin;
                         if (User.senha is not null) entity.Senha = BCrypt.Net.BCrypt.HashPassword(User.senha);
-                        entity.AppPassword = User.appPassword != null ? User.appPassword : throw new Exception("Senha do gmail não informada não informada");
+                        entity.AppPassword = User.appPassword ?? throw new Exception("Senha do gmail não informada não informada");
                         await ProjetoDbContext.SaveChangesAsync();
                         return StatusCode(204);
                     }
@@ -209,10 +209,10 @@ namespace backendcsharp.Controllers
                 var entity = await ProjetoDbContext.Users.FirstOrDefaultAsync(s => s.Id == Id);
                 if (entity != null)
                 {
-                    entity.Nome = User.nome != null ? User.nome : throw new Exception("Nome não informado");
-                    entity.Universidade = User.universidade != null ? User.universidade : throw new Exception("Universidade não informada");
+                    entity.Nome = User.nome ?? throw new Exception("Nome não informado");
+                    entity.Universidade = User.universidade ?? throw new Exception("Universidade não informada");
                     if (User.senha is not null) entity.Senha = BCrypt.Net.BCrypt.HashPassword(User.senha);
-                    entity.AppPassword = User.appPassword != null ? User.appPassword : throw new Exception("Senha do gmail não informada não informada");
+                    entity.AppPassword = User.appPassword ?? throw new Exception("Senha do gmail não informada não informada");
                     await ProjetoDbContext.SaveChangesAsync();
                     return StatusCode(204);
                 }
@@ -325,7 +325,7 @@ namespace backendcsharp.Controllers
                 ).Where(s => s.email == usuario.email).FirstOrDefaultAsync();
                 if (Usuario is not null)
                 {
-                    usuario.id = (int)Usuario.id;
+                    usuario.id = Usuario.id is not null? (int)Usuario.id:throw new Exception("Usuário Encontrado, porém não id, entrar em contato");
                     usuario.admin = Usuario.admin;
                 }else return StatusCode(400);
                 if (BCrypt.Net.BCrypt.Verify(usuario.senha,Usuario.senha))

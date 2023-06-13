@@ -188,15 +188,17 @@ export default function UserSection() {
                                 Caso não possua uma senha ou tenha perdido a informação siga os passos ou acesse: <a className="realLink" rel="noreferrer" target="_blank" href="https://support.google.com/accounts/answer/185833?hl=pt-BR">Senha de aplicativo do Gmail</a><br /><br />
                                 1. Acesse a aba <b>Gerenciar sua conta do Google</b> da sua conta do gmail:<br /><br />
                                 <div className="d-flex justify-content-center"><img alt="Configurações" src={require('./../imgs/settings.png')} className='img-fluid shadow-4'></img></div><br /><br />
-                                2. Encontre a aba de <b>Segurança</b>, ative a verificação em duas etapas e clique em <b>Senhas de apps</b>:<br /><br />
-                                <div className="d-flex justify-content-center"><img alt="Ver Configurações" src={require('./../imgs/seesettings.png')} className='img-fluid shadow-4'></img></div><br /><br />
-                                3. Clique na seção <b>Selecionar app</b>:<br /><br />
+                                2. Encontre a aba de <b>Segurança</b>, ative a verificação em duas etapas e clique em <b>Verificação em Duas Etapas</b>:<br /><br />
+                                <div className="d-flex justify-content-center"><img alt="Ver Duas Etapas" src={require('./../imgs/seesettings.png')} className='img-fluid shadow-4'></img></div><br /><br />
+                                3. Clique em <b>Senhas de app</b> ao final da página:<br /><br />
+                                <div className="d-flex justify-content-center"><img alt="Selecionar App" src={require('./../imgs/duasetapas.png')} className='img-fluid shadow-4'></img></div><br /><br />
+                                4. Clique na seção <b>Selecionar app</b>:<br /><br />
                                 <div className="d-flex justify-content-center"><img alt="Senha" src={require('./../imgs/senha.png')} className='img-fluid shadow-4'></img></div><br /><br />
-                                4. Escolha a opção <b>Outro (nome personalizado)</b>, digite um nome para o acesso à plataforma e clique em <b>Gerar</b>:<br /><br />
+                                5. Escolha a opção <b>Outro (nome personalizado)</b>, digite um nome para o acesso à plataforma e clique em <b>Gerar</b>:<br /><br />
                                 <div className="d-flex justify-content-center"><img alt="Geração" src={require('./../imgs/outro.png')} className='img-fluid shadow-4'></img></div><br /><br />
-                                5. Selecione a chave gerada na área amarela:<br /><br />
+                                6. Selecione a chave gerada na área amarela:<br /><br />
                                 <div className="d-flex justify-content-center"><img alt="Copiar" src={require('./../imgs/seleciona.png')} className='img-fluid shadow-4'></img></div><br /><br />
-                                6. Cole o texto selecionado neste campo.
+                                7. Cole o texto selecionado neste campo.
                             </MDBModalBody>
                         </MDBModalContent>
                     </MDBModalDialog>

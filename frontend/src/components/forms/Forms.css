@@ -72,18 +72,24 @@
 }
 
 .opcao1{background-color: #ccfcfc ;}
-.opcao2{background-color: #C7ECEE;}
-.opcao3{background-color: #B2EBF2 ;}
-.opcao4{background-color: #A0CFEC ;}
-.opcao5{background-color: #7FB3D5 ;}
-.opcao6{background-color: #77BFC7 ;}
-.opcao7{background-color: #87CEFA;}
-.opcao8{background-color: #87CEEB ;}
-.opcao9{background-color: #ADD8E6 ;}
-.opcao10{background-color: #BFEFFF ;}
+.opcao2{background-color: #fa87eebf;}
+.opcao3{background-color: #b8f2b2 ;}
+.opcao4{background-color: #eca0a0c0 ;}
+.opcao5{background-color: #cb7fd5ab ;}
+.opcao6{background-color: #77c7c4a6 ;}
+.opcao7{background-color: #fff15ba6 ;}
+.opcao8{background-color: #eb87afb4 ;}
+.opcao9{background-color: #d4e6adcb ;}
+.opcao10{background-color: #bfefff ;}
 
 .shadow{
     box-shadow: rgba(0, 0, 0, 0.074) 0px 0.1px 0.1px, rgba(0, 0, 0, 0.156) 0px 0.1px 0.1px;
+}
+
+.inputnumero{
+    border: #000000 solid 1px;
+    border-radius: 5px;
+    background-color: white;
 }
 
 @media screen and (min-width:280px) {

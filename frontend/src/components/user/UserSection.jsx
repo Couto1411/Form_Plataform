@@ -222,7 +222,7 @@ export default function UserSection() {
                             <MDBInput onChange={e=>{setUser(user => ({
                                 ...user,
                                 ...{universidade:e.target.value}
-                            }))}} id='univUsuario' value={user?.universidade} name='funiv' required label='Universidade' />
+                            }))}} id='univUsuario' value={user?.universidade} name='funiv' required label='Instituição' />
                         </div>
                         <div className="col-md-6" >
                             <MDBInput onKeyDown={e => { limit(e.target, 20) }} onKeyUp={e => { limit(e.target, 20) }} id='senha' type='password' onChange={e => {

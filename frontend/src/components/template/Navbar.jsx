@@ -26,17 +26,6 @@ export default function Navbar(props){
 
                 {/* Brand */}
                 <Logo/>
-
-                {/* Right links */}
-                <ul className="navbar-nav ms-auto d-flex flex-row">
-                    {/* Notification dropdown */}
-                    <MDBDropdown group className='shadow-0'>
-                        <MDBDropdownToggle color='transparent'><div className="text-light"><i className="fas fa-bell"></i></div></MDBDropdownToggle>
-                        <MDBDropdownMenu>
-                            <MDBDropdownItem link>...</MDBDropdownItem>
-                        </MDBDropdownMenu>
-                    </MDBDropdown>
-                </ul>
             </MDBContainer>
         </nav>
     )

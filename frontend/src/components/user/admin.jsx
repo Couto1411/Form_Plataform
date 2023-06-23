@@ -123,7 +123,7 @@ export default function Admin(){
                                     </div>
                                     <div className="col-md-6 pt-md-2 pt-1">
                                         <MDBInputGroup>
-                                            <MDBBtn color='secondary' className='novoUsuarioForm px-2'>Universidade</MDBBtn>
+                                            <MDBBtn color='secondary' className='novoUsuarioForm px-2'>Instituição</MDBBtn>
                                             <input onKeyDown={e=>{limit(e.target)}} onKeyUp={e=>{limit(e.target)}} defaultValue={element.universidade} onChange={e=>{users[users.map(object => object.id).indexOf(element.id)].universidade=e.target.value}} className='form-control' type='text'/>
                                         </MDBInputGroup>
                                     </div>
@@ -271,7 +271,7 @@ export default function Admin(){
                     </div>
                     <div className="col-md-6 pt-md-2 pt-1">
                         <MDBInputGroup>
-                            <MDBBtn color='secondary' className='novoUsuarioForm px-2'>Universidade</MDBBtn>
+                            <MDBBtn color='secondary' className='novoUsuarioForm px-2'>Instituição</MDBBtn>
                             <input onKeyDown={e=>{limit(e.target)}} onKeyUp={e=>{limit(e.target)}} className='form-control' type='text' id={'novoUsuarioUniversidade'}/>
                         </MDBInputGroup>
                     </div>

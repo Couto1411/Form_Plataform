@@ -55,9 +55,12 @@ export default function Forms(){
 
     // Usado para paginação
     const [contatosPage, setContatosPage] = useState(1);
+    const [qtdPPag, setQtdPPag] = useState(15);
 
     // Usado para busca de contatos
     const [nomeEmail, setNomeEmail] = useState(true);
+    // Confirmação de envio de email
+    const [enviou, setEnviou] = useState(false);
 
     // Usado para dizer qual a pergunta e o tipo de reposta do relatório
     const [show, setShow] = useState(false);
@@ -69,7 +72,7 @@ export default function Forms(){
         if (sessionStorage.getItem("token")){
             CarregaQuestoes(setQuestoes,navigate)
             CarregaCursosUser(setCursos,navigate)
-            CarregaEnvios(setContatos,setContatosDB,navigate)
+            CarregaEnvios(setContatos,setContatosDB,sessionStorage.getItem('formId'),navigate)
             CarregaRespostas(setRespostas,navigate)
         }
         else{
@@ -479,7 +482,7 @@ export default function Forms(){
 
     // Contatos
     function renderizaContatos(){
-        return contatos?.slice((contatosPage-1)*15,((contatosPage-1)*15)+15).map(element => {
+        return contatos?.slice((contatosPage-1)*(qtdPPag!==''?qtdPPag:15),((contatosPage-1)*(qtdPPag!==''?qtdPPag:15))+(qtdPPag!==''?qtdPPag:15)).map(element => {
                 if(element.respondido===true){
                     return(
                         <MDBListGroupItem className='py-2 px-2' key={element.id}>
@@ -675,7 +678,7 @@ export default function Forms(){
             }
         })
         .then((response)=>{
-            if(contatos.map(a=>a.id).indexOf(id)%15===0) {
+            if(contatos.map(a=>a.id).indexOf(id)%(qtdPPag!==''?qtdPPag:15)===0) {
                 setContatosPage(contatosPage-1)}
             setContatos(contatos.filter(a=> a.id !== id))
         })
@@ -845,6 +848,7 @@ export default function Forms(){
                 'Authorization': 'bearer ' + sessionStorage.getItem("token")
             }
         })
+        .then(()=>{setEnviou(true)})
         .catch((error) => {
             if (error.response.status===401) {
                 navigate('/login')
@@ -861,6 +865,7 @@ export default function Forms(){
                 'Authorization': 'bearer ' + sessionStorage.getItem("token")
             }
         })
+        .then(()=>{setEnviou(true)})
         .catch((error) => {
             if (error.response.status===401) {
                 navigate('/login')
@@ -895,7 +900,7 @@ export default function Forms(){
                         })
                         .then(responsta=>{
                             document.getElementById('cancelmodalimports').disabled=false
-                            CarregaEnvios(setContatos,setContatosDB,navigate)
+                            CarregaEnvios(setContatos,setContatosDB,sessionStorage.getItem('formId'),navigate)
                             CarregaCursosUser(setCursos,navigate)
                             setImportModal(false)
                         })
@@ -942,12 +947,18 @@ export default function Forms(){
         {/* Botões de adição e envio de contatos */}
         <div className='d-flex mt-3'>
             <MDBBtn outline color='dark' className='border-1 bg-light contatoBotoes' onClick={e=>{handleNewContato()}}><i title='Adicionar novo email a enviar' className="edit fas fa-regular fa-plus fa-2x"></i></MDBBtn>
+            <div className='mx-1'><input value={qtdPPag} onChange={e=>{
+                if(e.target.value!=='' && Number(e.target.value>=1)){
+                    setQtdPPag(Number(e.target.value))
+                }else setQtdPPag('')
+                setContatosPage(1)
+            }} className="inputnumero form-control form-control-3 p-2" id="typeNumber" size='3' maxLength="3"/></div>
             <MDBBtn outline color='dark' className='border-1 bg-light contatoBotoes ms-auto mx-2' onClick={e=>{setImportModal(true)}} ><i title='Importar emails de modelo CEFET-MG' className="edit fas fa-regular fa-file-import"></i></MDBBtn>
             <MDBBtn outline color='dark' className='border-1 bg-light contatoBotoes' onClick={e=>{sendEmails()}}><i title='Enviar à todos os emails da lista' className="edit fas fa-light fa-paper-plane"></i></MDBBtn>
         </div>
         
         {/* Modal para adicionar contatos no modelo Cefet */}
-        <MDBModal staticBackdrop tabIndex='-1' show={importModal} setShow={setImportModal}>
+        <MDBModal tabIndex='-1' show={importModal} setShow={setImportModal}>
             <MDBModalDialog centered>
                 <MDBModalContent>
                     <MDBModalHeader className='py-2'>
@@ -960,6 +971,17 @@ export default function Forms(){
                         <MDBBtn id="cancelmodalimports" color='secondary' onClick={e=>{setImportModal(false)}}> Cancelar </MDBBtn>
                         <MDBBtn onClick={e=>{importEmails()}}>Importar</MDBBtn>
                     </MDBModalFooter>
+                </MDBModalContent>
+            </MDBModalDialog>
+        </MDBModal>
+
+        {/* Modal de avisar que foi enviado */}
+        <MDBModal staticBackdrop tabIndex='-1' show={enviou} setShow={setEnviou}>
+            <MDBModalDialog centered>
+                <MDBModalContent>
+                    <MDBModalBody className='py-2'>
+                        Enviado com sucesso
+                    </MDBModalBody>
                 </MDBModalContent>
             </MDBModalDialog>
         </MDBModal>
@@ -979,25 +1001,25 @@ export default function Forms(){
         </MDBModal>
 
         {/* Pagination */}
-        {contatos.length>15
+        {contatos.length>(qtdPPag!==''?qtdPPag:15)
         ?<div className="d-flex justify-content-center mt-2">
             {contatosPage<=3?
             <MDBListGroup horizontal>
                 <MDBListGroupItem className='pages' onClick={e=>{setContatosPage(1)}}>1</MDBListGroupItem>
-                {Math.ceil(contatos.length/15)>1?<MDBListGroupItem className='pages' onClick={e=>{setContatosPage(2)}}>2</MDBListGroupItem>:<></>}
-                {Math.ceil(contatos.length/15)>2?<MDBListGroupItem className='pages' onClick={e=>{setContatosPage(3)}}>3</MDBListGroupItem>:<></>}
-                {Math.ceil(contatos.length/15)>3?<MDBListGroupItem className='pages' onClick={e=>{setContatosPage(4)}}>4</MDBListGroupItem>:<></>}
-                {Math.ceil(contatos.length/15)>4?<MDBListGroupItem className='pages' onClick={e=>{setContatosPage(5)}}>5</MDBListGroupItem>:<></>}
-                {Math.ceil(contatos.length/15)>5?<MDBListGroupItem className='pages' onClick={e=>{setContatosPage(Math.ceil(contatos.length/15))}}>...</MDBListGroupItem>:<></>}
+                {Math.ceil(contatos.length/(qtdPPag!==''?qtdPPag:15))>1?<MDBListGroupItem className='pages' onClick={e=>{setContatosPage(2)}}>2</MDBListGroupItem>:<></>}
+                {Math.ceil(contatos.length/(qtdPPag!==''?qtdPPag:15))>2?<MDBListGroupItem className='pages' onClick={e=>{setContatosPage(3)}}>3</MDBListGroupItem>:<></>}
+                {Math.ceil(contatos.length/(qtdPPag!==''?qtdPPag:15))>3?<MDBListGroupItem className='pages' onClick={e=>{setContatosPage(4)}}>4</MDBListGroupItem>:<></>}
+                {Math.ceil(contatos.length/(qtdPPag!==''?qtdPPag:15))>4?<MDBListGroupItem className='pages' onClick={e=>{setContatosPage(5)}}>5</MDBListGroupItem>:<></>}
+                {Math.ceil(contatos.length/(qtdPPag!==''?qtdPPag:15))>5?<MDBListGroupItem className='pages' onClick={e=>{setContatosPage(Math.ceil(contatos.length/(qtdPPag!==''?qtdPPag:15)))}}>...</MDBListGroupItem>:<></>}
             </MDBListGroup>
-            :contatosPage>((Math.ceil(contatos.length/15))-3)?
+            :contatosPage>((Math.ceil(contatos.length/(qtdPPag!==''?qtdPPag:15)))-3)?
             <MDBListGroup horizontal>
-                {Math.ceil(contatos.length/15)-5>0?<MDBListGroupItem className='pages' onClick={e=>{setContatosPage(1)}} >...</MDBListGroupItem>:<></>}
-                {Math.ceil(contatos.length/15)-4>0?<MDBListGroupItem className='pages' onClick={e=>{setContatosPage(Math.ceil(contatos.length/15)-4)}}>{Math.ceil(contatos.length/15)-4}</MDBListGroupItem>:<></>}
-                {Math.ceil(contatos.length/15)-3>0?<MDBListGroupItem className='pages' onClick={e=>{setContatosPage(Math.ceil(contatos.length/15)-3)}}>{Math.ceil(contatos.length/15)-3}</MDBListGroupItem>:<></>}
-                <MDBListGroupItem className='pages' onClick={e=>{setContatosPage(Math.ceil(contatos.length/15)-2)}}>{Math.ceil(contatos.length/15)-2}</MDBListGroupItem>
-                <MDBListGroupItem className='pages' onClick={e=>{setContatosPage(Math.ceil(contatos.length/15)-1)}}>{Math.ceil(contatos.length/15)-1}</MDBListGroupItem>
-                <MDBListGroupItem className='pages' onClick={e=>{setContatosPage(Math.ceil(contatos.length/15))}}>{Math.ceil(contatos.length/15)}</MDBListGroupItem>
+                {Math.ceil(contatos.length/(qtdPPag!==''?qtdPPag:15))-5>0?<MDBListGroupItem className='pages' onClick={e=>{setContatosPage(1)}} >...</MDBListGroupItem>:<></>}
+                {Math.ceil(contatos.length/(qtdPPag!==''?qtdPPag:15))-4>0?<MDBListGroupItem className='pages' onClick={e=>{setContatosPage(Math.ceil(contatos.length/(qtdPPag!==''?qtdPPag:15))-4)}}>{Math.ceil(contatos.length/(qtdPPag!==''?qtdPPag:15))-4}</MDBListGroupItem>:<></>}
+                {Math.ceil(contatos.length/(qtdPPag!==''?qtdPPag:15))-3>0?<MDBListGroupItem className='pages' onClick={e=>{setContatosPage(Math.ceil(contatos.length/(qtdPPag!==''?qtdPPag:15))-3)}}>{Math.ceil(contatos.length/(qtdPPag!==''?qtdPPag:15))-3}</MDBListGroupItem>:<></>}
+                <MDBListGroupItem className='pages' onClick={e=>{setContatosPage(Math.ceil(contatos.length/(qtdPPag!==''?qtdPPag:15))-2)}}>{Math.ceil(contatos.length/(qtdPPag!==''?qtdPPag:15))-2}</MDBListGroupItem>
+                <MDBListGroupItem className='pages' onClick={e=>{setContatosPage(Math.ceil(contatos.length/(qtdPPag!==''?qtdPPag:15))-1)}}>{Math.ceil(contatos.length/(qtdPPag!==''?qtdPPag:15))-1}</MDBListGroupItem>
+                <MDBListGroupItem className='pages' onClick={e=>{setContatosPage(Math.ceil(contatos.length/(qtdPPag!==''?qtdPPag:15)))}}>{Math.ceil(contatos.length/(qtdPPag!==''?qtdPPag:15))}</MDBListGroupItem>
             </MDBListGroup>
             :contatosPage>3?
             <MDBListGroup horizontal>
@@ -1007,7 +1029,7 @@ export default function Forms(){
                 <MDBListGroupItem className='pages' onClick={e=>{setContatosPage(contatosPage)}}>{contatosPage}</MDBListGroupItem>
                 <MDBListGroupItem className='pages' onClick={e=>{setContatosPage(contatosPage+1)}}>{contatosPage+1}</MDBListGroupItem>
                 <MDBListGroupItem className='pages' onClick={e=>{setContatosPage(contatosPage+2)}}>{contatosPage+2}</MDBListGroupItem>
-                <MDBListGroupItem className='pages' onClick={e=>{setContatosPage(Math.ceil(contatos.length/15))}}>...</MDBListGroupItem>
+                <MDBListGroupItem className='pages' onClick={e=>{setContatosPage(Math.ceil(contatos.length/(qtdPPag!==''?qtdPPag:15)))}}>...</MDBListGroupItem>
             </MDBListGroup>
             :<></>}
         </div>:<></>}
@@ -1016,7 +1038,7 @@ export default function Forms(){
 
     // Secao Respostas
     function renderizaRepostas(){
-        return respostas?.map(element => {
+        return respostas?.respostas?.map(element => {
             return(
                 <div key={element.id} className='col-md-6 col-xxl-4'>
                 <MDBListGroupItem className='shadow mt-3 rounded-3'>
@@ -1085,7 +1107,7 @@ export default function Forms(){
     }
 
     const secaoRespostas = <main className='mt-3 principal'> 
-        {Title("Repostas")}
+        {Title(respostas?.quantidadeRespostas+" Respostas")}
         <MDBListGroup small className='mt-3' >
             <div className='row'>
                 {renderizaRepostas()}

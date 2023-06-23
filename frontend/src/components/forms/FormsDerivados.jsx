@@ -3,7 +3,7 @@ import './Forms.css'
 import axios from "axios";
 import baseUrl from "../../config/api";
 import {useNavigate} from 'react-router-dom';
-import { CarregaQuestoes, CarregaRespostas, CarregaEnvios, RemoveSessao } from '../../config/utils';
+import { CarregaQuestoes, CarregaRespostas, CarregaEnvios, RemoveSessao, CarregaRelatorio } from '../../config/utils';
 import Title from '../template/Title'
 import Navbar from '../template/Navbar'
 import Sidebar from '../template/Sidebar'
@@ -11,7 +11,8 @@ import UserSection from '../user/UserSection'
 import {
     MDBInputGroup, MDBTextArea, MDBRadio, MDBCheckbox,
     MDBListGroup, MDBListGroupItem,
-    MDBBtn, MDBProgress, MDBProgressBar, MDBContainer, MDBInput} from 'mdb-react-ui-kit';
+    MDBBtn, MDBProgress, MDBProgressBar, MDBContainer, MDBInput,
+    MDBModal,MDBModalDialog,MDBModalContent,MDBModalTitle,MDBModalBody,MDBModalHeader} from 'mdb-react-ui-kit';
 
 export default function FormsDerivados(){
     const navigate = useNavigate();
@@ -34,11 +35,19 @@ export default function FormsDerivados(){
     const [nomeEmail, setNomeEmail] = useState(true);
 
     const [contatosPage, setContatosPage] = useState(1);
+    // Confirmação de envio de email
+    const [enviou, setEnviou] = useState(false);
+    
+    // Usado para dizer qual a pergunta e o tipo de reposta do relatório
+    const [show, setShow] = useState(false);
+    
+    // Usado para dizer os valores do relatório de reposta
+    const [contatosResposta, setContatosResposta] = useState([]);
 
     useEffect(() => {
         if (sessionStorage.getItem("token")){
             CarregaQuestoes(setQuestoes,navigate)
-            CarregaEnvios(setContatos,setContatosDB,navigate)
+            CarregaEnvios(setContatos,setContatosDB,sessionStorage.getItem('formDeId'),navigate)
             CarregaRespostas(setRespostas,navigate)
         }
         else{
@@ -220,6 +229,7 @@ export default function FormsDerivados(){
                 'Authorization': 'bearer ' + sessionStorage.getItem("token")
             }
         })
+        .then(()=>{setEnviou(true)})
         .catch((error) => {
             if (error.response.status===401) {
                 navigate('/login')
@@ -271,6 +281,17 @@ export default function FormsDerivados(){
             })}
         </MDBListGroup>
 
+        {/* Modal de avisar que foi enviado */}
+        <MDBModal tabIndex='-1' show={enviou} setShow={setEnviou}>
+            <MDBModalDialog centered>
+                <MDBModalContent>
+                    <MDBModalBody className='py-2'>
+                        Enviado com sucesso
+                    </MDBModalBody>
+                </MDBModalContent>
+            </MDBModalDialog>
+        </MDBModal>
+
         {/* Botões de adição e envio de contatos */}
         <div className='d-flex mt-3'>
             <MDBBtn outline color='dark' className=' ms-auto border-1 bg-light contatoBotoes' onClick={e=>{sendEmails()}}><i title='Enviar à todos os emails da lista' className="edit fas fa-light fa-paper-plane py-1"></i></MDBBtn>
@@ -315,7 +336,7 @@ export default function FormsDerivados(){
     // Secao Respostas
     
     function renderizaRepostas(){
-        return respostas?.map(element => {
+        return respostas?.respostas?.map(element => {
             return(
                 <div  key={element.id} className='col-md-6 col-xxl-4'>
                 <MDBListGroupItem className='shadow mt-3 rounded-3'>
@@ -357,13 +378,16 @@ export default function FormsDerivados(){
         let numero=0
         let sum = element.resposta.reduce((partialSum, a) => partialSum + a.quantidade, 0);
         let count=0
-        return element.resposta?.map((item)=>{
+        return element.resposta?.map((item,index)=>{
             numero+=1
             count+=1
             let parcial=Math.trunc((item.quantidade/sum)*100)
             if(!parcial) parcial=0
             return(
-                <div key={'Barra'+element.id+count} className='mb-2 porcentagem'> <div className={tipo?'rounded-3 opcao'+count:null}>{numero}) {item.texto}</div>
+                <div key={'Barra'+element.id+count} className='mb-2 porcentagem'> 
+                <div className={tipo?'rounded-3 opcao'+count:null}>{numero}) <a style={{display:'inline'}} onClick={()=>{
+                    setShow(item);
+                    CarregaRelatorio(setContatosResposta,navigate,element?.id,item);}}>{item.texto}</a></div>
                     <MDBProgress height='20' className='rounded-3'>
                         <MDBProgressBar className='porcentagem' width={parcial} valuemin={0} valuemax={100}>{parcial}%</MDBProgressBar>
                     </MDBProgress>
@@ -372,13 +396,34 @@ export default function FormsDerivados(){
         })
     }
 
+    function renderizaRelatorio(){
+        return contatosResposta?.data?.map(contato => {
+            return <MDBInputGroup key={contato.email} className='mb-1'>
+                    <input className='form-control' type='text' defaultValue={contato.email} disabled/>
+                </MDBInputGroup>
+        })
+    }
+
     const secaoRespostas = <main className='mt-3 principal'> 
-        {Title("Repostas")}
+        {Title(respostas?.quantidadeRespostas+" Respostas")}
         <MDBListGroup small className='mt-3' >
             <div className='row'>
                 {renderizaRepostas()}
             </div>
         </MDBListGroup>
+        <MDBModal show={show} tabIndex='-1' setShow={setShow}>
+            <MDBModalDialog size='md'>
+            <MDBModalContent>
+                <MDBModalHeader>
+                <MDBModalTitle>{contatosResposta?.enunciado}</MDBModalTitle>
+                <MDBBtn className='btn-close' color='none' onClick={e=>setShow(false)}></MDBBtn>
+                </MDBModalHeader>
+                <MDBContainer className='mt-2 mb-3 d-flex row justify-content-center'>
+                    {renderizaRelatorio()}
+                </MDBContainer>
+            </MDBModalContent>
+            </MDBModalDialog>
+        </MDBModal>
     </main>
     // Secao Respostas
 

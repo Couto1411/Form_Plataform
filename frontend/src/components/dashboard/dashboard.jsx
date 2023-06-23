@@ -169,7 +169,7 @@ export default function Dashboard(){
 
     return(
         <main className='mt-3 principal'>
-            {Titulo("Dashboard")}
+            {Titulo("Relatórios")}
 
             {/* Informações do usuários */}
             <MDBContainer className="shadow bg-light mt-3 rounded-3 p-3 ">

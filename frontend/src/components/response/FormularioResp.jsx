@@ -217,7 +217,7 @@ export default function FormularioResposta(){
                                 id: element.id,
                                 radio: +questao.value
                             })
-                            element.derivadas?.filter(e=>e.derivadaDeOpcao==questao.value)?.forEach(item=>{
+                            element.derivadas?.filter(e=>e.derivadaDeOpcao===questao.value)?.forEach(item=>{
                                 switch (item.type) {
                                     case 1:
                                         let radio= document.querySelector(`input[name="radioNoLabel${item.id}"]:checked`)
@@ -279,13 +279,17 @@ export default function FormularioResposta(){
         if(enviar){
             document.getElementById("desabilita").disabled=true
             await axios.post(baseUrl+"/enviados/"+formId,
-                {
-                    email:user,
-                    respostas: respostas
-                })
+            {
+                email:user,
+                respostas: respostas
+            })
+            .then(reposta =>{
+                setConcluded(true);
+            })
+            .catch(erro=>{
+                console.log(erro)
+            })
         }
-
-
     }
 
     return(

@@ -94,6 +94,7 @@ namespace backendcsharp.Controllers
                         email.Subject = Form.Titulo;
                         // Seta a mensagem do email
                         email.Body = Form.MsgEmail is not null? Form.MsgEmail.Replace(@" {replaceStringHere} ", @"<br/><br/>https://formplataform-4ac81.web.app/" + Form.Id+ "<br/><br/>").Replace("\n", @"<br/>"):"";
+                        email.Body += "<br/><br/> Caso link não funcione, cole-o no browser de sua escolha.";
                         //END
                         email.IsBodyHtml = true;
                         SmtpServer.Timeout = 5000;

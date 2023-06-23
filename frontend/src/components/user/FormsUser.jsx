@@ -212,11 +212,12 @@ export default function PaginaUsuario(){
         novoDerivado.titulo = element.titulo
         novoDerivado.msgEmail = element.msgEmail
         novoDerivado.derivadoDeId = element.id
-        await axios.post(baseUrl+"/users/"+sessionStorage.getItem("userId")+"/forms",novoDerivado,{
+        let response = await axios.post(baseUrl+"/users/"+sessionStorage.getItem("userId")+"/forms",novoDerivado,{
             headers: {
                 'Authorization': 'bearer ' + sessionStorage.getItem("token")
             }
         })
+        .then(response=>{CarregaForms(setforms)})
         .catch((error) => {
             if (error.response.status===401) {
                 navigate('/login')
@@ -224,9 +225,6 @@ export default function PaginaUsuario(){
                 alert("Faça o login")
             }else{ console.log(error)}
         })
-        novoDerivado.id = 'novoderivado'+count
-        setCount(count+1)
-        element.derivados.push(novoDerivado)
     }
 
     function renderizaForms(){
@@ -237,7 +235,9 @@ export default function PaginaUsuario(){
             return(
                 <div key={element.id} className={forms.length>numero?'border-bottom':''}>
                     <MDBListGroupItem noBorders className='d-flex rounded-2 align-items-center'>
-                        {numero}. <Link className='zoom' style={{color:'black'}} to="/forms" onClick={e=>{sessionStorage.setItem("formId",element.id);sessionStorage.removeItem("formDeId")}}>{element.titulo} {element.dataEnviado?<i>({tempDate.toLocaleDateString('en-GB')})</i>:<></>}</Link>{element.derivados?.length?<i id={'icone'+element.id} aberto='F' onClick={e=>{toggleDerivados(element.id)}} className=" mx-2 fas fa-regular fa-angle-down"></i>:null}
+                        {numero}. <Link className='zoom' style={{color:'black'}} to="/forms" onClick={e=>{sessionStorage.setItem("formId",element.id);sessionStorage.removeItem("formDeId")}}>{element.titulo} </Link>
+                        {element.dataEnviado?<i className='mx-1'>({tempDate.toLocaleDateString('en-GB')})</i>:<></>}
+                        {element.derivados?.length?<i id={'icone'+element.id} aberto='F' onClick={e=>{toggleDerivados(element.id)}} className=" mx-1 fas fa-regular fa-angle-down"></i>:null}
                         
                         <i title='Adicionar novo envio de formulário' className="edit pt-1 ms-auto fas fa-light fa-plus" onClick={e=>{addDerivado(element)}}></i>
                         <i title='Editar Formulário' className="edit mx-2 pt-1 fas fa-pen-to-square" onClick={()=>onClickEditForm(element)}></i>
@@ -252,17 +252,17 @@ export default function PaginaUsuario(){
                             <hr className='mt-0 mb-1'></hr>
                             <MDBListGroup numbered className='mx-3 mb-1 border-top'>
                                 {element.derivados.map(item =>{
+                                    let tempDate2= new Date( Date.parse(item.dataEnviado))
                                     return (
                                         <MDBListGroupItem key={'formderivado'+item.id} className='pb-0 formsDuplicates d-flex'>
-                                            {item.id[0]?<>{item.titulo}</>:<Link className='formsDuplicates zoom' to={"/forms/"+item.id} onClick={e=>{sessionStorage.setItem("formId",element.id);sessionStorage.setItem("formDeId",item.id)}}>{item.titulo}{item.dataEnviado?<i>({item.dataEnviado.toLocaleString('en-GB', { timeZone: 'UTC' })})</i>:<></>}</Link>}
-                                            {item.id[0]?<i onClick={e=>{CarregaForms(setforms)}} className="pt-1 ms-auto fa-solid fa-arrows-rotate"></i>:
-                                            <div className='ms-auto'>
-                                                <i title='Editar Formulário' className="edit mx-2 pt-1 fas fa-pen-to-square" onClick={()=>onClickEditForm(item)}></i>
-                                                <i className="trashcan pt-1 fas fa-trash-can" onClick={e=>{
-                                                setIdToDelete(element.id)
-                                                setIdDerivateToDelete(item.id)
-                                                setDeletaFormulario(true)
-                                                }}></i></div>}
+                                            <Link className='formsDuplicates zoom' to={"/forms/"+item.id} onClick={e=>{sessionStorage.setItem("formId",element.id);sessionStorage.setItem("formDeId",item.id)}}>{item.titulo}</Link>
+                                            {item.dataEnviado?<i className='mx-1'>({tempDate2.toLocaleDateString('en-GB')})</i>:<></>}
+                                            <i title='Editar Formulário' className="ms-auto edit mx-2 pt-1 fas fa-pen-to-square" onClick={()=>onClickEditForm(item)}></i>
+                                            <i className="trashcan pt-1 fas fa-trash-can" onClick={e=>{
+                                            setIdToDelete(element.id)
+                                            setIdDerivateToDelete(item.id)
+                                            setDeletaFormulario(true)
+                                            }}></i>
                                             <hr></hr>
                                         </MDBListGroupItem>
                                     )
@@ -276,7 +276,7 @@ export default function PaginaUsuario(){
     }
 
     const secaoForms=<main className='mt-3 principal'>
-        {Title("Formularios")}
+        {Title("Formulários")}
         
         <MDBListGroup small className='shadow mt-3 rounded-3 bg-light' >
             {renderizaForms()}

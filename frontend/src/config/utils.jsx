@@ -115,14 +115,18 @@ export async function CarregaCursosUser(setCursos,navigate){
     })
 }
 
-export async function CarregaEnvios(setContatos,setContatosDB,navigate){
-    await axios.get(baseUrl+"/users/"+sessionStorage.getItem("userId")+"/forms/"+sessionStorage.getItem("formId")+"/enviados",{
+export async function CarregaEnvios(setContatos,setContatosDB,id,navigate){
+    await axios.get(baseUrl+"/users/"+sessionStorage.getItem("userId")+"/forms/"+id+"/enviados",{
         headers: {
             'Content-Type' : 'application/json',
             'Authorization': 'bearer ' + sessionStorage.getItem("token")
         }
     })
-    .then((response)=>{setContatos(response.data);setContatosDB(response.data)})
+    .then((response)=>{
+        response.data.sort((a,b) => b.respondido-a.respondido);
+        setContatos(response.data);
+        setContatosDB(response.data)
+    })
     .catch((error) => {
         if (error.response.status===401) {
             navigate('/login')
@@ -146,8 +150,8 @@ export async function CarregaRespostas(setRespostas,navigate){
             navigate('/login')
             RemoveSessao()
             alert("Faça o login")
-        }else if (error.response.status===404){setRespostas([])}
-        else{ console.log(error);setRespostas([])}
+        }else if (error.response.status===404){setRespostas(null)}
+        else{ console.log(error);setRespostas(null)}
     })
 }
 

@@ -26,14 +26,14 @@ export default function Sidebar(area, setSecao) {
         if (area === 'forms') {
             return (
                 <MDBListGroup className="rounded-0" id='sidebar'>
-                    <MDBListGroupItem tag='a' action id='Forms' className='px-3 sidebarItem' onClick={e => { updateSelected(e.target.id); setSecao(1) }}>Forms</MDBListGroupItem>
-                    <MDBListGroupItem tag='a' action id='Dashboard' className='px-3 sidebarItem' onClick={e => { updateSelected(e.target.id); setSecao(2) }}>Dashboard</MDBListGroupItem>
+                    <MDBListGroupItem tag='a' action id='Forms' className='px-3 sidebarItem' onClick={e => { updateSelected(e.target.id); setSecao(1) }}>Formulários</MDBListGroupItem>
+                    <MDBListGroupItem tag='a' action id='Dashboard' className='px-3 sidebarItem' onClick={e => { updateSelected(e.target.id); setSecao(2) }}>Relatórios</MDBListGroupItem>
                 </MDBListGroup>
             )
         } else if (area === 'questoes') {
             return (
                 <MDBListGroup id='sidebar' className="rounded-0">
-                    <MDBListGroupItem tag='a' action id='QuestoesBar' className='px-3 sidebarItem' onClick={e => { updateSelected(e.target.id); setSecao(1) }}>Questoes</MDBListGroupItem>
+                    <MDBListGroupItem tag='a' action id='QuestoesBar' className='px-3 sidebarItem' onClick={e => { updateSelected(e.target.id); setSecao(1) }}>Questões</MDBListGroupItem>
                     <MDBListGroupItem tag='a' action id='ContatosBar' className='px-3 sidebarItem' onClick={e => { updateSelected(e.target.id); setSecao(2) }}>Contatos</MDBListGroupItem>
                     <MDBListGroupItem tag='a' action id='RespostasBar' className='px-3 sidebarItem' onClick={e => { updateSelected(e.target.id); setSecao(3) }}>Respostas</MDBListGroupItem>
                     <MDBListGroupItem tag='a' action id='VoltarBar' className='px-3 sidebarItem' onClick={e => { navigate('/user') }}>Voltar</MDBListGroupItem>
@@ -67,8 +67,7 @@ export default function Sidebar(area, setSecao) {
                 {items()}
             </div>
             <MDBContainer fluid className='rodape d-flex border-top border-dark'>
-                <i role='button' className="botoesconfig edit py-3 fas fa-light fa-gear fa-lg"></i>
-                <i role='button' id="userButton" className="botoesconfig edit ms-auto py-3 fas fa-user fa-lg" onClick={e => { updateSelected(0); setSecao(0) }}></i>
+                <i role='button' id="userButton" className="botoesconfig edit py-3 fas fa-user fa-lg" onClick={e => { updateSelected(0); setSecao(0) }}></i>
             </MDBContainer>
         </nav>
     )

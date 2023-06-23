@@ -472,6 +472,17 @@ namespace backendcsharp.Controllers
             public List<QuantidadeResposta> derivadas { get; set; } = new List<QuantidadeResposta>();
             public List<TextQuant> resposta { get; set; } = new List<TextQuant>();
         }
+        public class RetornoRespostas
+        {
+            public int quantidadeRespostas { get; set; } = 0;
+            public List<QuantidadeResposta> respostas { get; set; } = new List<QuantidadeResposta>();
+            public RetornoRespostas(int quantidadeRespostas, List<QuantidadeResposta> respostas)
+            {
+                this.quantidadeRespostas = quantidadeRespostas;
+                this.respostas = respostas;
+            }
+        }
+
 
         // Pegar os contatos de uma certa pergunta e opcao
         [HttpGet("respostas/{QuestId}/{Opcao}")]
@@ -590,7 +601,7 @@ namespace backendcsharp.Controllers
         // Pegar as respostas de um formulário especifico
         [HttpGet("users/{Id}/forms/{FormId}/respostas")]
         [Authorize("Bearer")]
-        public async Task<ActionResult<List<QuantidadeResposta>>> GetRespostasByFormId([FromRoute] int FormId)
+        public async Task<ActionResult<RetornoRespostas>> GetRespostasByFormId([FromRoute] int FormId)
         {
             try
             {
@@ -624,9 +635,14 @@ namespace backendcsharp.Controllers
                            opcao10 = questao.Opcao10
                        }).ToListAsync();
                 response = await PegarRespostas(questoes, FormId, FormularioId);
-                // Adiciona a quatidade de respostas para cada questão numa lista
-             // Retorna resposta
-                return response;
+                // Pega quantidade de respostas total
+                var respostasquant = await
+                    (from envio in ProjetoDbContext.Enviados
+                     where envio.FormId == FormId && envio.Respondido == true
+                     select new { id = envio.Id }
+                    ).CountAsync();
+                // Retorna resposta
+                return new RetornoRespostas(respostasquant, response);
             }
             catch (Exception ex)
             {

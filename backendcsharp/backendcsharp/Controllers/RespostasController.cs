@@ -1,4 +1,5 @@
-﻿using backendcsharp.DTO;
+﻿using APIs.Security.JWT;
+using backendcsharp.DTO;
 using backendcsharp.Entities;
 using backendcsharp.Handles;
 using Microsoft.AspNetCore.Authorization;
@@ -7,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Build.Framework;
 using Microsoft.EntityFrameworkCore;
 using Org.BouncyCastle.Asn1.Ocsp;
+using Org.BouncyCastle.Crypto.Digests;
 using System.Text;
 
 namespace backendcsharp.Controllers
@@ -449,9 +451,11 @@ namespace backendcsharp.Controllers
         public class TextQuant
         {
             public virtual string texto { get; set; } = null!;
+            public virtual int opcao { get; set; }
             public virtual int quantidade { get; set; }
-            public TextQuant(string a, int b)
+            public TextQuant(string a, int b, int c)
             {
+                this.opcao = c;
                 this.texto = a;
                 this.quantidade = b;
             }
@@ -467,6 +471,120 @@ namespace backendcsharp.Controllers
             public uint numero { get; set; }
             public List<QuantidadeResposta> derivadas { get; set; } = new List<QuantidadeResposta>();
             public List<TextQuant> resposta { get; set; } = new List<TextQuant>();
+        }
+
+        // Pegar os contatos de uma certa pergunta e opcao
+        [HttpGet("respostas/{QuestId}/{Opcao}")]
+        [Authorize("Bearer")]
+        public async Task<ActionResult<List<EnviadoDTO>>> SelecionarContatos([FromRoute] int QuestId, [FromRoute] int Opcao )
+        {
+            try
+            {
+                Handlers.ExistsOrError(QuestId.ToString(), "Id da questão não informado");
+                Handlers.IdNegative(QuestId, "Id da questão inválido");
+                Handlers.ExistsOrError(Opcao.ToString(), "Opção da questão não informado");
+                Handlers.IdNegative(Opcao, "Opção da questão inválido");
+                var questao = await ProjetoDbContext.Questoes.Where(s => (s.Id == QuestId)).FirstOrDefaultAsync();
+                if (questao == null) throw new Exception("Questão não encontrada");
+                List<EnviadoDTO> contatos = new();
+                if (questao.Type == 1 || questao.Type == 9)
+                {
+                    contatos = await
+                    (from enviado in ProjetoDbContext.Enviados
+                     join radio in ProjetoDbContext.Radioboxes on enviado.Id equals radio.RespostaId
+                     where radio.QuestaoId==QuestId && radio.Radio==Opcao
+                     select new EnviadoDTO
+                     {
+                         id = enviado.Id,
+                         email = enviado.Email,
+                         nome = enviado.Nome
+                     }).ToListAsync();
+                }
+                else if (questao.Type == 3)
+                {
+                    switch (Opcao)
+                    {
+                        case 1:
+                            contatos = await
+                            (from enviado in ProjetoDbContext.Enviados
+                             join check in ProjetoDbContext.Checkboxes on enviado.Id equals check.RespostaId
+                             where check.QuestaoId == QuestId && check.Opcao1 == true
+                             select new EnviadoDTO { id = enviado.Id, email = enviado.Email, nome = enviado.Nome }).ToListAsync();
+                            break;
+                        case 2:
+                            contatos = await
+                            (from enviado in ProjetoDbContext.Enviados
+                             join check in ProjetoDbContext.Checkboxes on enviado.Id equals check.RespostaId
+                             where check.QuestaoId == QuestId && check.Opcao2 == true
+                             select new EnviadoDTO { id = enviado.Id, email = enviado.Email, nome = enviado.Nome }).ToListAsync();
+                            break;
+                        case 3:
+                            contatos = await
+                            (from enviado in ProjetoDbContext.Enviados
+                             join check in ProjetoDbContext.Checkboxes on enviado.Id equals check.RespostaId
+                             where check.QuestaoId == QuestId && check.Opcao3 == true
+                             select new EnviadoDTO { id = enviado.Id, email = enviado.Email, nome = enviado.Nome }).ToListAsync();
+                            break;
+                        case 4:
+                            contatos = await
+                            (from enviado in ProjetoDbContext.Enviados
+                             join check in ProjetoDbContext.Checkboxes on enviado.Id equals check.RespostaId
+                             where check.QuestaoId == QuestId && check.Opcao4 == true
+                             select new EnviadoDTO { id = enviado.Id, email = enviado.Email, nome = enviado.Nome }).ToListAsync();
+                            break;
+                        case 5:
+                            contatos = await
+                            (from enviado in ProjetoDbContext.Enviados
+                             join check in ProjetoDbContext.Checkboxes on enviado.Id equals check.RespostaId
+                             where check.QuestaoId == QuestId && check.Opcao5 == true
+                             select new EnviadoDTO { id = enviado.Id, email = enviado.Email, nome = enviado.Nome }).ToListAsync();
+                            break;
+                        case 6:
+                            contatos = await
+                            (from enviado in ProjetoDbContext.Enviados
+                             join check in ProjetoDbContext.Checkboxes on enviado.Id equals check.RespostaId
+                             where check.QuestaoId == QuestId && check.Opcao6 == true
+                             select new EnviadoDTO { id = enviado.Id, email = enviado.Email, nome = enviado.Nome }).ToListAsync();
+                            break;
+                        case 7:
+                            contatos = await
+                            (from enviado in ProjetoDbContext.Enviados
+                             join check in ProjetoDbContext.Checkboxes on enviado.Id equals check.RespostaId
+                             where check.QuestaoId == QuestId && check.Opcao7 == true
+                             select new EnviadoDTO { id = enviado.Id, email = enviado.Email, nome = enviado.Nome }).ToListAsync();
+                            break;
+                        case 8:
+                            contatos = await
+                            (from enviado in ProjetoDbContext.Enviados
+                             join check in ProjetoDbContext.Checkboxes on enviado.Id equals check.RespostaId
+                             where check.QuestaoId == QuestId && check.Opcao8 == true
+                             select new EnviadoDTO { id = enviado.Id, email = enviado.Email, nome = enviado.Nome }).ToListAsync();
+                            break;
+                        case 9:
+                            contatos = await
+                            (from enviado in ProjetoDbContext.Enviados
+                             join check in ProjetoDbContext.Checkboxes on enviado.Id equals check.RespostaId
+                             where check.QuestaoId == QuestId && check.Opcao9 == true
+                             select new EnviadoDTO { id = enviado.Id, email = enviado.Email, nome = enviado.Nome }).ToListAsync();
+                            break;
+                        case 10:
+                            contatos = await
+                            (from enviado in ProjetoDbContext.Enviados
+                             join check in ProjetoDbContext.Checkboxes on enviado.Id equals check.RespostaId
+                             where check.QuestaoId == QuestId && check.Opcao10 == true
+                             select new EnviadoDTO { id = enviado.Id, email = enviado.Email, nome = enviado.Nome }).ToListAsync();
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                return contatos;
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
 
         // Pegar as respostas de um formulário especifico
@@ -539,16 +657,16 @@ namespace backendcsharp.Controllers
                                        questaoId = radiobox.QuestaoId
                                    };
                             // Adiciona texto e quantidade de respostas na estrutura "QuantidadeResposta"
-                            radio.resposta.Add(new TextQuant(item.opcao1, radioBoxDB.Where(s => s.radio == 1).Count()));
-                            if (item.opcao2 is not null) radio.resposta.Add(new TextQuant(item.opcao2, radioBoxDB.Where(s => s.radio == 2).Count()));
-                            if (item.opcao3 is not null) radio.resposta.Add(new TextQuant(item.opcao3, radioBoxDB.Where(s => s.radio == 3).Count()));
-                            if (item.opcao4 is not null) radio.resposta.Add(new TextQuant(item.opcao4, radioBoxDB.Where(s => s.radio == 4).Count()));
-                            if (item.opcao5 is not null) radio.resposta.Add(new TextQuant(item.opcao5, radioBoxDB.Where(s => s.radio == 5).Count()));
-                            if (item.opcao6 is not null) radio.resposta.Add(new TextQuant(item.opcao6, radioBoxDB.Where(s => s.radio == 6).Count()));
-                            if (item.opcao7 is not null) radio.resposta.Add(new TextQuant(item.opcao7, radioBoxDB.Where(s => s.radio == 7).Count()));
-                            if (item.opcao8 is not null) radio.resposta.Add(new TextQuant(item.opcao8, radioBoxDB.Where(s => s.radio == 8).Count()));
-                            if (item.opcao9 is not null) radio.resposta.Add(new TextQuant(item.opcao9, radioBoxDB.Where(s => s.radio == 9).Count()));
-                            if (item.opcao10 is not null) radio.resposta.Add(new TextQuant(item.opcao10, radioBoxDB.Where(s => s.radio == 10).Count()));
+                            radio.resposta.Add(new TextQuant(item.opcao1, radioBoxDB.Where(s => s.radio == 1).Count(),1));
+                            if (item.opcao2 is not null) radio.resposta.Add(new TextQuant(item.opcao2, radioBoxDB.Where(s => s.radio == 2).Count(),2));
+                            if (item.opcao3 is not null) radio.resposta.Add(new TextQuant(item.opcao3, radioBoxDB.Where(s => s.radio == 3).Count(),3));
+                            if (item.opcao4 is not null) radio.resposta.Add(new TextQuant(item.opcao4, radioBoxDB.Where(s => s.radio == 4).Count(),4));
+                            if (item.opcao5 is not null) radio.resposta.Add(new TextQuant(item.opcao5, radioBoxDB.Where(s => s.radio == 5).Count(),5));
+                            if (item.opcao6 is not null) radio.resposta.Add(new TextQuant(item.opcao6, radioBoxDB.Where(s => s.radio == 6).Count(),6));
+                            if (item.opcao7 is not null) radio.resposta.Add(new TextQuant(item.opcao7, radioBoxDB.Where(s => s.radio == 7).Count(),7));
+                            if (item.opcao8 is not null) radio.resposta.Add(new TextQuant(item.opcao8, radioBoxDB.Where(s => s.radio == 8).Count(),8));
+                            if (item.opcao9 is not null) radio.resposta.Add(new TextQuant(item.opcao9, radioBoxDB.Where(s => s.radio == 9).Count(),9));
+                            if (item.opcao10 is not null) radio.resposta.Add(new TextQuant(item.opcao10, radioBoxDB.Where(s => s.radio == 10).Count(),10));
 
                             // Informações gerais
                             radio.derivadaDeOpcao = item.derivadaDeOpcao is not null ? (int)item.derivadaDeOpcao : null;
@@ -584,16 +702,16 @@ namespace backendcsharp.Controllers
                                        questaoId = checkbox.QuestaoId
                                    };
                             // Adiciona texto e quantidade de respostas na estrutura "QuantidadeResposta"
-                            check.resposta.Add(new TextQuant(item.opcao1, checkBoxDB.Where(s => s.opcao1 == true).Count()));
-                            if (item.opcao2 is not null) check.resposta.Add(new TextQuant(item.opcao2, checkBoxDB.Where(s => s.opcao2 == true).Count()));
-                            if (item.opcao3 is not null) check.resposta.Add(new TextQuant(item.opcao3, checkBoxDB.Where(s => s.opcao3 == true).Count()));
-                            if (item.opcao4 is not null) check.resposta.Add(new TextQuant(item.opcao4, checkBoxDB.Where(s => s.opcao4 == true).Count()));
-                            if (item.opcao5 is not null) check.resposta.Add(new TextQuant(item.opcao5, checkBoxDB.Where(s => s.opcao5 == true).Count()));
-                            if (item.opcao6 is not null) check.resposta.Add(new TextQuant(item.opcao6, checkBoxDB.Where(s => s.opcao6 == true).Count()));
-                            if (item.opcao7 is not null) check.resposta.Add(new TextQuant(item.opcao7, checkBoxDB.Where(s => s.opcao7 == true).Count()));
-                            if (item.opcao8 is not null) check.resposta.Add(new TextQuant(item.opcao8, checkBoxDB.Where(s => s.opcao8 == true).Count()));
-                            if (item.opcao9 is not null) check.resposta.Add(new TextQuant(item.opcao9, checkBoxDB.Where(s => s.opcao9 == true).Count()));
-                            if (item.opcao10 is not null) check.resposta.Add(new TextQuant(item.opcao10, checkBoxDB.Where(s => s.opcao10 == true).Count()));
+                            check.resposta.Add(new TextQuant(item.opcao1, checkBoxDB.Where(s => s.opcao1 == true).Count(),1));
+                            if (item.opcao2 is not null) check.resposta.Add(new TextQuant(item.opcao2, checkBoxDB.Where(s => s.opcao2 == true).Count(),2));
+                            if (item.opcao3 is not null) check.resposta.Add(new TextQuant(item.opcao3, checkBoxDB.Where(s => s.opcao3 == true).Count(),3));
+                            if (item.opcao4 is not null) check.resposta.Add(new TextQuant(item.opcao4, checkBoxDB.Where(s => s.opcao4 == true).Count(),4));
+                            if (item.opcao5 is not null) check.resposta.Add(new TextQuant(item.opcao5, checkBoxDB.Where(s => s.opcao5 == true).Count(),5));
+                            if (item.opcao6 is not null) check.resposta.Add(new TextQuant(item.opcao6, checkBoxDB.Where(s => s.opcao6 == true).Count(),6));
+                            if (item.opcao7 is not null) check.resposta.Add(new TextQuant(item.opcao7, checkBoxDB.Where(s => s.opcao7 == true).Count(),7));
+                            if (item.opcao8 is not null) check.resposta.Add(new TextQuant(item.opcao8, checkBoxDB.Where(s => s.opcao8 == true).Count(),8));
+                            if (item.opcao9 is not null) check.resposta.Add(new TextQuant(item.opcao9, checkBoxDB.Where(s => s.opcao9 == true).Count(),9));
+                            if (item.opcao10 is not null) check.resposta.Add(new TextQuant(item.opcao10, checkBoxDB.Where(s => s.opcao10 == true).Count(),10));
 
                             // Informações gerais
                             check.derivadaDeOpcao = item.derivadaDeOpcao is not null ? (int)item.derivadaDeOpcao : null;
@@ -617,16 +735,16 @@ namespace backendcsharp.Controllers
                                    questaoId = radiobox.QuestaoId
                                };
                         // Adiciona texto e quantidade de respostas na estrutura "QuantidadeResposta"
-                        if (item.opcao1 is not null) questao.resposta.Add(new TextQuant(item.opcao1, questaoDB.Where(s => s.radio == 1).Count()));
-                        if (item.opcao2 is not null) questao.resposta.Add(new TextQuant(item.opcao2, questaoDB.Where(s => s.radio == 2).Count()));
-                        if (item.opcao3 is not null) questao.resposta.Add(new TextQuant(item.opcao3, questaoDB.Where(s => s.radio == 3).Count()));
-                        if (item.opcao4 is not null) questao.resposta.Add(new TextQuant(item.opcao4, questaoDB.Where(s => s.radio == 4).Count()));
-                        if (item.opcao5 is not null) questao.resposta.Add(new TextQuant(item.opcao5, questaoDB.Where(s => s.radio == 5).Count()));
-                        if (item.opcao6 is not null) questao.resposta.Add(new TextQuant(item.opcao6, questaoDB.Where(s => s.radio == 6).Count()));
-                        if (item.opcao7 is not null) questao.resposta.Add(new TextQuant(item.opcao7, questaoDB.Where(s => s.radio == 7).Count()));
-                        if (item.opcao8 is not null) questao.resposta.Add(new TextQuant(item.opcao8, questaoDB.Where(s => s.radio == 8).Count()));
-                        if (item.opcao9 is not null) questao.resposta.Add(new TextQuant(item.opcao9, questaoDB.Where(s => s.radio == 9).Count()));
-                        if (item.opcao10 is not null) questao.resposta.Add(new TextQuant(item.opcao10, questaoDB.Where(s => s.radio == 10).Count()));
+                        if (item.opcao1 is not null) questao.resposta.Add(new TextQuant(item.opcao1, questaoDB.Where(s => s.radio == 1).Count(),1));
+                        if (item.opcao2 is not null) questao.resposta.Add(new TextQuant(item.opcao2, questaoDB.Where(s => s.radio == 2).Count(),2));
+                        if (item.opcao3 is not null) questao.resposta.Add(new TextQuant(item.opcao3, questaoDB.Where(s => s.radio == 3).Count(),3));
+                        if (item.opcao4 is not null) questao.resposta.Add(new TextQuant(item.opcao4, questaoDB.Where(s => s.radio == 4).Count(),4));
+                        if (item.opcao5 is not null) questao.resposta.Add(new TextQuant(item.opcao5, questaoDB.Where(s => s.radio == 5).Count(),5));
+                        if (item.opcao6 is not null) questao.resposta.Add(new TextQuant(item.opcao6, questaoDB.Where(s => s.radio == 6).Count(), 6));
+                        if (item.opcao7 is not null) questao.resposta.Add(new TextQuant(item.opcao7, questaoDB.Where(s => s.radio == 7).Count(), 7));
+                        if (item.opcao8 is not null) questao.resposta.Add(new TextQuant(item.opcao8, questaoDB.Where(s => s.radio == 8).Count(), 8));
+                        if (item.opcao9 is not null) questao.resposta.Add(new TextQuant(item.opcao9, questaoDB.Where(s => s.radio == 9).Count(), 9));
+                        if (item.opcao10 is not null) questao.resposta.Add(new TextQuant(item.opcao10, questaoDB.Where(s => s.radio == 10).Count(), 10));
 
                         var questoesDerivadas = await
                                (from questaodb in ProjetoDbContext.Questoes

@@ -169,6 +169,24 @@ export async function CarregaDashboard(setDatasets,setLabels,navigate,id,forms,q
     })
 }
 
+export async function CarregaRelatorio(setContatosResposta,navigate,questid,item){
+    await axios.get(baseUrl+"/respostas/"+questid+"/"+item?.opcao,{
+        headers: {
+            'Content-Type' : 'application/json',
+            'Authorization': 'bearer ' + sessionStorage.getItem("token")
+        }
+    })
+    .then((response)=>{setContatosResposta({data: response.data,enunciado: item?.texto})})
+    .catch((error) => {
+        if (error.response.status===401) {
+            navigate('/login')
+            RemoveSessao()
+            alert("Faça o login")
+        }else if (error.response.status===404){setContatosResposta([])}
+        else{ console.log(error);setContatosResposta([])}
+    })
+}
+
 export function limit(element,tamanho)
 {
     let max_chars

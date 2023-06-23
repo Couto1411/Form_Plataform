@@ -1,5 +1,5 @@
 import React, {useEffect,useState}from 'react'
-import { limit, CarregaQuestoes, CarregaCursosUser, CarregaRespostas, CarregaEnvios, RemoveSessao } from '../../config/utils';
+import { limit, CarregaQuestoes, CarregaCursosUser, CarregaRespostas, CarregaEnvios, RemoveSessao, CarregaRelatorio } from '../../config/utils';
 import './Forms.css'
 import Questoes from './Questoes'
 import axios from "axios";
@@ -15,7 +15,7 @@ import {
     MDBInputGroup, MDBTextArea, MDBRadio, MDBCheckbox,
     MDBListGroup, MDBListGroupItem,
     MDBBtn, MDBInput, MDBFile, MDBProgressBar,
-    MDBModal, MDBModalDialog, MDBModalContent, MDBModalBody, MDBModalFooter, MDBModalHeader, MDBContainer, MDBProgress} from 'mdb-react-ui-kit';
+    MDBModal, MDBModalDialog, MDBModalContent, MDBModalBody, MDBModalFooter, MDBModalHeader, MDBModalTitle, MDBContainer, MDBProgress} from 'mdb-react-ui-kit';
 
 export default function Forms(){
     const navigate = useNavigate();
@@ -58,6 +58,12 @@ export default function Forms(){
 
     // Usado para busca de contatos
     const [nomeEmail, setNomeEmail] = useState(true);
+
+    // Usado para dizer qual a pergunta e o tipo de reposta do relatório
+    const [show, setShow] = useState(false);
+    
+    // Usado para dizer os valores do relatório de reposta
+    const [contatosResposta, setContatosResposta] = useState([]);
 
     useEffect(() => {
         if (sessionStorage.getItem("token")){
@@ -1014,7 +1020,7 @@ export default function Forms(){
             return(
                 <div key={element.id} className='col-md-6 col-xxl-4'>
                 <MDBListGroupItem className='shadow mt-3 rounded-3'>
-                    <div className='d-flex porcentagem'>{element.numero}) {element.enunciado}
+                    <div className='d-flex porcentagem'>{element.numero+") "+element.enunciado}
                         <div className='ms-auto'>
                             {element.type===1?
                             <MDBRadio disabled defaultChecked={true} className='mt-1' value='' inline/>:
@@ -1058,12 +1064,23 @@ export default function Forms(){
             let parcial=Math.trunc((item.quantidade/sum)*100)
             if(!parcial) parcial=0
             return(
-                <div key={'Barra'+element.id+count} className='mb-2 porcentagem'> <div className={tipo?'rounded-3 opcao'+count:null}>{numero}) {item.texto}</div>
+                <div key={'Barra'+element.id+count} className='mb-2 porcentagem'> 
+                <div className={tipo?'rounded-3 opcao'+count:null}>{numero}) <a style={{display:'inline'}} onClick={()=>{
+                    setShow(item);
+                    CarregaRelatorio(setContatosResposta,navigate,element?.id,item);}}>{item.texto}</a></div>
                     <MDBProgress height='20' className='rounded-3'>
                         <MDBProgressBar className='porcentagem' width={parcial} valuemin={0} valuemax={100}>{parcial}%</MDBProgressBar>
                     </MDBProgress>
                 </div>
             )
+        })
+    }
+
+    function renderizaRelatorio(){
+        return contatosResposta?.data?.map(contato => {
+            return <MDBInputGroup key={contato.email} className='mb-1'>
+                    <input className='form-control' type='text' defaultValue={contato.email} disabled/>
+                </MDBInputGroup>
         })
     }
 
@@ -1074,6 +1091,19 @@ export default function Forms(){
                 {renderizaRepostas()}
             </div>
         </MDBListGroup>
+        <MDBModal show={show} tabIndex='-1' setShow={setShow}>
+            <MDBModalDialog size='md'>
+            <MDBModalContent>
+                <MDBModalHeader>
+                <MDBModalTitle>{contatosResposta?.enunciado}</MDBModalTitle>
+                <MDBBtn className='btn-close' color='none' onClick={e=>setShow(false)}></MDBBtn>
+                </MDBModalHeader>
+                <MDBContainer className='mt-2 mb-3 d-flex row justify-content-center'>
+                    {renderizaRelatorio()}
+                </MDBContainer>
+            </MDBModalContent>
+            </MDBModalDialog>
+        </MDBModal>
     </main>
     // Secao Respostas
 

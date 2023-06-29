@@ -35,7 +35,7 @@ export default function Resposta(){
             RemoveSessao()
         }
 
-    }, []);
+    }, [navigate]);
 
     function renderizaRepostas(){
         return respostas?.map(element => {

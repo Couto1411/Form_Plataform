@@ -81,7 +81,7 @@ export default function Forms(){
             RemoveSessao()
         }
 
-    }, []);
+    }, [navigate]);
 
     const searchChange = (e) => {
         setContatosPage(1)
@@ -923,7 +923,7 @@ export default function Forms(){
     }
 
     const secaoContatos = <main className='mt-3 principal'> 
-        {Title("Contatos")}
+        {Title("Destinatários")}
 
         {/* Barra de busca */}
         <MDBContainer fluid className='shadow mt-3 p-3 rounded-3 bg-light'>
@@ -976,7 +976,7 @@ export default function Forms(){
         </MDBModal>
 
         {/* Modal de avisar que foi enviado */}
-        <MDBModal staticBackdrop tabIndex='-1' show={enviou} setShow={setEnviou}>
+        <MDBModal tabIndex='-1' show={enviou} setShow={setEnviou}>
             <MDBModalDialog centered>
                 <MDBModalContent>
                     <MDBModalBody className='py-2'>
@@ -1087,9 +1087,9 @@ export default function Forms(){
             if(!parcial) parcial=0
             return(
                 <div key={'Barra'+element.id+count} className='mb-2 porcentagem'> 
-                <div className={tipo?'rounded-3 opcao'+count:null}>{numero}) <a style={{display:'inline'}} onClick={()=>{
+                <div className={tipo?'rounded-3 opcao'+count:null}>{numero}) <div style={{cursor:'pointer',display:'inline'}} onClick={()=>{
                     setShow(item);
-                    CarregaRelatorio(setContatosResposta,navigate,element?.id,item);}}>{item.texto}</a></div>
+                    CarregaRelatorio(setContatosResposta,navigate,element?.id,item);}}>{item.texto}</div></div>
                     <MDBProgress height='20' className='rounded-3'>
                         <MDBProgressBar className='porcentagem' width={parcial} valuemin={0} valuemax={100}>{parcial}%</MDBProgressBar>
                     </MDBProgress>

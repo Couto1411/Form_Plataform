@@ -56,7 +56,7 @@ export default function Forms(props){
             RemoveSessao()
         }
 
-    }, []);
+    }, [navigate,props]);
 
     function renderizaQuestoes(opcao,cor){
         return questoes.filter(e=>e.derivadaDeOpcao===opcao)?.map(element => {

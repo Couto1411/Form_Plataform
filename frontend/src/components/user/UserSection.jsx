@@ -21,7 +21,7 @@ export default function UserSection() {
     useEffect(() => {
         CarregaUsuario(setUser,navigate)
         CarregaCursos(setCursos,setTipoCursos,navigate)
-    }, []);
+    }, [navigate]);
 
     async function handleSave() {
         let nomeUser = document.getElementById('nomeUsuario')

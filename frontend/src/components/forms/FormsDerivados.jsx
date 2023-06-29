@@ -45,6 +45,7 @@ export default function FormsDerivados(){
     const [contatosResposta, setContatosResposta] = useState([]);
 
     useEffect(() => {
+        console.log("oi")
         if (sessionStorage.getItem("token")){
             CarregaQuestoes(setQuestoes,navigate)
             CarregaEnvios(setContatos,setContatosDB,sessionStorage.getItem('formDeId'),navigate)
@@ -56,7 +57,7 @@ export default function FormsDerivados(){
             RemoveSessao()
         }
 
-    }, []);
+    }, [navigate]);
     
     const searchChange = (e) => {
         var envio = contatosDB.filter((el)=>{
@@ -241,7 +242,7 @@ export default function FormsDerivados(){
     }
 
     const secaoContatos = <main className='mt-3 principal'> 
-        {Title("Contatos")}
+        {Title("Destinatários")}
 
         
         <MDBContainer fluid className='mt-3 p-3 rounded-3 bg-light'>
@@ -385,9 +386,9 @@ export default function FormsDerivados(){
             if(!parcial) parcial=0
             return(
                 <div key={'Barra'+element.id+count} className='mb-2 porcentagem'> 
-                <div className={tipo?'rounded-3 opcao'+count:null}>{numero}) <a style={{display:'inline'}} onClick={()=>{
+                <div className={tipo?'rounded-3 opcao'+count:null}>{numero}) <div style={{cursor:'pointer',display:'inline'}} onClick={()=>{
                     setShow(item);
-                    CarregaRelatorio(setContatosResposta,navigate,element?.id,item);}}>{item.texto}</a></div>
+                    CarregaRelatorio(setContatosResposta,navigate,element?.id,item);}}>{item.texto}</div></div>
                     <MDBProgress height='20' className='rounded-3'>
                         <MDBProgressBar className='porcentagem' width={parcial} valuemin={0} valuemax={100}>{parcial}%</MDBProgressBar>
                     </MDBProgress>

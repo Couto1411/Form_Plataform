@@ -67,7 +67,7 @@ export default function Dashboard(){
             RemoveSessao()
         }
 
-    }, []);
+    }, [navigate]);
 
     function renderizaForms(){
         return forms?.map(element => {

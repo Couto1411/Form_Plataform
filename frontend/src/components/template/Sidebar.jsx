@@ -34,7 +34,7 @@ export default function Sidebar(area, setSecao) {
             return (
                 <MDBListGroup id='sidebar' className="rounded-0">
                     <MDBListGroupItem tag='a' action id='QuestoesBar' className='px-3 sidebarItem' onClick={e => { updateSelected(e.target.id); setSecao(1) }}>Questões</MDBListGroupItem>
-                    <MDBListGroupItem tag='a' action id='ContatosBar' className='px-3 sidebarItem' onClick={e => { updateSelected(e.target.id); setSecao(2) }}>Contatos</MDBListGroupItem>
+                    <MDBListGroupItem tag='a' action id='ContatosBar' className='px-3 sidebarItem' onClick={e => { updateSelected(e.target.id); setSecao(2) }}>Destinatários</MDBListGroupItem>
                     <MDBListGroupItem tag='a' action id='RespostasBar' className='px-3 sidebarItem' onClick={e => { updateSelected(e.target.id); setSecao(3) }}>Respostas</MDBListGroupItem>
                     <MDBListGroupItem tag='a' action id='VoltarBar' className='px-3 sidebarItem' onClick={e => { navigate('/user') }}>Voltar</MDBListGroupItem>
                 </MDBListGroup>

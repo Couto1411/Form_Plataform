@@ -10,7 +10,7 @@ import {
     MDBListGroup, MDBListGroupItem,
     MDBBtn, MDBModal, MDBModalDialog, MDBModalContent, MDBModalBody, MDBModalFooter, MDBModalHeader} from 'mdb-react-ui-kit';
 
-export default function FormularioResposta(){    
+export default function FormularioResposta(props){    
     const [questoes, setQuestoes] = useState(null);
     const [emailChecker, setEmailChecker] = useState(true);
     const [concluded, setConcluded] = useState(false);
@@ -29,11 +29,11 @@ export default function FormularioResposta(){
         }
         CarregaQuestoes()
 
-    }, []);
+    }, [formId]);
 
     // Questões
     function renderizaQuestoes(listaQuestoes,derivada){
-        listaQuestoes?.length?listaQuestoes=listaQuestoes:listaQuestoes=questoes
+        if(!listaQuestoes)listaQuestoes=questoes
         return listaQuestoes?.map(element => {
             switch (element.type) {
                 case 1:
@@ -97,7 +97,7 @@ export default function FormularioResposta(){
                 case 4:
                     return(
                         <MDBListGroupItem noBorders key={element.id} className={derivada?'rounded-3 mb-3 opcao1':'rounded-3 mb-3'}>
-                            <MDBTextArea rows={4} id={'questao'+element.id} defaultValue={element.enunciado} label='Resposta' readOnly className='mb-2'/>
+                            <MDBTextArea rows={4} id={'questao'+element.id} defaultValue={element.enunciado} readOnly className='mb-2'/>
                         </MDBListGroupItem>
                     )
                 case 9:
@@ -163,7 +163,11 @@ export default function FormularioResposta(){
     async function sendResposta(){
         let respostas=[]
         let enviar=true
-        questoes?.forEach(element=>{
+        let temp = questoes
+        for (let index = 0; index < temp.length; index++) {
+            const element = temp[index];
+            element?.derivadas?.forEach(el =>  temp.push(el));
+            element.derivadas = []
             if(!element.semQuestao){
                 switch (element.type) {
                     case 1:
@@ -217,7 +221,9 @@ export default function FormularioResposta(){
                                 id: element.id,
                                 radio: +questao.value
                             })
-                            element.derivadas?.filter(e=>e.derivadaDeOpcao===questao.value)?.forEach(item=>{
+                            let array = element.derivadas?.filter(e=>e.derivadaDeOpcao===questao.value)
+                            for (let index = 0; index < array.length; index++) {
+                                const item = array[index];
                                 switch (item.type) {
                                     case 1:
                                         let radio= document.querySelector(`input[name="radioNoLabel${item.id}"]:checked`)
@@ -248,8 +254,8 @@ export default function FormularioResposta(){
                                     case 3:
                                         let check=[]
                                         let markCheck = document.getElementsByName('checkNoLabel'+item.id);  
-                                        for (var checkbox of markCheck) {  
-                                            if (checkbox.checked) check.push(+checkbox.value);  
+                                        for (var checkboxDer of markCheck) {  
+                                            if (checkboxDer.checked) check.push(+checkboxDer.value);  
                                         } 
                                         if (check.length!==0) {
                                             document.getElementById(item.id).style.border='none'
@@ -265,7 +271,7 @@ export default function FormularioResposta(){
                                     default:
                                         break
                                     }
-                            })
+                            }
                         }else{
                             document.getElementById(element.id).style.border='1px solid rgb(255, 43, 43)'
                             enviar=false
@@ -275,7 +281,7 @@ export default function FormularioResposta(){
                         break;
                 }
             }
-        })
+        }
         if(enviar){
             document.getElementById("desabilita").disabled=true
             await axios.post(baseUrl+"/enviados/"+formId,
@@ -334,7 +340,7 @@ export default function FormularioResposta(){
                             Pesquisa concluída
                         </MDBModalHeader>
                         <MDBModalBody className='py-2'>
-                            Em caso de dúvidas entre em contato com o contato disponível em seu email.
+                            Em caso de dúvidas entre em contato com o remetente disponível em seu email.
                         </MDBModalBody>
                     </MDBModalContent>
                 </MDBModalDialog>

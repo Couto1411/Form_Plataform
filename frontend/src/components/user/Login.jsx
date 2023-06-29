@@ -2,7 +2,7 @@ import React, {useState} from 'react'
 import './Login.css'
 import axios from "axios"
 import baseUrl from "../../config/api"
-import {useNavigate, Link} from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 import { MDBInput,MDBInputGroup,MDBBtn } from 'mdb-react-ui-kit';
 
 export default function Login (props) {

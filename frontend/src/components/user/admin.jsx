@@ -91,7 +91,7 @@ export default function Admin(){
             RemoveSessao()
         }
 
-    }, []);
+    }, [navigate]);
 
     // Usuários
     function renderizaUsers(){

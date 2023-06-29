@@ -35,8 +35,6 @@ export default function PaginaUsuario(){
 
     const [secao, setSecao] = useState(1)
 
-    const [count, setCount] = useState(0);
-
     const changeActive = (e) => {
         if(e.target.id==='formModal')limit(e.target)
         if(e.target.value==='') e.target.classList.remove('active')
@@ -87,7 +85,7 @@ export default function PaginaUsuario(){
             RemoveSessao()
         }
 
-    }, []);
+    }, [navigate]);
 
     async function editForm(){
         var change = document.getElementById("formModal");
@@ -212,7 +210,7 @@ export default function PaginaUsuario(){
         novoDerivado.titulo = element.titulo
         novoDerivado.msgEmail = element.msgEmail
         novoDerivado.derivadoDeId = element.id
-        let response = await axios.post(baseUrl+"/users/"+sessionStorage.getItem("userId")+"/forms",novoDerivado,{
+        await axios.post(baseUrl+"/users/"+sessionStorage.getItem("userId")+"/forms",novoDerivado,{
             headers: {
                 'Authorization': 'bearer ' + sessionStorage.getItem("token")
             }

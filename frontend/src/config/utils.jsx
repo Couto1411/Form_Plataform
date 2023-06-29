@@ -138,7 +138,8 @@ export async function CarregaEnvios(setContatos,setContatosDB,id,navigate){
 }
 
 export async function CarregaRespostas(setRespostas,navigate){
-    await axios.get(baseUrl+"/users/"+sessionStorage.getItem("userId")+"/forms/"+sessionStorage.getItem("formId")+"/respostas",{
+    let temp = sessionStorage.getItem("formDeId") || sessionStorage.getItem("formId")
+    await axios.get(baseUrl+"/users/"+sessionStorage.getItem("userId")+"/forms/"+temp+"/respostas",{
         headers: {
             'Content-Type' : 'application/json',
             'Authorization': 'bearer ' + sessionStorage.getItem("token")

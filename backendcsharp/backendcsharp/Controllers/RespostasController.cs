@@ -485,12 +485,14 @@ namespace backendcsharp.Controllers
 
 
         // Pegar os contatos de uma certa pergunta e opcao
-        [HttpGet("respostas/{QuestId}/{Opcao}")]
+        [HttpGet("respostas/forms/{FormId}/questao/{QuestId}/{Opcao}")]
         [Authorize("Bearer")]
-        public async Task<ActionResult<List<EnviadoDTO>>> SelecionarContatos([FromRoute] int QuestId, [FromRoute] int Opcao )
+        public async Task<ActionResult<List<EnviadoDTO>>> SelecionarContatos([FromRoute] int QuestId, [FromRoute] int FormId, [FromRoute] int Opcao )
         {
             try
             {
+                Handlers.ExistsOrError(FormId.ToString(), "Id do form não informado");
+                Handlers.IdNegative(FormId, "Id do form inválido");
                 Handlers.ExistsOrError(QuestId.ToString(), "Id da questão não informado");
                 Handlers.IdNegative(QuestId, "Id da questão inválido");
                 Handlers.ExistsOrError(Opcao.ToString(), "Opção da questão não informado");
@@ -503,7 +505,7 @@ namespace backendcsharp.Controllers
                     contatos = await
                     (from enviado in ProjetoDbContext.Enviados
                      join radio in ProjetoDbContext.Radioboxes on enviado.Id equals radio.RespostaId
-                     where radio.QuestaoId==QuestId && radio.Radio==Opcao
+                     where radio.QuestaoId==QuestId && radio.Radio==Opcao && enviado.FormId==FormId
                      select new EnviadoDTO
                      {
                          id = enviado.Id,
@@ -519,70 +521,70 @@ namespace backendcsharp.Controllers
                             contatos = await
                             (from enviado in ProjetoDbContext.Enviados
                              join check in ProjetoDbContext.Checkboxes on enviado.Id equals check.RespostaId
-                             where check.QuestaoId == QuestId && check.Opcao1 == true
+                             where check.QuestaoId == QuestId && check.Opcao1 == true && enviado.FormId == FormId
                              select new EnviadoDTO { id = enviado.Id, email = enviado.Email, nome = enviado.Nome }).ToListAsync();
                             break;
                         case 2:
                             contatos = await
                             (from enviado in ProjetoDbContext.Enviados
                              join check in ProjetoDbContext.Checkboxes on enviado.Id equals check.RespostaId
-                             where check.QuestaoId == QuestId && check.Opcao2 == true
+                             where check.QuestaoId == QuestId && check.Opcao2 == true && enviado.FormId == FormId
                              select new EnviadoDTO { id = enviado.Id, email = enviado.Email, nome = enviado.Nome }).ToListAsync();
                             break;
                         case 3:
                             contatos = await
                             (from enviado in ProjetoDbContext.Enviados
                              join check in ProjetoDbContext.Checkboxes on enviado.Id equals check.RespostaId
-                             where check.QuestaoId == QuestId && check.Opcao3 == true
+                             where check.QuestaoId == QuestId && check.Opcao3 == true && enviado.FormId == FormId
                              select new EnviadoDTO { id = enviado.Id, email = enviado.Email, nome = enviado.Nome }).ToListAsync();
                             break;
                         case 4:
                             contatos = await
                             (from enviado in ProjetoDbContext.Enviados
                              join check in ProjetoDbContext.Checkboxes on enviado.Id equals check.RespostaId
-                             where check.QuestaoId == QuestId && check.Opcao4 == true
+                             where check.QuestaoId == QuestId && check.Opcao4 == true && enviado.FormId == FormId
                              select new EnviadoDTO { id = enviado.Id, email = enviado.Email, nome = enviado.Nome }).ToListAsync();
                             break;
                         case 5:
                             contatos = await
                             (from enviado in ProjetoDbContext.Enviados
                              join check in ProjetoDbContext.Checkboxes on enviado.Id equals check.RespostaId
-                             where check.QuestaoId == QuestId && check.Opcao5 == true
+                             where check.QuestaoId == QuestId && check.Opcao5 == true && enviado.FormId == FormId
                              select new EnviadoDTO { id = enviado.Id, email = enviado.Email, nome = enviado.Nome }).ToListAsync();
                             break;
                         case 6:
                             contatos = await
                             (from enviado in ProjetoDbContext.Enviados
                              join check in ProjetoDbContext.Checkboxes on enviado.Id equals check.RespostaId
-                             where check.QuestaoId == QuestId && check.Opcao6 == true
+                             where check.QuestaoId == QuestId && check.Opcao6 == true && enviado.FormId == FormId
                              select new EnviadoDTO { id = enviado.Id, email = enviado.Email, nome = enviado.Nome }).ToListAsync();
                             break;
                         case 7:
                             contatos = await
                             (from enviado in ProjetoDbContext.Enviados
                              join check in ProjetoDbContext.Checkboxes on enviado.Id equals check.RespostaId
-                             where check.QuestaoId == QuestId && check.Opcao7 == true
+                             where check.QuestaoId == QuestId && check.Opcao7 == true && enviado.FormId == FormId
                              select new EnviadoDTO { id = enviado.Id, email = enviado.Email, nome = enviado.Nome }).ToListAsync();
                             break;
                         case 8:
                             contatos = await
                             (from enviado in ProjetoDbContext.Enviados
                              join check in ProjetoDbContext.Checkboxes on enviado.Id equals check.RespostaId
-                             where check.QuestaoId == QuestId && check.Opcao8 == true
+                             where check.QuestaoId == QuestId && check.Opcao8 == true && enviado.FormId == FormId
                              select new EnviadoDTO { id = enviado.Id, email = enviado.Email, nome = enviado.Nome }).ToListAsync();
                             break;
                         case 9:
                             contatos = await
                             (from enviado in ProjetoDbContext.Enviados
                              join check in ProjetoDbContext.Checkboxes on enviado.Id equals check.RespostaId
-                             where check.QuestaoId == QuestId && check.Opcao9 == true
+                             where check.QuestaoId == QuestId && check.Opcao9 == true && enviado.FormId == FormId
                              select new EnviadoDTO { id = enviado.Id, email = enviado.Email, nome = enviado.Nome }).ToListAsync();
                             break;
                         case 10:
                             contatos = await
                             (from enviado in ProjetoDbContext.Enviados
                              join check in ProjetoDbContext.Checkboxes on enviado.Id equals check.RespostaId
-                             where check.QuestaoId == QuestId && check.Opcao10 == true
+                             where check.QuestaoId == QuestId && check.Opcao10 == true && enviado.FormId == FormId
                              select new EnviadoDTO { id = enviado.Id, email = enviado.Email, nome = enviado.Nome }).ToListAsync();
                             break;
                         default:

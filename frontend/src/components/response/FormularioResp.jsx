@@ -199,7 +199,7 @@ export default function FormularioResposta(props){
                     case 3:
                         let check=[]
                         let markCheck = document.getElementsByName('checkNoLabel'+element.id);  
-                        for (var checkbox of markCheck) {  
+                        for (let checkbox of markCheck) {  
                             if (checkbox.checked) check.push(+checkbox.value);  
                         } 
                         if (check.length!==0) {
@@ -222,8 +222,8 @@ export default function FormularioResposta(props){
                                 radio: +questao.value
                             })
                             let array = element.derivadas?.filter(e=>e.derivadaDeOpcao===questao.value)
-                            for (let index = 0; index < array.length; index++) {
-                                const item = array[index];
+                            for (let indice = 0; indice < array.length; indice++) {
+                                const item = array[indice];
                                 switch (item.type) {
                                     case 1:
                                         let radio= document.querySelector(`input[name="radioNoLabel${item.id}"]:checked`)
@@ -254,7 +254,7 @@ export default function FormularioResposta(props){
                                     case 3:
                                         let check=[]
                                         let markCheck = document.getElementsByName('checkNoLabel'+item.id);  
-                                        for (var checkboxDer of markCheck) {  
+                                        for (let checkboxDer of markCheck) {  
                                             if (checkboxDer.checked) check.push(+checkboxDer.value);  
                                         } 
                                         if (check.length!==0) {

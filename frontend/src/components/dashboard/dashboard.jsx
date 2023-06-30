@@ -154,12 +154,12 @@ export default function Dashboard(){
             let derivados=forms.find(element => element.id === formSelected.id).derivados
             if (derivados.length>0){
                 let derivados = document.getElementsByName('FormulariosDev');  
-                for (var checkbox of derivados) {  
+                for (let checkbox of derivados) {  
                     if (checkbox.checked) check.push(+checkbox.value);  
                 } 
             }
             let questoes = document.getElementsByName('Questoes');  
-            for (var checkboxQuest of questoes) {  
+            for (let checkboxQuest of questoes) {  
                 if (checkboxQuest.checked) quests.push(+checkboxQuest.value);  
             } 
             CarregaDashboard(setDatasets,setLabels, navigate, formSelected.id, JSON.stringify(check), JSON.stringify(quests))

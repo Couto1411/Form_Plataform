@@ -174,8 +174,9 @@ export async function CarregaDashboard(setDatasets,setLabels,navigate,id,forms,q
     })
 }
 
-export async function CarregaRelatorio(setContatosResposta,navigate,questid,item){
-    await axios.get(baseUrl+"/respostas/"+questid+"/"+item?.opcao,{
+export async function CarregaRelatorio(setContatosResposta,navigate,formid,questid,item){
+    console.log(formid,questid,item?.opcao);
+    await axios.get(baseUrl+"/respostas/forms/"+formid+"/questao/"+questid+"/"+item?.opcao,{
         headers: {
             'Content-Type' : 'application/json',
             'Authorization': 'bearer ' + sessionStorage.getItem("token")

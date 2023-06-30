@@ -388,7 +388,7 @@ export default function FormsDerivados(){
                 <div key={'Barra'+element.id+count} className='mb-2 porcentagem'> 
                 <div className={tipo?'rounded-3 opcao'+count:null}>{numero}) <div style={{cursor:'pointer',display:'inline'}} onClick={()=>{
                     setShow(item);
-                    CarregaRelatorio(setContatosResposta,navigate,element?.id,item);}}>{item.texto}</div></div>
+                    CarregaRelatorio(setContatosResposta,navigate,sessionStorage.getItem('formDeId'),element?.id,item);}}>{item.texto}</div></div>
                     <MDBProgress height='20' className='rounded-3'>
                         <MDBProgressBar className='porcentagem' width={parcial} valuemin={0} valuemax={100}>{parcial}%</MDBProgressBar>
                     </MDBProgress>

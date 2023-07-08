@@ -233,7 +233,11 @@ export default function PaginaUsuario(){
             return(
                 <div key={element.id} className={forms.length>numero?'border-bottom':''}>
                     <MDBListGroupItem noBorders className='d-flex rounded-2 align-items-center'>
-                        {numero}. <Link className='zoom' style={{color:'black'}} to="/forms" onClick={e=>{sessionStorage.setItem("formId",element.id);sessionStorage.removeItem("formDeId")}}>{element.titulo} </Link>
+                        {numero}. <Link className='zoom' style={{color:'black'}} to="/forms" onClick={e=>{
+                            sessionStorage.setItem("formId",element.id);
+                            sessionStorage.setItem("nomePesquisa",element.titulo);
+                            sessionStorage.removeItem("formDeId");
+                        }}>{element.titulo} </Link>
                         {element.dataEnviado?<i className='mx-1'>({tempDate.toLocaleDateString('en-GB')})</i>:<></>}
                         {element.derivados?.length?<i id={'icone'+element.id} aberto='F' onClick={e=>{toggleDerivados(element.id)}} className=" mx-1 fas fa-regular fa-angle-down"></i>:null}
                         
@@ -253,7 +257,11 @@ export default function PaginaUsuario(){
                                     let tempDate2= new Date( Date.parse(item.dataEnviado))
                                     return (
                                         <MDBListGroupItem key={'formderivado'+item.id} className='pb-0 formsDuplicates d-flex'>
-                                            <Link className='formsDuplicates zoom' to={"/forms/"+item.id} onClick={e=>{sessionStorage.setItem("formId",element.id);sessionStorage.setItem("formDeId",item.id)}}>{item.titulo}</Link>
+                                            <Link className='formsDuplicates zoom' to={"/forms/"+item.id} onClick={e=>{
+                                                sessionStorage.setItem("formId",element.id);
+                                                sessionStorage.setItem("formDeId",item.id)
+                                                sessionStorage.setItem("nomePesquisa",element.titulo);
+                                            }}>{item.titulo}</Link>
                                             {item.dataEnviado?<i className='mx-1'>({tempDate2.toLocaleDateString('en-GB')})</i>:<></>}
                                             <i title='Editar Formulário' className="ms-auto edit mx-2 pt-1 fas fa-pen-to-square" onClick={()=>onClickEditForm(item)}></i>
                                             <i className="trashcan pt-1 fas fa-trash-can" onClick={e=>{

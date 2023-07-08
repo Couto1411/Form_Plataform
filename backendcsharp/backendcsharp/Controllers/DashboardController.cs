@@ -22,6 +22,7 @@ namespace backendcsharp.Controllers
         public class Questao
         {
             public int Numero { get; set; } = 0;
+            public string Enunciado { get; set; } = "";
             public List<string> Opcoes { get; set; } = new();
         }
 
@@ -67,6 +68,7 @@ namespace backendcsharp.Controllers
                      select new
                      {
                          questaoId = questao.Id,
+                         enunciado = questao.Enunciado,
                          numero = questao.Numero,
                          tipo = questao.Type,
                          opcao1 = questao.Opcao1 ?? "",
@@ -84,17 +86,18 @@ namespace backendcsharp.Controllers
                 foreach (var item in questoesOpcoes)
                 {
                     Questao quest = new();
-                    if (item.opcao1.Length > 0) quest.Opcoes.Add("Opção1 " + item.opcao1);
-                    if (item.opcao2.Length > 0) quest.Opcoes.Add("Opção2 " + item.opcao2);
-                    if (item.opcao3.Length > 0) quest.Opcoes.Add("Opção3 " + item.opcao3);
-                    if (item.opcao4.Length > 0) quest.Opcoes.Add("Opção4 " + item.opcao4);
-                    if (item.opcao5.Length > 0) quest.Opcoes.Add("Opção5 " + item.opcao5);
-                    if (item.opcao6.Length > 0) quest.Opcoes.Add("Opção6 " + item.opcao6);
-                    if (item.opcao7.Length > 0) quest.Opcoes.Add("Opção7 " + item.opcao7);
-                    if (item.opcao8.Length > 0) quest.Opcoes.Add("Opção8 " + item.opcao8);
-                    if (item.opcao9.Length > 0) quest.Opcoes.Add("Opção9 " + item.opcao9);
-                    if (item.opcao10.Length > 0) quest.Opcoes.Add("Opção10 " + item.opcao10);
+                    if (item.opcao1.Length > 0) quest.Opcoes.Add("Opção 1: " + item.opcao1);
+                    if (item.opcao2.Length > 0) quest.Opcoes.Add("Opção 2: " + item.opcao2);
+                    if (item.opcao3.Length > 0) quest.Opcoes.Add("Opção 3: " + item.opcao3);
+                    if (item.opcao4.Length > 0) quest.Opcoes.Add("Opção 4: " + item.opcao4);
+                    if (item.opcao5.Length > 0) quest.Opcoes.Add("Opção 5: " + item.opcao5);
+                    if (item.opcao6.Length > 0) quest.Opcoes.Add("Opção 6: " + item.opcao6);
+                    if (item.opcao7.Length > 0) quest.Opcoes.Add("Opção 7: " + item.opcao7);
+                    if (item.opcao8.Length > 0) quest.Opcoes.Add("Opção 8: " + item.opcao8);
+                    if (item.opcao9.Length > 0) quest.Opcoes.Add("Opção 9: " + item.opcao9);
+                    if (item.opcao10.Length > 0) quest.Opcoes.Add("Opção 10: " + item.opcao10);
                     quest.Numero = (int)item.numero;
+                    quest.Enunciado = item.enunciado;
                     labels.Add(quest);
                 }
                 foreach (var form in derivadosId)

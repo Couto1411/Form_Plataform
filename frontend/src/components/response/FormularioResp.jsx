@@ -166,8 +166,6 @@ export default function FormularioResposta(props){
         let temp = questoes
         for (let index = 0; index < temp.length; index++) {
             const element = temp[index];
-            element?.derivadas?.forEach(el =>  temp.push(el));
-            element.derivadas = []
             if(!element.semQuestao){
                 switch (element.type) {
                     case 1:
@@ -221,7 +219,8 @@ export default function FormularioResposta(props){
                                 id: element.id,
                                 radio: +questao.value
                             })
-                            let array = element.derivadas?.filter(e=>e.derivadaDeOpcao===questao.value)
+                            let array = element.derivadas?.filter(e=>e.derivadaDeOpcao===parseInt(questao.value))
+                            console.log(element.derivadas,questao.value,array)
                             for (let indice = 0; indice < array.length; indice++) {
                                 const item = array[indice];
                                 switch (item.type) {
@@ -337,7 +336,7 @@ export default function FormularioResposta(props){
                 <MDBModalDialog centered>
                     <MDBModalContent>
                         <MDBModalHeader className='py-2'>
-                            Pesquisa concluída
+                            Pesquisa concluída, você pode fechar seu navegador.
                         </MDBModalHeader>
                         <MDBModalBody className='py-2'>
                             Em caso de dúvidas entre em contato com o remetente disponível em seu email.

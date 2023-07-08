@@ -14,7 +14,7 @@ export default function Sidebar(area, setSecao) {
         var lista = document.getElementById('sidebar')
         for (const child of lista.children) {
             child.classList.remove('sidebarSelected')
-            child.classList.add('sidebarItem')
+            if(child.id!=='NomePesquisa') child.classList.add('sidebarItem')
         }
         if (id) {
             document.getElementById(id).classList.add('sidebarSelected')
@@ -33,6 +33,7 @@ export default function Sidebar(area, setSecao) {
         } else if (area === 'questoes') {
             return (
                 <MDBListGroup id='sidebar' className="rounded-0">
+                    <MDBListGroupItem action id='NomePesquisa' className='px-3 sidebarTitle'>{sessionStorage.getItem('nomePesquisa')}</MDBListGroupItem>
                     <MDBListGroupItem tag='a' action id='QuestoesBar' className='px-3 sidebarItem' onClick={e => { updateSelected(e.target.id); setSecao(1) }}>Questões</MDBListGroupItem>
                     <MDBListGroupItem tag='a' action id='ContatosBar' className='px-3 sidebarItem' onClick={e => { updateSelected(e.target.id); setSecao(2) }}>Destinatários</MDBListGroupItem>
                     <MDBListGroupItem tag='a' action id='RespostasBar' className='px-3 sidebarItem' onClick={e => { updateSelected(e.target.id); setSecao(3) }}>Respostas</MDBListGroupItem>

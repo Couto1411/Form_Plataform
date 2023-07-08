@@ -7,7 +7,7 @@ import {  CarregaForms, CarregaQuestoesUser, CarregaDashboard, RemoveSessao} fro
 import {useNavigate} from 'react-router-dom'
 import {
     MDBBtn, MDBContainer, MDBCheckbox, MDBRadio,
-    MDBModal,MDBModalContent,MDBModalDialog,MDBModalHeader,MDBModalTitle
+    MDBModal,MDBModalContent,MDBModalDialog,MDBModalHeader,MDBModalTitle, MDBDropdown, MDBDropdownToggle, MDBDropdownMenu, MDBDropdownItem, MDBTextArea
 } from 'mdb-react-ui-kit'
 
 ChartJS.register( ArcElement,Colors, Title, Tooltip, Legend);
@@ -43,7 +43,7 @@ export default function Dashboard(){
                     generateLabels: chart => chart.data.labels.map((l, i) => ({
                         datasetIndex: 0,
                         index: i,
-                        text: l.substr(0,l.indexOf(' ')),
+                        text: l.substr(0,l.indexOf(':')),
                         fillStyle: chart.data.datasets[0].backgroundColor[i],
                         strokeStyle: chart.data.datasets[0].backgroundColor[i],
                         hidden: false
@@ -141,7 +141,16 @@ export default function Dashboard(){
                     dado.datasets.push(sets)
                 })
                 cont+=1
-                if(dado.datasets.length>0) return (<div key={'questao'+cont} className='col-lg-4 col-md-6 mb-3'><div className='d-flex justify-content-center'>Questão {element.numero}</div><Pie className='graficos' data={dado} options={options} /></div>)
+                if(dado.datasets.length>0) return (<div key={'questao'+cont} className='col-lg-4 col-md-6 mb-3'>
+                    <div className='d-flex justify-content-center questaoEnum'>
+                    <MDBDropdown group className='shadow-0'>
+                        <MDBDropdownToggle color='light'>Questão {element.numero}</MDBDropdownToggle>
+                        <MDBDropdownMenu>
+                        <MDBDropdownItem><MDBTextArea rows={3} readOnly value={element.enunciado}/></MDBDropdownItem>
+                        </MDBDropdownMenu>
+                    </MDBDropdown>
+                    </div>
+                    <Pie className='graficos' data={dado} options={options} /></div>)
                 else return (<></>)
             })
         }
@@ -186,7 +195,7 @@ export default function Dashboard(){
                 <MDBModalDialog size='xl'>
                 <MDBModalContent>
                     <MDBModalHeader>
-                    <MDBModalTitle>{formSelected?.titulo}</MDBModalTitle>
+                    <MDBModalTitle className='overflowSemBarra'>{formSelected?.titulo}</MDBModalTitle>
                     <MDBBtn className='btn-close' color='none' onClick={e=>setShow(false)}></MDBBtn>
                     </MDBModalHeader>
                     <MDBContainer className='mt-2 mb-3 d-flex row justify-content-center'>

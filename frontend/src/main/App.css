@@ -27,6 +27,15 @@ main{
     -ms-overflow-style: none;
     scrollbar-width: none;
 }
+.overflowSemBarra{
+    overflow:auto;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+.overflowSemBarra::-webkit-scrollbar {
+    display: none;
+}
+
 .zoom::-webkit-scrollbar {
     display: none;
 }

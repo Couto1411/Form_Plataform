@@ -9,6 +9,18 @@
     z-index: 600;
     background: #f2f2f2;
 }
+.sidebarTitle{
+    white-space: nowrap;
+    overflow: auto;
+    background-color: #eeeeee;
+    font-weight: 600;
+    font-size: 1.1em;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+.sidebarTitle::-webkit-scrollbar {
+    display: none;
+}
 .sidebarSelected{
     color: #ff9142;
     background-color: #ffffe6;

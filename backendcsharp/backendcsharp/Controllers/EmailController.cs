@@ -97,6 +97,7 @@ namespace backendcsharp.Controllers
                         email.Body += "<br/><br/> Caso link não funcione, cole-o no browser de sua escolha.";
                         //END
                         email.IsBodyHtml = true;
+                        email.BodyEncoding = System.Text.Encoding.UTF8;
                         SmtpServer.Timeout = 5000;
                         SmtpServer.EnableSsl = true;
                         SmtpServer.UseDefaultCredentials = false;

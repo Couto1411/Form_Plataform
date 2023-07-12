@@ -8,12 +8,13 @@ import Navbar from '../template/Navbar'
 import {
     MDBInput, MDBInputGroup, MDBTextArea, MDBRadio, MDBCheckbox,
     MDBListGroup, MDBListGroupItem,
-    MDBBtn, MDBModal, MDBModalDialog, MDBModalContent, MDBModalBody, MDBModalFooter, MDBModalHeader} from 'mdb-react-ui-kit';
+    MDBBtn, MDBModal, MDBModalDialog, MDBModalContent, MDBModalBody, MDBModalFooter, MDBModalHeader, MDBSpinner} from 'mdb-react-ui-kit';
 
 export default function FormularioResposta(props){    
     const [questoes, setQuestoes] = useState(null);
     const [emailChecker, setEmailChecker] = useState(true);
     const [concluded, setConcluded] = useState(false);
+    const [loading, setLoading] = useState(false);
     const [user, setUser] = useState();
     const { formId } = useParams();
 
@@ -42,20 +43,22 @@ export default function FormularioResposta(props){
                             <div className='mt-1 rounded-3'>
                                 <MDBInputGroup id={element.id} className='mb-2 rounded-3'>
                                     <MDBBtn disabled color='secondary' className='numQuestao'>{element.numero}</MDBBtn>
-                                    <input className='form-control' type='text' id={'questao'+element.id} value={element.enunciado} disabled/>
+                                    <div className='col-8 col-xs-9 col-sm-10 col-md-11'>
+                                        <textarea className='form-control' style={{borderTopLeftRadius:'0px',borderBottomLeftRadius:'0px'}} id={'questao'+element.id} value={element.enunciado} disabled rows={2} />
+                                    </div>
                                 </MDBInputGroup>
                             </div>
                             <div id={"opcoes"+element.id} className='mx-2'>
-                                {element.opcao1?<div className='d-flex'><MDBRadio name={'radioNoLabel'+element.id} value={1} inline/>{element.opcao1}</div>:questoes[questoes.map(object => object.id).indexOf(element.id)].semQuestao=true}
-                                {element.opcao2?<div className='d-flex'><MDBRadio name={'radioNoLabel'+element.id} value={2} inline/>{element.opcao2}</div>:<div className='mb-1 erro'></div>}
-                                {element.opcao3?<div className='d-flex'><MDBRadio name={'radioNoLabel'+element.id} value={3} inline/>{element.opcao3}</div>:<div className='mb-1 erro'></div>}
-                                {element.opcao4?<div className='d-flex'><MDBRadio name={'radioNoLabel'+element.id} value={4} inline/>{element.opcao4}</div>:<div className='mb-1 erro'></div>}
-                                {element.opcao5?<div className='d-flex'><MDBRadio name={'radioNoLabel'+element.id} value={5} inline/>{element.opcao5}</div>:<div className='mb-1 erro'></div>}
-                                {element.opcao6?<div className='d-flex'><MDBRadio name={'radioNoLabel'+element.id} value={6} inline/>{element.opcao6}</div>:<div className='mb-1 erro'></div>}
-                                {element.opcao7?<div className='d-flex'><MDBRadio name={'radioNoLabel'+element.id} value={7} inline/>{element.opcao7}</div>:<div className='mb-1 erro'></div>}
-                                {element.opcao8?<div className='d-flex'><MDBRadio name={'radioNoLabel'+element.id} value={8} inline/>{element.opcao8}</div>:<div className='mb-1 erro'></div>}
-                                {element.opcao9?<div className='d-flex'><MDBRadio name={'radioNoLabel'+element.id} value={9} inline/>{element.opcao9}</div>:<div className='mb-1 erro'></div>}
-                                {element.opcao10?<div className='d-flex mb-1'><MDBRadio name={'radioNoLabel'+element.id} vlue={10} inline/>{element.opcao10}</div>:<div className='mb-1 erro'></div>}
+                                {element.opcao1? <MDBRadio name={'radioNoLabel'+element.id} value={1}  label={element.opcao1}  labelStyle={{wordBreak: 'break-word'}}/>:questoes[questoes.map(object => object.id).indexOf(element.id)].semQuestao=true}
+                                {element.opcao2? <MDBRadio name={'radioNoLabel'+element.id} value={2}  label={element.opcao2}  labelStyle={{wordBreak: 'break-word'}}/>:<div className='mb-1 erro'></div>}
+                                {element.opcao3? <MDBRadio name={'radioNoLabel'+element.id} value={3}  label={element.opcao3}  labelStyle={{wordBreak: 'break-word'}}/>:<div className='mb-1 erro'></div>}
+                                {element.opcao4? <MDBRadio name={'radioNoLabel'+element.id} value={4}  label={element.opcao4}  labelStyle={{wordBreak: 'break-word'}}/>:<div className='mb-1 erro'></div>}
+                                {element.opcao5? <MDBRadio name={'radioNoLabel'+element.id} value={5}  label={element.opcao5}  labelStyle={{wordBreak: 'break-word'}}/>:<div className='mb-1 erro'></div>}
+                                {element.opcao6? <MDBRadio name={'radioNoLabel'+element.id} value={6}  label={element.opcao6}  labelStyle={{wordBreak: 'break-word'}}/>:<div className='mb-1 erro'></div>}
+                                {element.opcao7? <MDBRadio name={'radioNoLabel'+element.id} value={7}  label={element.opcao7}  labelStyle={{wordBreak: 'break-word'}}/>:<div className='mb-1 erro'></div>}
+                                {element.opcao8? <MDBRadio name={'radioNoLabel'+element.id} value={8}  label={element.opcao8}  labelStyle={{wordBreak: 'break-word'}}/>:<div className='mb-1 erro'></div>}
+                                {element.opcao9? <MDBRadio name={'radioNoLabel'+element.id} value={9}  label={element.opcao9}  labelStyle={{wordBreak: 'break-word'}}/>:<div className='mb-1 erro'></div>}
+                                {element.opcao10?<MDBRadio name={'radioNoLabel'+element.id} value={10} label={element.opcao10} labelStyle={{wordBreak: 'break-word'}}/>:<div className='mb-1 erro'></div>}
                             </div>
                         </MDBListGroupItem>
                     )
@@ -65,7 +68,9 @@ export default function FormularioResposta(props){
                             <div className='mt-1 rounded-3'>
                                 <MDBInputGroup id={element.id} className='mb-2 rounded-3'>
                                     <MDBBtn disabled color='secondary' className='numQuestao'>{element.numero}</MDBBtn>
-                                    <input className='form-control' type='text' id={'questao'+element.id} value={element.enunciado} disabled/>
+                                    <div className='col-8 col-xs-9 col-sm-10 col-md-11'>
+                                        <textarea className='form-control' style={{borderTopLeftRadius:'0px',borderBottomLeftRadius:'0px'}} id={'questao'+element.id} value={element.enunciado} disabled rows={2} />
+                                    </div>
                                 </MDBInputGroup>
                             </div>
                             <MDBTextArea id={"open"+element.id} rows={4} label='Resposta' className='mb-2'/>
@@ -77,20 +82,22 @@ export default function FormularioResposta(props){
                             <div className='mt-1 rounded-3' >
                                 <MDBInputGroup id={element.id} className='mb-2 rounded-3'>
                                     <MDBBtn disabled color='secondary' className='numQuestao'>{element.numero}</MDBBtn>
-                                    <input className='form-control' type='text' id={'questao'+element.id} value={element.enunciado} disabled/>
+                                    <div className='col-8 col-xs-9 col-sm-10 col-md-11'>
+                                        <textarea className='form-control' style={{borderTopLeftRadius:'0px',borderBottomLeftRadius:'0px'}} id={'questao'+element.id} value={element.enunciado} disabled rows={2} />
+                                    </div>
                                 </MDBInputGroup>
                             </div>
                             <div id={"opcoes"+element.id} className='mx-2'>
-                                {element.opcao1?<div className='d-flex'><MDBCheckbox name={'checkNoLabel'+element.id} value={1} inline/>{element.opcao1}</div>:questoes[questoes.map(object => object.id).indexOf(element.id)].semQuestao=true}
-                                {element.opcao2?<div className='d-flex'><MDBCheckbox name={'checkNoLabel'+element.id} value={2} inline/>{element.opcao2}</div>:<div className='mb-1 erro'></div>}
-                                {element.opcao3?<div className='d-flex'><MDBCheckbox name={'checkNoLabel'+element.id} value={3} inline/>{element.opcao3}</div>:<div className='mb-1 erro'></div>}
-                                {element.opcao4?<div className='d-flex'><MDBCheckbox name={'checkNoLabel'+element.id} value={4} inline/>{element.opcao4}</div>:<div className='mb-1 erro'></div>}
-                                {element.opcao5?<div className='d-flex'><MDBCheckbox name={'checkNoLabel'+element.id} value={5} inline/>{element.opcao5}</div>:<div className='mb-1 erro'></div>}
-                                {element.opcao6?<div className='d-flex'><MDBCheckbox name={'checkNoLabel'+element.id} value={6} inline/>{element.opcao6}</div>:<div className='mb-1 erro'></div>}
-                                {element.opcao7?<div className='d-flex'><MDBCheckbox name={'checkNoLabel'+element.id} value={7} inline/>{element.opcao7}</div>:<div className='mb-1 erro'></div>}
-                                {element.opcao8?<div className='d-flex'><MDBCheckbox name={'checkNoLabel'+element.id} value={8} inline/>{element.opcao8}</div>:<div className='mb-1 erro'></div>}
-                                {element.opcao9?<div className='d-flex'><MDBCheckbox name={'checkNoLabel'+element.id} value={9} inline/>{element.opcao9}</div>:<div className='mb-1 erro'></div>}
-                                {element.opcao10?<div className='d-flex mb-1'><MDBCheckbox name={'checkNoLabel'+element.id} value={10} inline/>{element.opcao10}</div>:<div className='mb-1 erro'></div>}
+                                {element.opcao1? <MDBCheckbox name={'checkNoLabel'+element.id} value={1}  label={element.opcao1}  labelStyle={{wordBreak: 'break-word'}}/>:questoes[questoes.map(object => object.id).indexOf(element.id)].semQuestao=true}
+                                {element.opcao2? <MDBCheckbox name={'checkNoLabel'+element.id} value={2}  label={element.opcao2}  labelStyle={{wordBreak: 'break-word'}}/>:<div className='mb-1 erro'></div>}
+                                {element.opcao3? <MDBCheckbox name={'checkNoLabel'+element.id} value={3}  label={element.opcao3}  labelStyle={{wordBreak: 'break-word'}}/>:<div className='mb-1 erro'></div>}
+                                {element.opcao4? <MDBCheckbox name={'checkNoLabel'+element.id} value={4}  label={element.opcao4}  labelStyle={{wordBreak: 'break-word'}}/>:<div className='mb-1 erro'></div>}
+                                {element.opcao5? <MDBCheckbox name={'checkNoLabel'+element.id} value={5}  label={element.opcao5}  labelStyle={{wordBreak: 'break-word'}}/>:<div className='mb-1 erro'></div>}
+                                {element.opcao6? <MDBCheckbox name={'checkNoLabel'+element.id} value={6}  label={element.opcao6}  labelStyle={{wordBreak: 'break-word'}}/>:<div className='mb-1 erro'></div>}
+                                {element.opcao7? <MDBCheckbox name={'checkNoLabel'+element.id} value={7}  label={element.opcao7}  labelStyle={{wordBreak: 'break-word'}}/>:<div className='mb-1 erro'></div>}
+                                {element.opcao8? <MDBCheckbox name={'checkNoLabel'+element.id} value={8}  label={element.opcao8}  labelStyle={{wordBreak: 'break-word'}}/>:<div className='mb-1 erro'></div>}
+                                {element.opcao9? <MDBCheckbox name={'checkNoLabel'+element.id} value={9}  label={element.opcao9}  labelStyle={{wordBreak: 'break-word'}}/>:<div className='mb-1 erro'></div>}
+                                {element.opcao10?<MDBCheckbox name={'checkNoLabel'+element.id} value={10} label={element.opcao10} labelStyle={{wordBreak: 'break-word'}}/>:<div className='mb-1 erro'></div>}
                             </div>
                         </MDBListGroupItem>
                     )
@@ -107,20 +114,22 @@ export default function FormularioResposta(props){
                             <div className='mt-1 rounded-3'>
                                 <MDBInputGroup id={element.id} className='mb-2 rounded-3'>
                                     <MDBBtn disabled color='secondary' className='numQuestao'>{element.numero}</MDBBtn>
-                                    <input className='form-control' type='text' id={'questao'+element.id} value={element.enunciado} disabled/>
+                                    <div className='col-8 col-xs-9 col-sm-10 col-md-11'>
+                                        <textarea className='form-control' style={{borderTopLeftRadius:'0px',borderBottomLeftRadius:'0px'}} id={'questao'+element.id} value={element.enunciado} disabled rows={2} />
+                                    </div>
                                 </MDBInputGroup>
                             </div>
                             <div id={"opcoes"+element.id} className='mx-2'>
-                                {element.opcao1?<div className='d-flex'><MDBRadio onClick={e=>{showDerivada(element.id,1)}} name={'radioNoLabel'+element.id} value={1} inline/>{element.opcao1}</div>:questoes[questoes.map(object => object.id).indexOf(element.id)].semQuestao=true}
-                                {element.opcao2?<div className='d-flex'><MDBRadio onClick={e=>{showDerivada(element.id,2)}} name={'radioNoLabel'+element.id} value={2} inline/>{element.opcao2}</div>:<div className='mb-1 erro'></div>}
-                                {element.opcao3?<div className='d-flex'><MDBRadio onClick={e=>{showDerivada(element.id,3)}} name={'radioNoLabel'+element.id} value={3} inline/>{element.opcao3}</div>:<div className='mb-1 erro'></div>}
-                                {element.opcao4?<div className='d-flex'><MDBRadio onClick={e=>{showDerivada(element.id,4)}} name={'radioNoLabel'+element.id} value={4} inline/>{element.opcao4}</div>:<div className='mb-1 erro'></div>}
-                                {element.opcao5?<div className='d-flex'><MDBRadio onClick={e=>{showDerivada(element.id,5)}} name={'radioNoLabel'+element.id} value={5} inline/>{element.opcao5}</div>:<div className='mb-1 erro'></div>}
-                                {element.opcao6?<div className='d-flex'><MDBRadio onClick={e=>{showDerivada(element.id,6)}} name={'radioNoLabel'+element.id} value={6} inline/>{element.opcao6}</div>:<div className='mb-1 erro'></div>}
-                                {element.opcao7?<div className='d-flex'><MDBRadio onClick={e=>{showDerivada(element.id,7)}} name={'radioNoLabel'+element.id} value={7} inline/>{element.opcao7}</div>:<div className='mb-1 erro'></div>}
-                                {element.opcao8?<div className='d-flex'><MDBRadio onClick={e=>{showDerivada(element.id,8)}} name={'radioNoLabel'+element.id} value={8} inline/>{element.opcao8}</div>:<div className='mb-1 erro'></div>}
-                                {element.opcao9?<div className='d-flex'><MDBRadio onClick={e=>{showDerivada(element.id,9)}} name={'radioNoLabel'+element.id} value={9} inline/>{element.opcao9}</div>:<div className='mb-1 erro'></div>}
-                                {element.opcao10?<div className='d-flex mb-1'><MDBRadio onClick={e=>{showDerivada(element.id,10)}} name={'radioNoLabel'+element.id} vlue={10} inline/>{element.opcao10}</div>:<div className='mb-1 erro'></div>}
+                                {element.opcao1? <MDBRadio onClick={e=>{showDerivada(element.id,1)}}  name={'radioNoLabel'+element.id} value={1}  label={element.opcao1}  labelStyle={{wordBreak: 'break-word'}}/>:questoes[questoes.map(object => object.id).indexOf(element.id)].semQuestao=true}
+                                {element.opcao2? <MDBRadio onClick={e=>{showDerivada(element.id,2)}}  name={'radioNoLabel'+element.id} value={2}  label={element.opcao2}  labelStyle={{wordBreak: 'break-word'}}/>:<div className='mb-1 erro'></div>}
+                                {element.opcao3? <MDBRadio onClick={e=>{showDerivada(element.id,3)}}  name={'radioNoLabel'+element.id} value={3}  label={element.opcao3}  labelStyle={{wordBreak: 'break-word'}}/>:<div className='mb-1 erro'></div>}
+                                {element.opcao4? <MDBRadio onClick={e=>{showDerivada(element.id,4)}}  name={'radioNoLabel'+element.id} value={4}  label={element.opcao4}  labelStyle={{wordBreak: 'break-word'}}/>:<div className='mb-1 erro'></div>}
+                                {element.opcao5? <MDBRadio onClick={e=>{showDerivada(element.id,5)}}  name={'radioNoLabel'+element.id} value={5}  label={element.opcao5}  labelStyle={{wordBreak: 'break-word'}}/>:<div className='mb-1 erro'></div>}
+                                {element.opcao6? <MDBRadio onClick={e=>{showDerivada(element.id,6)}}  name={'radioNoLabel'+element.id} value={6}  label={element.opcao6}  labelStyle={{wordBreak: 'break-word'}}/>:<div className='mb-1 erro'></div>}
+                                {element.opcao7? <MDBRadio onClick={e=>{showDerivada(element.id,7)}}  name={'radioNoLabel'+element.id} value={7}  label={element.opcao7}  labelStyle={{wordBreak: 'break-word'}}/>:<div className='mb-1 erro'></div>}
+                                {element.opcao8? <MDBRadio onClick={e=>{showDerivada(element.id,8)}}  name={'radioNoLabel'+element.id} value={8}  label={element.opcao8}  labelStyle={{wordBreak: 'break-word'}}/>:<div className='mb-1 erro'></div>}
+                                {element.opcao9? <MDBRadio onClick={e=>{showDerivada(element.id,9)}}  name={'radioNoLabel'+element.id} value={9}  label={element.opcao9}  labelStyle={{wordBreak: 'break-word'}}/>:<div className='mb-1 erro'></div>}
+                                {element.opcao10?<MDBRadio onClick={e=>{showDerivada(element.id,10)}} name={'radioNoLabel'+element.id} value={10} label={element.opcao10} labelStyle={{wordBreak: 'break-word'}}/>:<div className='mb-1 erro'></div>}
                             </div>
                         </MDBListGroupItem>
                         {renderizaDerivadas(element)}
@@ -161,6 +170,8 @@ export default function FormularioResposta(props){
     }
 
     async function sendResposta(){
+        setLoading(true)
+        setConcluded(true)
         let respostas=[]
         let enviar=true
         let temp = questoes
@@ -220,7 +231,6 @@ export default function FormularioResposta(props){
                                 radio: +questao.value
                             })
                             let array = element.derivadas?.filter(e=>e.derivadaDeOpcao===parseInt(questao.value))
-                            console.log(element.derivadas,questao.value,array)
                             for (let indice = 0; indice < array.length; indice++) {
                                 const item = array[indice];
                                 switch (item.type) {
@@ -289,7 +299,7 @@ export default function FormularioResposta(props){
                 respostas: respostas
             })
             .then(reposta =>{
-                setConcluded(true);
+                setLoading(false);
             })
             .catch(erro=>{
                 console.log(erro)
@@ -334,6 +344,13 @@ export default function FormularioResposta(props){
             
             <MDBModal staticBackdrop tabIndex='-1' show={concluded} setShow={setConcluded}>
                 <MDBModalDialog centered>
+                    {loading?
+                    <MDBModalContent>
+                        <MDBModalBody className='py-2'>
+                            <MDBSpinner color='primary' size='sm' role='status'/><span className='px-2'>Enviando...</span>
+                        </MDBModalBody>
+                    </MDBModalContent>
+                    :
                     <MDBModalContent>
                         <MDBModalHeader className='py-2'>
                             Pesquisa concluída, você pode fechar seu navegador.
@@ -341,7 +358,7 @@ export default function FormularioResposta(props){
                         <MDBModalBody className='py-2'>
                             Em caso de dúvidas entre em contato com o remetente disponível em seu email.
                         </MDBModalBody>
-                    </MDBModalContent>
+                    </MDBModalContent>}
                 </MDBModalDialog>
             </MDBModal>
         </section>

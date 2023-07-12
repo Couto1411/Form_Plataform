@@ -13,6 +13,14 @@ namespace backendcsharp.Controllers
     [ApiController]
     public class EmailController : Controller
     {
+        public static IEnumerable<List<T>> SplitList<T>(List<T> locations, int nSize = 30)
+        {
+            for (int i = 0; i < locations.Count; i += nSize)
+            {
+                yield return locations.GetRange(i, Math.Min(nSize, locations.Count - i));
+            }
+        }
+
         private readonly ProjetoDbContext ProjetoDbContext;
 
         public EmailController(ProjetoDbContext ProjetoDbContext)
@@ -51,6 +59,7 @@ namespace backendcsharp.Controllers
                     var Envios = await ProjetoDbContext.Enviados
                         .Select(s => new EnviadoDTO
                         {
+                            id = s.Id,
                             email = s.Email,
                             formId = s.FormId,
                             respondido = s.Respondido
@@ -70,39 +79,45 @@ namespace backendcsharp.Controllers
                         {
                             DeliveryMethod = SmtpDeliveryMethod.Network
                         };
-                        MailMessage email = new();
-
-                        // Começo da configuração do EMAIL
-
-                        // Seta remetente
-                        if(User.email is not null) email.From = new MailAddress(User.email);
-                        else throw new Exception("Sem email de remetente");
-
-                        // Seta destinatários
-                        foreach (var item in Envios)
+                        var EnviosPartidos = SplitList(Envios,100);
+                        foreach (var envios in EnviosPartidos)
                         {
-                            if (!item.respondido) { 
-                                if(Handlers.IsValidEmail(item.email)) email.Bcc.Add(item.email);
+                            MailMessage email = new();
+
+                            // Começo da configuração do EMAIL
+
+                            // Seta remetente
+                            if(User.email is not null) email.From = new MailAddress(User.email);
+                            else throw new Exception("Sem email de remetente");
+
+                            // Seta destinatários
+                            foreach (var element in envios)
+                            {
+                                if (element.respondido == 0) {
+                                    var contato = await ProjetoDbContext.Enviados.Select(e => new Enviado()).FirstOrDefaultAsync(s => s.Id == element.id);
+                                    if (contato is not null) contato.Respondido = 1;
+                                    if (Handlers.IsValidEmail(element.email)) email.Bcc.Add(element.email);
+                                }
                             }
+                            //email.To.Add("gabriel.couto14@hotmail.com");
+
+                            // Faz cópia do email para o remetente
+                            email.CC.Add(User.email);
+
+                            // Seta o título do formulário como assunto
+                            email.Subject = Form.Titulo;
+                            // Seta a mensagem do email
+                            email.Body = Form.MsgEmail is not null? Form.MsgEmail.Replace(@" {replaceStringHere} ", @"<br/><br/>https://formplataform-4ac81.web.app/" + Form.Id+ "<br/><br/>").Replace("\n", @"<br/>"):"";
+                            email.Body += "<br/><br/> Caso link não funcione, cole-o no browser de sua escolha.";
+                            //END
+                            email.IsBodyHtml = true;
+                            email.BodyEncoding = System.Text.Encoding.UTF8;
+                            SmtpServer.Timeout = 5000;
+                            SmtpServer.EnableSsl = true;
+                            SmtpServer.UseDefaultCredentials = false;
+                            SmtpServer.Credentials = new NetworkCredential(User.email, User.appPassword);
+                            await SmtpServer.SendMailAsync(email);
                         }
-                        //email.To.Add("gabriel.couto14@hotmail.com");
-
-                        // Faz cópia do email para o remetente
-                        email.CC.Add(User.email);
-
-                        // Seta o título do formulário como assunto
-                        email.Subject = Form.Titulo;
-                        // Seta a mensagem do email
-                        email.Body = Form.MsgEmail is not null? Form.MsgEmail.Replace(@" {replaceStringHere} ", @"<br/><br/>https://formplataform-4ac81.web.app/" + Form.Id+ "<br/><br/>").Replace("\n", @"<br/>"):"";
-                        email.Body += "<br/><br/> Caso link não funcione, cole-o no browser de sua escolha.";
-                        //END
-                        email.IsBodyHtml = true;
-                        email.BodyEncoding = System.Text.Encoding.UTF8;
-                        SmtpServer.Timeout = 5000;
-                        SmtpServer.EnableSsl = true;
-                        SmtpServer.UseDefaultCredentials = false;
-                        SmtpServer.Credentials = new NetworkCredential(User.email, User.appPassword);
-                        await SmtpServer.SendMailAsync(email);
                         Form.DataEnviado = DateTime.Now;
                         await ProjetoDbContext.SaveChangesAsync();
                         return StatusCode(204);
@@ -164,7 +179,10 @@ namespace backendcsharp.Controllers
 
                         // Seta destinatário
                         var enviado = await ProjetoDbContext.Enviados.Where(s => s.Id == model.EmailId).FirstOrDefaultAsync();
-                        if (enviado is not null && Handlers.IsValidEmail(enviado.Email)) email.To.Add(enviado.Email);
+                        if (enviado is not null) { 
+                            if (Handlers.IsValidEmail(enviado.Email)) email.To.Add(enviado.Email);
+                            enviado.Respondido = 1;
+                        }
                         //email.To.Add("gabriel.couto14@hotmail.com");
 
                         // Faz cópia do email para o remetente
@@ -181,7 +199,7 @@ namespace backendcsharp.Controllers
                         SmtpServer.UseDefaultCredentials = false;
                         SmtpServer.Credentials = new NetworkCredential(User.email, User.appPassword);
                         await SmtpServer.SendMailAsync(email);
-
+                        await ProjetoDbContext.SaveChangesAsync();
                         return StatusCode(204);
                     }
                 }

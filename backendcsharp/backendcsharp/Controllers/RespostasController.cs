@@ -63,7 +63,7 @@ namespace backendcsharp.Controllers
                         email = s.Email,
                         respondido = s.Respondido
                     })
-                    .Where(s => (s.formId == FormId && s.email == Resp.email && s.respondido == false))
+                    .Where(s => (s.formId == FormId && s.email == Resp.email && (s.respondido == 0 || s.respondido == 1)))
                     .FirstOrDefaultAsync();
                 if (Form is not null && enviado is not null) {
                     FormId = Form.derivadoDeId is not null? (int)Form.derivadoDeId:FormId;
@@ -123,7 +123,7 @@ namespace backendcsharp.Controllers
                     var enviadoUpdate = await ProjetoDbContext.Enviados.FirstOrDefaultAsync(s => s.Id == enviado.id);
                     if (enviadoUpdate != null)
                     {
-                        enviadoUpdate.Respondido = true;
+                        enviadoUpdate.Respondido = 2;
                         await ProjetoDbContext.SaveChangesAsync();
                         return StatusCode(204);
                     }
@@ -640,7 +640,7 @@ namespace backendcsharp.Controllers
                 // Pega quantidade de respostas total
                 var respostasquant = await
                     (from envio in ProjetoDbContext.Enviados
-                     where envio.FormId == FormId && envio.Respondido == true
+                     where envio.FormId == FormId && envio.Respondido == 2
                      select new { id = envio.Id }
                     ).CountAsync();
                 // Retorna resposta

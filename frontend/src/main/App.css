@@ -44,13 +44,12 @@ main{
 }
 
 ::-webkit-scrollbar {
-    width: 10px;
+    width: 8px;
     height: 10px;
 }
   
 ::-webkit-scrollbar-thumb {
     background: #00284eb8;
-    border-radius: 10px;
 }
 
 ::-webkit-scrollbar-track {

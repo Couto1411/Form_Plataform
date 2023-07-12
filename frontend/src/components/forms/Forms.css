@@ -30,12 +30,17 @@
 
 .porcentagem{
     color: rgb(34, 34, 34);
+    display: inline;
+    word-break: break-all;
     font-size: 1em;
 }
 .contatoBotoes:hover{
     background-color: #ffff00;
     border: #ffa564 solid 1px;
+}
 
+.greenicon{
+    color: rgb(25, 213, 25)
 }
 
 .form-check-inline{

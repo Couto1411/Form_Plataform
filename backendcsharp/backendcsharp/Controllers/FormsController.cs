@@ -48,7 +48,7 @@ namespace backendcsharp.Controllers
                         {
                             var envio = new Enviado()
                             {
-                                Respondido = false,
+                                Respondido = 0,
                                 FormId = entity.Id,
                                 Nome = item.Nome,
                                 Email = item.Email,

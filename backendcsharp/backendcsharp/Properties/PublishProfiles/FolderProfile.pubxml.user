@@ -5,7 +5,7 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
 <Project>
   <PropertyGroup>
     <_PublishTargetUrl>D:\Pessoal\CEFET\Form_Plataform\backendcsharp\backendcsharp\bin\Release\net6.0\publish\</_PublishTargetUrl>
-    <History>True|2023-04-15T22:48:15.8774511Z;True|2023-03-09T17:20:14.2417588-03:00;</History>
+    <History>True|2023-07-12T01:14:25.0228313Z;True|2023-04-15T19:48:15.8774511-03:00;True|2023-03-09T17:20:14.2417588-03:00;</History>
     <LastFailureDetails />
   </PropertyGroup>
 </Project>

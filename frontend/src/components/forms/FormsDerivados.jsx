@@ -45,7 +45,6 @@ export default function FormsDerivados(){
     const [contatosResposta, setContatosResposta] = useState([]);
 
     useEffect(() => {
-        console.log("oi")
         if (sessionStorage.getItem("token")){
             CarregaQuestoes(setQuestoes,navigate)
             CarregaEnvios(setContatos,setContatosDB,sessionStorage.getItem('formDeId'),navigate)
@@ -90,19 +89,21 @@ export default function FormsDerivados(){
                         <MDBListGroupItem noBorders key={element.id} className={opcao?'rounded-3 mb-3 opcao'+opcao:'rounded-3 mb-3'}>
                             <MDBInputGroup className='mb-2 mt-1'>
                                 <MDBBtn color='secondary' className='numQuestao'>{element.numero}</MDBBtn>
-                                <input className='form-control' type='text' id={'questao'+element.id} defaultValue={element.enunciado} disabled/>
+                                <textarea className='form-control' id={'questao'+element.id} 
+                                    defaultValue={element.enunciado} disabled 
+                                    style={{borderTopLeftRadius:'0px',borderBottomLeftRadius:'0px'}}/>
                             </MDBInputGroup>
                             <div id={"opcoes"+element.id} className='mx-2'>
-                                {element.opcao1?<div className='d-flex'><MDBRadio disabled name='radioNoLabel' value='' inline/>{element.opcao1}</div>:<></>}
-                                {element.opcao2?<div className='d-flex'><MDBRadio disabled name='radioNoLabel' value='' inline/>{element.opcao2}</div>:<></>}
-                                {element.opcao3?<div className='d-flex'><MDBRadio disabled name='radioNoLabel' value='' inline/>{element.opcao3}</div>:<></>}
-                                {element.opcao4?<div className='d-flex'><MDBRadio disabled name='radioNoLabel' value='' inline/>{element.opcao4}</div>:<></>}
-                                {element.opcao5?<div className='d-flex'><MDBRadio disabled name='radioNoLabel' value='' inline/>{element.opcao5}</div>:<></>}
-                                {element.opcao6?<div className='d-flex'><MDBRadio disabled name='radioNoLabel' value='' inline/>{element.opcao6}</div>:<></>}
-                                {element.opcao7?<div className='d-flex'><MDBRadio disabled name='radioNoLabel' value='' inline/>{element.opcao7}</div>:<></>}
-                                {element.opcao8?<div className='d-flex'><MDBRadio disabled name='radioNoLabel' value='' inline/>{element.opcao8}</div>:<></>}
-                                {element.opcao9?<div className='d-flex'><MDBRadio disabled name='radioNoLabel' value='' inline/>{element.opcao9}</div>:<></>}
-                                {element.opcao10?<div className='d-flex'><MDBRadio disabled name='radioNoLabel' value='' inline/>{element.opcao10}</div>:<></>}
+                                {element.opcao1? <MDBRadio label={element.opcao1}  labelStyle={{wordBreak: 'break-word'}}/>:<></>}
+                                {element.opcao2? <MDBRadio label={element.opcao2}  labelStyle={{wordBreak: 'break-word'}}/>:<></>}
+                                {element.opcao3? <MDBRadio label={element.opcao3}  labelStyle={{wordBreak: 'break-word'}}/>:<></>}
+                                {element.opcao4? <MDBRadio label={element.opcao4}  labelStyle={{wordBreak: 'break-word'}}/>:<></>}
+                                {element.opcao5? <MDBRadio label={element.opcao5}  labelStyle={{wordBreak: 'break-word'}}/>:<></>}
+                                {element.opcao6? <MDBRadio label={element.opcao6}  labelStyle={{wordBreak: 'break-word'}}/>:<></>}
+                                {element.opcao7? <MDBRadio label={element.opcao7}  labelStyle={{wordBreak: 'break-word'}}/>:<></>}
+                                {element.opcao8? <MDBRadio label={element.opcao8}  labelStyle={{wordBreak: 'break-word'}}/>:<></>}
+                                {element.opcao9? <MDBRadio label={element.opcao9}  labelStyle={{wordBreak: 'break-word'}}/>:<></>}
+                                {element.opcao10?<MDBRadio label={element.opcao10} labelStyle={{wordBreak: 'break-word'}}/>:<></>}
                             </div>
                         </MDBListGroupItem>
                     )
@@ -111,7 +112,9 @@ export default function FormsDerivados(){
                         <MDBListGroupItem noBorders key={element.id} className={opcao?'rounded-3 mb-3 opcao'+opcao:'rounded-3 mb-3'}>
                             <MDBInputGroup className='mb-2 mt-1'>
                                 <MDBBtn color='secondary' className='numQuestao'>{element.numero}</MDBBtn>
-                                <input className='form-control' type='text' id={'questao'+element.id} defaultValue={element.enunciado} disabled/>
+                                <textarea className='form-control' id={'questao'+element.id} 
+                                    defaultValue={element.enunciado} disabled 
+                                    style={{borderTopLeftRadius:'0px',borderBottomLeftRadius:'0px'}}/>
                             </MDBInputGroup>
                             <MDBTextArea rows={4} label='Resposta' readOnly className='mb-2'/>
                         </MDBListGroupItem>
@@ -121,19 +124,21 @@ export default function FormsDerivados(){
                         <MDBListGroupItem noBorders key={element.id} className={opcao?'rounded-3 mb-3 opcao'+opcao:'rounded-3 mb-3'}>
                             <MDBInputGroup className='mb-2 mt-1'>
                                 <MDBBtn color='secondary' className='numQuestao'>{element.numero}</MDBBtn>
-                                <input className='form-control' type='text' id={'questao'+element.id} defaultValue={element.enunciado} disabled/>
+                                <textarea className='form-control' id={'questao'+element.id} 
+                                    defaultValue={element.enunciado} disabled 
+                                    style={{borderTopLeftRadius:'0px',borderBottomLeftRadius:'0px'}}/>                              
                             </MDBInputGroup>
                             <div id={"opcoes"+element.id} className='mx-2'>
-                                {element.opcao1?<div className='d-flex'><MDBCheckbox disabled name='checkNoLabel' value='' inline/>{element.opcao1}</div>:<></>}
-                                {element.opcao2?<div className='d-flex'><MDBCheckbox disabled name='checkNoLabel' value='' inline/>{element.opcao2}</div>:<></>}
-                                {element.opcao3?<div className='d-flex'><MDBCheckbox disabled name='checkNoLabel' value='' inline/>{element.opcao3}</div>:<></>}
-                                {element.opcao4?<div className='d-flex'><MDBCheckbox disabled name='checkNoLabel' value='' inline/>{element.opcao4}</div>:<></>}
-                                {element.opcao5?<div className='d-flex'><MDBCheckbox disabled name='checkNoLabel' value='' inline/>{element.opcao5}</div>:<></>}
-                                {element.opcao6?<div className='d-flex'><MDBCheckbox disabled name='checkNoLabel' value='' inline/>{element.opcao6}</div>:<></>}
-                                {element.opcao7?<div className='d-flex'><MDBCheckbox disabled name='checkNoLabel' value='' inline/>{element.opcao7}</div>:<></>}
-                                {element.opcao8?<div className='d-flex'><MDBCheckbox disabled name='checkNoLabel' value='' inline/>{element.opcao8}</div>:<></>}
-                                {element.opcao9?<div className='d-flex'><MDBCheckbox disabled name='checkNoLabel' value='' inline/>{element.opcao9}</div>:<></>}
-                                {element.opcao10?<div className='d-flex'><MDBCheckbox disabled name='checkNoLabel' value='' inline/>{element.opcao10}</div>:<></>}
+                                {element.opcao1? <MDBCheckbox label={element.opcao1}  labelStyle={{wordBreak: 'break-word'}}/>:<></>}
+                                {element.opcao2? <MDBCheckbox label={element.opcao2}  labelStyle={{wordBreak: 'break-word'}}/>:<></>}
+                                {element.opcao3? <MDBCheckbox label={element.opcao3}  labelStyle={{wordBreak: 'break-word'}}/>:<></>}
+                                {element.opcao4? <MDBCheckbox label={element.opcao4}  labelStyle={{wordBreak: 'break-word'}}/>:<></>}
+                                {element.opcao5? <MDBCheckbox label={element.opcao5}  labelStyle={{wordBreak: 'break-word'}}/>:<></>}
+                                {element.opcao6? <MDBCheckbox label={element.opcao6}  labelStyle={{wordBreak: 'break-word'}}/>:<></>}
+                                {element.opcao7? <MDBCheckbox label={element.opcao7}  labelStyle={{wordBreak: 'break-word'}}/>:<></>}
+                                {element.opcao8? <MDBCheckbox label={element.opcao8}  labelStyle={{wordBreak: 'break-word'}}/>:<></>}
+                                {element.opcao9? <MDBCheckbox label={element.opcao9}  labelStyle={{wordBreak: 'break-word'}}/>:<></>}
+                                {element.opcao10?<MDBCheckbox label={element.opcao10} labelStyle={{wordBreak: 'break-word'}}/>:<></>}
                             </div>
                         </MDBListGroupItem>
                     )
@@ -149,19 +154,21 @@ export default function FormsDerivados(){
                         <MDBListGroupItem className='rounded-2 mb-3'>
                             <MDBInputGroup className='mb-2 mt-1'>
                                 <MDBBtn color='secondary' className='numQuestao'>{element.numero}</MDBBtn>
-                                <input className='form-control' type='text' id={'questao'+element.id} defaultValue={element.enunciado} disabled/>
+                                <textarea className='form-control' id={'questao'+element.id} 
+                                    defaultValue={element.enunciado} disabled 
+                                    style={{borderTopLeftRadius:'0px',borderBottomLeftRadius:'0px'}}/>                            
                             </MDBInputGroup>
                             <div id={"opcoes"+element.id} className='mx-2'>
-                                {element.opcao1?<div className='my-1 opcao1 rounded-2 d-flex'><MDBRadio name='radioNoLabel' value='' inline/>{element.opcao1}</div>:<></>}
-                                {element.opcao2?<div className='my-1 opcao2 rounded-2 d-flex'><MDBRadio name='radioNoLabel' value='' inline/>{element.opcao2}</div>:<></>}
-                                {element.opcao3?<div className='my-1 opcao3 rounded-2 d-flex'><MDBRadio name='radioNoLabel' value='' inline/>{element.opcao3}</div>:<></>}
-                                {element.opcao4?<div className='my-1 opcao4 rounded-2 d-flex'><MDBRadio name='radioNoLabel' value='' inline/>{element.opcao4}</div>:<></>}
-                                {element.opcao5?<div className='my-1 opcao5 rounded-2 d-flex'><MDBRadio name='radioNoLabel' value='' inline/>{element.opcao5}</div>:<></>}
-                                {element.opcao6?<div className='my-1 opcao6 rounded-2 d-flex'><MDBRadio name='radioNoLabel' value='' inline/>{element.opcao6}</div>:<></>}
-                                {element.opcao7?<div className='my-1 opcao7 rounded-2 d-flex'><MDBRadio name='radioNoLabel' value='' inline/>{element.opcao7}</div>:<></>}
-                                {element.opcao8?<div className='my-1 opcao8 rounded-2 d-flex'><MDBRadio name='radioNoLabel' value='' inline/>{element.opcao8}</div>:<></>}
-                                {element.opcao9?<div className='my-1 opcao9 rounded-2 d-flex'><MDBRadio name='radioNoLabel' value='' inline/>{element.opcao9}</div>:<></>}
-                                {element.opcao10?<div className='my-1 opcao10 rounded-2 d-flex'><MDBRadio name='radioNoLabel' value='' inline/>{element.opcao10}</div>:<></>}
+                                {element.opcao1? <div className='pt-1 px-1 my-1 opcao1  rounded-2 d-flex'><MDBRadio labelStyle={{wordBreak: 'break-word'}} label={element.opcao1} /></div>:<></>}
+                                {element.opcao2? <div className='pt-1 px-1 my-1 opcao2  rounded-2 d-flex'><MDBRadio labelStyle={{wordBreak: 'break-word'}} label={element.opcao2} /></div>:<></>}
+                                {element.opcao3? <div className='pt-1 px-1 my-1 opcao3  rounded-2 d-flex'><MDBRadio labelStyle={{wordBreak: 'break-word'}} label={element.opcao3} /></div>:<></>}
+                                {element.opcao4? <div className='pt-1 px-1 my-1 opcao4  rounded-2 d-flex'><MDBRadio labelStyle={{wordBreak: 'break-word'}} label={element.opcao4} /></div>:<></>}
+                                {element.opcao5? <div className='pt-1 px-1 my-1 opcao5  rounded-2 d-flex'><MDBRadio labelStyle={{wordBreak: 'break-word'}} label={element.opcao5} /></div>:<></>}
+                                {element.opcao6? <div className='pt-1 px-1 my-1 opcao6  rounded-2 d-flex'><MDBRadio labelStyle={{wordBreak: 'break-word'}} label={element.opcao6} /></div>:<></>}
+                                {element.opcao7? <div className='pt-1 px-1 my-1 opcao7  rounded-2 d-flex'><MDBRadio labelStyle={{wordBreak: 'break-word'}} label={element.opcao7} /></div>:<></>}
+                                {element.opcao8? <div className='pt-1 px-1 my-1 opcao8  rounded-2 d-flex'><MDBRadio labelStyle={{wordBreak: 'break-word'}} label={element.opcao8} /></div>:<></>}
+                                {element.opcao9? <div className='pt-1 px-1 my-1 opcao9  rounded-2 d-flex'><MDBRadio labelStyle={{wordBreak: 'break-word'}} label={element.opcao9} /></div>:<></>}
+                                {element.opcao10?<div className='pt-1 px-1 my-1 opcao10 rounded-2 d-flex'><MDBRadio labelStyle={{wordBreak: 'break-word'}} label={element.opcao10}/></div>:<></>}
                             </div>
                         </MDBListGroupItem>
                         {element?.derivadas?.length?opcoes.map(numero=>{
@@ -180,7 +187,7 @@ export default function FormsDerivados(){
     }
 
     const secaoQuestoes = <main className='mt-3 principal'>
-        {Title("Questões")}
+        {Title(sessionStorage.getItem('nomePesquisa'))}
 
         <MDBListGroup small className='mt-3' >
             {renderizaQuestoes()}
@@ -242,7 +249,7 @@ export default function FormsDerivados(){
     }
 
     const secaoContatos = <main className='mt-3 principal'> 
-        {Title("Destinatários")}
+        {Title(sessionStorage.getItem('nomePesquisa'),()=>CarregaEnvios(setContatos,setContatosDB,sessionStorage.getItem('formDeId'),navigate))}
 
         
         <MDBContainer fluid className='mt-3 p-3 rounded-3 bg-light'>
@@ -258,7 +265,7 @@ export default function FormsDerivados(){
         {/* Emails */}
         <MDBListGroup small className='mt-3' >
             {contatos?.slice((contatosPage-1)*15,((contatosPage-1)*15)+15).map(element => {
-                if(element.respondido===true){
+                if(element.respondido===2){
                     return(
                         <MDBListGroupItem className='py-2 px-2' key={element.id}>
                             <MDBInputGroup>
@@ -341,12 +348,11 @@ export default function FormsDerivados(){
             return(
                 <div  key={element.id} className='col-md-6 col-xxl-4'>
                 <MDBListGroupItem className='shadow mt-3 rounded-3'>
-                    <div className='d-flex porcentagem'>{element.numero}) {element.enunciado}
-                        <div className='ms-auto'>
-                            {element.type===1?
-                            <MDBRadio disabled defaultChecked={true} className='mt-1' value='' inline/>:
-                            <MDBCheckbox disabled defaultChecked={true} className='mt-1' value='' inline/>}
-                        </div>
+                    <div className='porcentagem'>
+                        {element.type===1?
+                        <MDBRadio disabled defaultChecked={true} className='mt-1' value='' inline/>:
+                        <MDBCheckbox disabled defaultChecked={true} className='mt-1' value='' inline/>}
+                        {element.numero}) {element.enunciado}
                     </div>
                     <hr className='mt-0 mb-2'></hr>
                     <div id={"resposta"+element.id} className='mx-2'>
@@ -386,9 +392,12 @@ export default function FormsDerivados(){
             if(!parcial) parcial=0
             return(
                 <div key={'Barra'+element.id+count} className='mb-2 porcentagem'> 
-                <div className={tipo?'rounded-3 opcao'+count:null}>{numero}) <div style={{cursor:'pointer',display:'inline'}} onClick={()=>{
-                    setShow(item);
-                    CarregaRelatorio(setContatosResposta,navigate,sessionStorage.getItem('formDeId'),element?.id,item);}}>{item.texto}</div></div>
+                    <div className={tipo?'rounded-3 px-1 mt-1  opcao'+count:"px-1 mt-1"}>{numero}) 
+                        <div style={{cursor:'pointer',display:'inline'}} onClick={()=>{
+                            setShow(item);
+                            CarregaRelatorio(setContatosResposta,navigate,sessionStorage.getItem('formDeId'),element?.id,item);}}>{item.texto}
+                        </div>
+                    </div>
                     <MDBProgress height='20' className='rounded-3'>
                         <MDBProgressBar className='porcentagem' width={parcial} valuemin={0} valuemax={100}>{parcial}%</MDBProgressBar>
                     </MDBProgress>
@@ -406,7 +415,7 @@ export default function FormsDerivados(){
     }
 
     const secaoRespostas = <main className='mt-3 principal'> 
-        {Title(respostas?.quantidadeRespostas+" Respostas")}
+        {Title(sessionStorage.getItem('nomePesquisa'))}
         <MDBListGroup small className='mt-3' >
             <div className='row'>
                 {renderizaRepostas()}
@@ -442,7 +451,7 @@ export default function FormsDerivados(){
 
     return(
         <section>
-            {Sidebar('questoes',setsecao)}
+            {Sidebar('questoes',setsecao, respostas?.quantidadeRespostas)}
             {Navbar()}
 
             {makeSecao()}

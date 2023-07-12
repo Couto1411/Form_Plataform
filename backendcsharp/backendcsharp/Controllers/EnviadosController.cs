@@ -147,7 +147,7 @@ namespace backendcsharp.Controllers
                             {
                                 Email = item.email,
                                 Matricula = item.matricula,
-                                Respondido = false,
+                                Respondido = 0,
                                 FormId = ((uint)FormId),
                                 Nome = item.nome,
                                 Curso = item.curso,
@@ -228,7 +228,7 @@ namespace backendcsharp.Controllers
                                     var ContatoDerivado = await ProjetoDbContext.Enviados.FirstOrDefaultAsync(s => s.FormId == item.Id && s.Email == Contato.Email);
                                     if (ContatoDerivado != null)
                                     {
-                                        if (!ContatoDerivado.Respondido)
+                                        if (ContatoDerivado.Respondido==0|| ContatoDerivado.Respondido == 1)
                                         {
                                             ContatoDerivado.Email = Envio.email;
                                             ContatoDerivado.Nome = Envio.nome;
@@ -247,7 +247,7 @@ namespace backendcsharp.Controllers
                                 }
 
                                 // Modifica contato no form original
-                                if (!Contato.Respondido)
+                                if (Contato.Respondido == 0 || Contato.Respondido == 1)
                                 {
                                     Contato.Email = Envio.email;
                                     Contato.Nome = Envio.nome;
@@ -354,9 +354,9 @@ namespace backendcsharp.Controllers
                     // Deleta resposta e torna envio possível
                     else
                     {
-                        if (Contato.Respondido)
+                        if (Contato.Respondido==2)
                         {
-                            Contato.Respondido = false;
+                            Contato.Respondido = 0;
                             await ProjetoDbContext.SaveChangesAsync();
                             return StatusCode(204);
                         }
@@ -388,7 +388,7 @@ namespace backendcsharp.Controllers
                         respondido = s.Respondido,
                         formId = s.FormId
                     })
-                    .Where(s => (s.formId == FormId && s.email==Email && s.respondido==false))
+                    .Where(s => (s.formId == FormId && s.email==Email && (s.respondido==0 || s.respondido==1)))
                     .FirstOrDefaultAsync();
                 if (Envios is null) return NotFound();
                 else return Envios;

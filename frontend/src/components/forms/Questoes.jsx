@@ -67,22 +67,22 @@ export default function Forms(props){
                         <MDBListGroupItem className={cor} key={element.id}>
                             <MDBInputGroup className='mb-2 mt-1'>
                                 <MDBBtn outline color='dark' onClick={e=>{toggleShowExcluiSalva(element.id)}} className='numQuestao'>{element.numero}</MDBBtn>
-                                <input onKeyDown={e=>{limit(e.target)}} onKeyUp={e=>{limit(e.target)}} 
-                                className='form-control' type='text' id={'questao'+element.id} 
-                                defaultValue={element.enunciado} disabled 
-                                onChange={e=>{questoes[questoes.map(object => object.id).indexOf(element.id)].enunciado=e.target.value}}/>
+                                <textarea id={'questao'+element.id} className='form-control'
+                                    defaultValue={element.enunciado} disabled 
+                                    style={{borderTopLeftRadius:'0px',borderBottomLeftRadius:'0px'}}
+                                    onChange={e=>{limit(e.target);questoes[questoes.map(object => object.id).indexOf(element.id)].enunciado=e.target.value}}/>
                             </MDBInputGroup>
-                            <div id={"opcoes"+element.id} className='mx-2'>
-                                {element.opcao1?<div className='d-flex'><MDBRadio name='radioNoLabel' value='' inline/>{element.opcao1}<i role='button' onClick={e=>{editOpcao(element.id,"1")}} className='edit editOpcoes ms-auto p-1 fas fa-regular fa-pen fa-md'></i></div>:<></>}
-                                {element.opcao2?<div className='d-flex'><MDBRadio name='radioNoLabel' value='' inline/>{element.opcao2}<i role='button' onClick={e=>{editOpcao(element.id,"2")}} className='edit editOpcoes ms-auto p-1 fas fa-regular fa-pen fa-md'></i></div>:<></>}
-                                {element.opcao3?<div className='d-flex'><MDBRadio name='radioNoLabel' value='' inline/>{element.opcao3}<i role='button' onClick={e=>{editOpcao(element.id,"3")}} className='edit editOpcoes ms-auto p-1 fas fa-regular fa-pen fa-md'></i></div>:<></>}
-                                {element.opcao4?<div className='d-flex'><MDBRadio name='radioNoLabel' value='' inline/>{element.opcao4}<i role='button' onClick={e=>{editOpcao(element.id,"4")}} className='edit editOpcoes ms-auto p-1 fas fa-regular fa-pen fa-md'></i></div>:<></>}
-                                {element.opcao5?<div className='d-flex'><MDBRadio name='radioNoLabel' value='' inline/>{element.opcao5}<i role='button' onClick={e=>{editOpcao(element.id,"5")}} className='edit editOpcoes ms-auto p-1 fas fa-regular fa-pen fa-md'></i></div>:<></>}
-                                {element.opcao6?<div className='d-flex'><MDBRadio name='radioNoLabel' value='' inline/>{element.opcao6}<i role='button' onClick={e=>{editOpcao(element.id,"6")}} className='edit editOpcoes ms-auto p-1 fas fa-regular fa-pen fa-md'></i></div>:<></>}
-                                {element.opcao7?<div className='d-flex'><MDBRadio name='radioNoLabel' value='' inline/>{element.opcao7}<i role='button' onClick={e=>{editOpcao(element.id,"7")}} className='edit editOpcoes ms-auto p-1 fas fa-regular fa-pen fa-md'></i></div>:<></>}
-                                {element.opcao8?<div className='d-flex'><MDBRadio name='radioNoLabel' value='' inline/>{element.opcao8}<i role='button' onClick={e=>{editOpcao(element.id,"8")}} className='edit editOpcoes ms-auto p-1 fas fa-regular fa-pen fa-md'></i></div>:<></>}
-                                {element.opcao9?<div className='d-flex'><MDBRadio name='radioNoLabel' value='' inline/>{element.opcao9}<i role='button' onClick={e=>{editOpcao(element.id,"9")}} className='edit editOpcoes ms-auto p-1 fas fa-regular fa-pen fa-md'></i></div>:<></>}
-                                {element.opcao10?<div className='d-flex'><MDBRadio name='radioNoLabel' value='' inline/>{element.opcao10}<i role='button' onClick={e=>{editOpcao(element.id,"10")}} className='edit editOpcoes mb-2 ms-auto p-1 fas fa-regular fa-pen fa-md'></i></div>:<i role='button' className="addQuestao mx-1 edit fas fa-regular fa-plus" onClick={e=>{addOpcao(element.id)}}></i>}
+                            <div className='mx-2'>
+                                {element.opcao1? <div className='d-flex'><MDBRadio labelClass={element.id+"-1"}  label={element.opcao1}  labelStyle={{wordBreak: 'break-word'}}/><i role='button' onClick={e=>{editOpcao(element.id,1)}}  className='edit editOpcoes ms-auto p-1 fas fa-regular fa-pen fa-md'></i></div>:<></>}
+                                {element.opcao2? <div className='d-flex'><MDBRadio labelClass={element.id+"-2"}  label={element.opcao2}  labelStyle={{wordBreak: 'break-word'}}/><i role='button' onClick={e=>{editOpcao(element.id,2)}}  className='edit editOpcoes ms-auto p-1 fas fa-regular fa-pen fa-md'></i></div>:<></>}
+                                {element.opcao3? <div className='d-flex'><MDBRadio labelClass={element.id+"-3"}  label={element.opcao3}  labelStyle={{wordBreak: 'break-word'}}/><i role='button' onClick={e=>{editOpcao(element.id,3)}}  className='edit editOpcoes ms-auto p-1 fas fa-regular fa-pen fa-md'></i></div>:<></>}
+                                {element.opcao4? <div className='d-flex'><MDBRadio labelClass={element.id+"-4"}  label={element.opcao4}  labelStyle={{wordBreak: 'break-word'}}/><i role='button' onClick={e=>{editOpcao(element.id,4)}}  className='edit editOpcoes ms-auto p-1 fas fa-regular fa-pen fa-md'></i></div>:<></>}
+                                {element.opcao5? <div className='d-flex'><MDBRadio labelClass={element.id+"-5"}  label={element.opcao5}  labelStyle={{wordBreak: 'break-word'}}/><i role='button' onClick={e=>{editOpcao(element.id,5)}}  className='edit editOpcoes ms-auto p-1 fas fa-regular fa-pen fa-md'></i></div>:<></>}
+                                {element.opcao6? <div className='d-flex'><MDBRadio labelClass={element.id+"-6"}  label={element.opcao6}  labelStyle={{wordBreak: 'break-word'}}/><i role='button' onClick={e=>{editOpcao(element.id,6)}}  className='edit editOpcoes ms-auto p-1 fas fa-regular fa-pen fa-md'></i></div>:<></>}
+                                {element.opcao7? <div className='d-flex'><MDBRadio labelClass={element.id+"-7"}  label={element.opcao7}  labelStyle={{wordBreak: 'break-word'}}/><i role='button' onClick={e=>{editOpcao(element.id,7)}}  className='edit editOpcoes ms-auto p-1 fas fa-regular fa-pen fa-md'></i></div>:<></>}
+                                {element.opcao8? <div className='d-flex'><MDBRadio labelClass={element.id+"-8"}  label={element.opcao8}  labelStyle={{wordBreak: 'break-word'}}/><i role='button' onClick={e=>{editOpcao(element.id,8)}}  className='edit editOpcoes ms-auto p-1 fas fa-regular fa-pen fa-md'></i></div>:<></>}
+                                {element.opcao9? <div className='d-flex'><MDBRadio labelClass={element.id+"-9"}  label={element.opcao9}  labelStyle={{wordBreak: 'break-word'}}/><i role='button' onClick={e=>{editOpcao(element.id,9)}}  className='edit editOpcoes ms-auto p-1 fas fa-regular fa-pen fa-md'></i></div>:<></>}
+                                {element.opcao10?<div className='d-flex'><MDBRadio labelClass={element.id+"-10"} label={element.opcao10} labelStyle={{wordBreak: 'break-word'}}/><i role='button' onClick={e=>{editOpcao(element.id,10)}} className='edit editOpcoes ms-auto p-1 fas fa-regular fa-pen fa-md'></i></div>:<i role='button' className="addQuestao mx-1 edit fas fa-regular fa-plus" onClick={e=>{addOpcao(element.id)}}></i>}
                                 {handleInput(element.id)}
                             </div>
                             <div className='d-flex'>
@@ -97,10 +97,10 @@ export default function Forms(props){
                         <MDBListGroupItem className={cor} key={element.id}>
                             <MDBInputGroup className='mb-2 mt-1'>
                                 <MDBBtn outline color='dark'  onClick={e=>{toggleShowExcluiSalva(element.id)}} className='numQuestao'>{element.numero}</MDBBtn>
-                                <input onKeyDown={e=>{limit(e.target)}} onKeyUp={e=>{limit(e.target)}} 
-                                    className='enunciado form-control' type='text' id={'questao'+element.id} 
-                                    defaultValue={element.enunciado} disabled 
-                                    onChange={e=>{questoes[questoes.map(object => object.id).indexOf(element.id)].enunciado=e.target.value}}/>
+                                <textarea id={'questao'+element.id} className='form-control'
+                                    defaultValue={element.enunciado} disabled
+                                    style={{borderTopLeftRadius:'0px',borderBottomLeftRadius:'0px'}}
+                                    onChange={e=>{limit(e.target);questoes[questoes.map(object => object.id).indexOf(element.id)].enunciado=e.target.value}}/>
                             </MDBInputGroup>
                             <MDBTextArea rows={4} label='Resposta' readOnly className='mb-2'/>
                             <div className='d-flex'>
@@ -115,22 +115,22 @@ export default function Forms(props){
                         <MDBListGroupItem className={cor} key={element.id}>
                             <MDBInputGroup className='mb-2 mt-1'>
                                 <MDBBtn outline color='dark' onClick={e=>{toggleShowExcluiSalva(element.id)}} className='numQuestao'>{element.numero}</MDBBtn>
-                                <input onKeyDown={e=>{limit(e.target)}} onKeyUp={e=>{limit(e.target)}} 
-                                    className='enunciado form-control' type='text' id={'questao'+element.id} 
-                                    defaultValue={element.enunciado} disabled 
-                                    onChange={e=>{questoes[questoes.map(object => object.id).indexOf(element.id)].enunciado=e.target.value}}/>
+                                <textarea id={'questao'+element.id} className='form-control'
+                                    defaultValue={element.enunciado} disabled
+                                    style={{borderTopLeftRadius:'0px',borderBottomLeftRadius:'0px'}}
+                                    onChange={e=>{limit(e.target);questoes[questoes.map(object => object.id).indexOf(element.id)].enunciado=e.target.value}}/>
                             </MDBInputGroup>
                             <div id={"opcoes"+element.id} className='mx-2'>
-                                {element.opcao1?<div className='d-flex'><MDBCheckbox name='checkNoLabel' value='' inline/>{element.opcao1}<i role='button' onClick={e=>{editOpcao(element.id,"1")}} className='edit editOpcoes ms-auto p-1 fas fa-regular fa-pen fa-md'></i></div>:<></>}
-                                {element.opcao2?<div className='d-flex'><MDBCheckbox name='checkNoLabel' value='' inline/>{element.opcao2}<i role='button' onClick={e=>{editOpcao(element.id,"2")}} className='edit editOpcoes ms-auto p-1 fas fa-regular fa-pen fa-md'></i></div>:<></>}
-                                {element.opcao3?<div className='d-flex'><MDBCheckbox name='checkNoLabel' value='' inline/>{element.opcao3}<i role='button' onClick={e=>{editOpcao(element.id,"3")}} className='edit editOpcoes ms-auto p-1 fas fa-regular fa-pen fa-md'></i></div>:<></>}
-                                {element.opcao4?<div className='d-flex'><MDBCheckbox name='checkNoLabel' value='' inline/>{element.opcao4}<i role='button' onClick={e=>{editOpcao(element.id,"4")}} className='edit editOpcoes ms-auto p-1 fas fa-regular fa-pen fa-md'></i></div>:<></>}
-                                {element.opcao5?<div className='d-flex'><MDBCheckbox name='checkNoLabel' value='' inline/>{element.opcao5}<i role='button' onClick={e=>{editOpcao(element.id,"5")}} className='edit editOpcoes ms-auto p-1 fas fa-regular fa-pen fa-md'></i></div>:<></>}
-                                {element.opcao6?<div className='d-flex'><MDBCheckbox name='checkNoLabel' value='' inline/>{element.opcao6}<i role='button' onClick={e=>{editOpcao(element.id,"6")}} className='edit editOpcoes ms-auto p-1 fas fa-regular fa-pen fa-md'></i></div>:<></>}
-                                {element.opcao7?<div className='d-flex'><MDBCheckbox name='checkNoLabel' value='' inline/>{element.opcao7}<i role='button' onClick={e=>{editOpcao(element.id,"7")}} className='edit editOpcoes ms-auto p-1 fas fa-regular fa-pen fa-md'></i></div>:<></>}
-                                {element.opcao8?<div className='d-flex'><MDBCheckbox name='checkNoLabel' value='' inline/>{element.opcao8}<i role='button' onClick={e=>{editOpcao(element.id,"8")}} className='edit editOpcoes ms-auto p-1 fas fa-regular fa-pen fa-md'></i></div>:<></>}
-                                {element.opcao9?<div className='d-flex'><MDBCheckbox name='checkNoLabel' value='' inline/>{element.opcao9}<i role='button' onClick={e=>{editOpcao(element.id,"9")}} className='edit editOpcoes ms-auto p-1 fas fa-regular fa-pen fa-md'></i></div>:<></>}
-                                {element.opcao10?<div className='d-flex'><MDBCheckbox name='checkNoLabel' value='' inline/>{element.opcao10}<i role='button' onClick={e=>{editOpcao(element.id,"10")}} className='edit editOpcoes mb-2 ms-auto p-1 fas fa-regular fa-pen fa-md'></i></div>:<i role='button' className="addQuestao edit fas fa-regular fa-plus" onClick={e=>{addOpcao(element.id)}}></i>}
+                                {element.opcao1? <div className='d-flex'><MDBCheckbox labelClass={element.id+"-1"}  label={element.opcao1}  labelStyle={{wordBreak: 'break-word'}}/><i role='button' onClick={e=>{editOpcao(element.id,1)}}  className='edit editOpcoes ms-auto p-1 fas fa-regular fa-pen fa-md'></i></div>:<></>}
+                                {element.opcao2? <div className='d-flex'><MDBCheckbox labelClass={element.id+"-2"}  label={element.opcao2}  labelStyle={{wordBreak: 'break-word'}}/><i role='button' onClick={e=>{editOpcao(element.id,2)}}  className='edit editOpcoes ms-auto p-1 fas fa-regular fa-pen fa-md'></i></div>:<></>}
+                                {element.opcao3? <div className='d-flex'><MDBCheckbox labelClass={element.id+"-3"}  label={element.opcao3}  labelStyle={{wordBreak: 'break-word'}}/><i role='button' onClick={e=>{editOpcao(element.id,3)}}  className='edit editOpcoes ms-auto p-1 fas fa-regular fa-pen fa-md'></i></div>:<></>}
+                                {element.opcao4? <div className='d-flex'><MDBCheckbox labelClass={element.id+"-4"}  label={element.opcao4}  labelStyle={{wordBreak: 'break-word'}}/><i role='button' onClick={e=>{editOpcao(element.id,4)}}  className='edit editOpcoes ms-auto p-1 fas fa-regular fa-pen fa-md'></i></div>:<></>}
+                                {element.opcao5? <div className='d-flex'><MDBCheckbox labelClass={element.id+"-5"}  label={element.opcao5}  labelStyle={{wordBreak: 'break-word'}}/><i role='button' onClick={e=>{editOpcao(element.id,5)}}  className='edit editOpcoes ms-auto p-1 fas fa-regular fa-pen fa-md'></i></div>:<></>}
+                                {element.opcao6? <div className='d-flex'><MDBCheckbox labelClass={element.id+"-6"}  label={element.opcao6}  labelStyle={{wordBreak: 'break-word'}}/><i role='button' onClick={e=>{editOpcao(element.id,6)}}  className='edit editOpcoes ms-auto p-1 fas fa-regular fa-pen fa-md'></i></div>:<></>}
+                                {element.opcao7? <div className='d-flex'><MDBCheckbox labelClass={element.id+"-7"}  label={element.opcao7}  labelStyle={{wordBreak: 'break-word'}}/><i role='button' onClick={e=>{editOpcao(element.id,7)}}  className='edit editOpcoes ms-auto p-1 fas fa-regular fa-pen fa-md'></i></div>:<></>}
+                                {element.opcao8? <div className='d-flex'><MDBCheckbox labelClass={element.id+"-8"}  label={element.opcao8}  labelStyle={{wordBreak: 'break-word'}}/><i role='button' onClick={e=>{editOpcao(element.id,8)}}  className='edit editOpcoes ms-auto p-1 fas fa-regular fa-pen fa-md'></i></div>:<></>}
+                                {element.opcao9? <div className='d-flex'><MDBCheckbox labelClass={element.id+"-9"}  label={element.opcao9}  labelStyle={{wordBreak: 'break-word'}}/><i role='button' onClick={e=>{editOpcao(element.id,9)}}  className='edit editOpcoes ms-auto p-1 fas fa-regular fa-pen fa-md'></i></div>:<></>}
+                                {element.opcao10?<div className='d-flex'><MDBCheckbox labelClass={element.id+"-10"} label={element.opcao10} labelStyle={{wordBreak: 'break-word'}}/><i role='button' onClick={e=>{editOpcao(element.id,10)}} className='edit editOpcoes ms-auto p-1 fas fa-regular fa-pen fa-md'></i></div>:<i role='button' className="addQuestao edit fas fa-regular fa-plus" onClick={e=>{addOpcao(element.id)}}></i>}
                                 {handleInput(element.id)}
                             </div>
                             <div className='d-flex'>
@@ -172,15 +172,15 @@ export default function Forms(props){
         novaQuestao.enunciado=document.getElementById("novaQuestaoEnunciado").value
         if(novaQuestao.enunciado){
             if (novaQuestao.type===1||novaQuestao.type===3) {
-                novaQuestao.opcao1=document.getElementById("option1").value
-                novaQuestao.opcao2=document.getElementById("option2").value
-                novaQuestao.opcao3=document.getElementById("option3").value
-                novaQuestao.opcao4=document.getElementById("option4").value
-                novaQuestao.opcao5=document.getElementById("option5").value
-                novaQuestao.opcao6=document.getElementById("option6").value
-                novaQuestao.opcao7=document.getElementById("option7").value
-                novaQuestao.opcao8=document.getElementById("option8").value
-                novaQuestao.opcao9=document.getElementById("option9").value
+                novaQuestao.opcao1 =document.getElementById("option1").value
+                novaQuestao.opcao2 =document.getElementById("option2").value
+                novaQuestao.opcao3 =document.getElementById("option3").value
+                novaQuestao.opcao4 =document.getElementById("option4").value
+                novaQuestao.opcao5 =document.getElementById("option5").value
+                novaQuestao.opcao6 =document.getElementById("option6").value
+                novaQuestao.opcao7 =document.getElementById("option7").value
+                novaQuestao.opcao8 =document.getElementById("option8").value
+                novaQuestao.opcao9 =document.getElementById("option9").value
                 novaQuestao.opcao10=document.getElementById("option10").value
             }
             await axios.post(baseUrl+"/users/"+sessionStorage.getItem("userId")+"/forms/"+sessionStorage.getItem("formId"),novaQuestao,{
@@ -264,14 +264,14 @@ export default function Forms(props){
                         document.getElementById("exclui"+id).style.display= "inline-block"
                         document.getElementById("salva"+id).style.display = "inline-block"
                         if (!questoes[index].opcao1) {questoes[index].opcao1=newOption}
-                        else if (!questoes[index].opcao2) {questoes[index].opcao2=newOption}
-                        else if (!questoes[index].opcao3) {questoes[index].opcao3=newOption}
-                        else if (!questoes[index].opcao4) {questoes[index].opcao4=newOption}
-                        else if (!questoes[index].opcao5) {questoes[index].opcao5=newOption}
-                        else if (!questoes[index].opcao6) {questoes[index].opcao6=newOption}
-                        else if (!questoes[index].opcao7) {questoes[index].opcao7=newOption}
-                        else if (!questoes[index].opcao8) {questoes[index].opcao8=newOption}
-                        else if (!questoes[index].opcao9) {questoes[index].opcao9=newOption}
+                        else if (!questoes[index].opcao2)  {questoes[index].opcao2 =newOption}
+                        else if (!questoes[index].opcao3)  {questoes[index].opcao3 =newOption}
+                        else if (!questoes[index].opcao4)  {questoes[index].opcao4 =newOption}
+                        else if (!questoes[index].opcao5)  {questoes[index].opcao5 =newOption}
+                        else if (!questoes[index].opcao6)  {questoes[index].opcao6 =newOption}
+                        else if (!questoes[index].opcao7)  {questoes[index].opcao7 =newOption}
+                        else if (!questoes[index].opcao8)  {questoes[index].opcao8 =newOption}
+                        else if (!questoes[index].opcao9)  {questoes[index].opcao9 =newOption}
                         else if (!questoes[index].opcao10) {questoes[index].opcao10=newOption}
                     }
                 }}><i className='p-1 fas fa-regular fa-pen'></i></MDBBtn>
@@ -291,15 +291,53 @@ export default function Forms(props){
         setInput({
             id:id,
             content:<div className='my-2'>
-                <MDBTextArea onKeyDown={e=>{limit(e.target)}} onKeyUp={e=>{limit(e.target)}} id={"questao"+id+"novaopcao"} rows={3} label='Opcao' className='mb-2'/>
+                <MDBTextArea defaultValue={document.getElementsByClassName(id+"-"+opcao)[0].innerHTML} onChange={e=>{limit(e.target)}} id={"questao"+id+"novaopcao"} label={'Opcão '+opcao} rows={3} className='mb-2'/>
                 <MDBBtn className='border border-secondary' color='light' onClick={e=>{
                     for (let item of v) item.style.display = "inline-block"
                     for (let item of opcoes) item.style.display = "inline-block"
                     document.getElementById("exclui"+id).style.display= "inline-block"
                     document.getElementById("salva"+id).style.display = "inline-block"
                     setInput({})
-                    eval("questoes[questoes.map(object => object.id).indexOf(id)].opcao"+opcao+`=document.getElementById("questao"+${id}+"novaopcao").value`)
-                }}><i className='p-1 fas fa-regular fa-pen'></i></MDBBtn>
+                    switch (opcao) {
+                        case 1:
+                            questoes[questoes.map(object => object.id).indexOf(id)].opcao1=document.getElementById("questao"+id+"novaopcao").value
+                            break;
+                        case 2:
+                            questoes[questoes.map(object => object.id).indexOf(id)].opcao2=document.getElementById("questao"+id+"novaopcao").value
+                            break;
+                        case 3:
+                            questoes[questoes.map(object => object.id).indexOf(id)].opcao3=document.getElementById("questao"+id+"novaopcao").value
+                            break;
+                        case 4:
+                            questoes[questoes.map(object => object.id).indexOf(id)].opcao4=document.getElementById("questao"+id+"novaopcao").value
+                            break;
+                        case 5:
+                            questoes[questoes.map(object => object.id).indexOf(id)].opcao5=document.getElementById("questao"+id+"novaopcao").value
+                            break;
+                        case 6:
+                            questoes[questoes.map(object => object.id).indexOf(id)].opcao6=document.getElementById("questao"+id+"novaopcao").value
+                            break;
+                        case 7:
+                            questoes[questoes.map(object => object.id).indexOf(id)].opcao7=document.getElementById("questao"+id+"novaopcao").value
+                            break;
+                        case 8:
+                            questoes[questoes.map(object => object.id).indexOf(id)].opcao8=document.getElementById("questao"+id+"novaopcao").value
+                            break;
+                        case 9:
+                            questoes[questoes.map(object => object.id).indexOf(id)].opcao9=document.getElementById("questao"+id+"novaopcao").value
+                            break;
+                        case 10:
+                            questoes[questoes.map(object => object.id).indexOf(id)].opcao10=document.getElementById("questao"+id+"novaopcao").value
+                            break;
+                        default:
+                            break;
+                    }
+                }}><i className=' fas fa-regular fa-pen'></i></MDBBtn>
+                <MDBBtn className=' mx-2 border border-secondary' color='light' onClick={()=>{
+                    for (let item of v) item.style.display = "inline-block"
+                    for (let item of opcoes) item.style.display = "inline-block"
+                    setInput({})
+                }}>Cancelar</MDBBtn>
             </div>
         })
         for (let item of v) item.style.display = "none"
@@ -331,16 +369,11 @@ export default function Forms(props){
                             </MDBInputGroup>
                         </div>
                         <div id={"novaQuestaoOpcoes"} className='mx-2'>
-                            {<div className='d-flex align-items-center mb-2'><MDBInputGroup onKeyDown={e=>{limit(e.target)}} onKeyUp={e=>{limit(e.target)}} textBefore='Opção 1'><input id='option1' className='form-control' onInput={e=>{document.getElementById("option2").disabled=false}} type='text'/></MDBInputGroup></div>}
-                            {<div className='d-flex align-items-center mb-2'><MDBInputGroup onKeyDown={e=>{limit(e.target)}} onKeyUp={e=>{limit(e.target)}} textBefore='Opção 2'><input id='option2' className='form-control' onInput={e=>{document.getElementById("option3").disabled=false}} type='text' disabled/></MDBInputGroup></div>}
-                            {<div className='d-flex align-items-center mb-2'><MDBInputGroup onKeyDown={e=>{limit(e.target)}} onKeyUp={e=>{limit(e.target)}} textBefore='Opção 3'><input id='option3' className='form-control' onInput={e=>{document.getElementById("option4").disabled=false}} type='text' disabled/></MDBInputGroup></div>}
-                            {<div className='d-flex align-items-center mb-2'><MDBInputGroup onKeyDown={e=>{limit(e.target)}} onKeyUp={e=>{limit(e.target)}} textBefore='Opção 4'><input id='option4' className='form-control' onInput={e=>{document.getElementById("option5").disabled=false}} type='text' disabled/></MDBInputGroup></div>}
-                            {<div className='d-flex align-items-center mb-2'><MDBInputGroup onKeyDown={e=>{limit(e.target)}} onKeyUp={e=>{limit(e.target)}} textBefore='Opção 5'><input id='option5' className='form-control' onInput={e=>{document.getElementById("option6").disabled=false}} type='text' disabled/></MDBInputGroup></div>}
-                            {<div className='d-flex align-items-center mb-2'><MDBInputGroup onKeyDown={e=>{limit(e.target)}} onKeyUp={e=>{limit(e.target)}} textBefore='Opção 6'><input id='option6' className='form-control' onInput={e=>{document.getElementById("option7").disabled=false}} type='text' disabled/></MDBInputGroup></div>}
-                            {<div className='d-flex align-items-center mb-2'><MDBInputGroup onKeyDown={e=>{limit(e.target)}} onKeyUp={e=>{limit(e.target)}} textBefore='Opção 7'><input id='option7' className='form-control' onInput={e=>{document.getElementById("option8").disabled=false}} type='text' disabled/></MDBInputGroup></div>}
-                            {<div className='d-flex align-items-center mb-2'><MDBInputGroup onKeyDown={e=>{limit(e.target)}} onKeyUp={e=>{limit(e.target)}} textBefore='Opção 8'><input id='option8' className='form-control' onInput={e=>{document.getElementById("option9").disabled=false}} type='text' disabled/></MDBInputGroup></div>}
-                            {<div className='d-flex align-items-center mb-2'><MDBInputGroup onKeyDown={e=>{limit(e.target)}} onKeyUp={e=>{limit(e.target)}} textBefore='Opção 9'><input id='option9' className='form-control' onInput={e=>{document.getElementById("option10").disabled=false}} type='text' disabled/></MDBInputGroup></div>}
-                            {<div className='d-flex align-items-center mb-2'><MDBInputGroup onKeyDown={e=>{limit(e.target)}} onKeyUp={e=>{limit(e.target)}} textBefore='Opção 10'><input id='option10' className='form-control' type='text' disabled/></MDBInputGroup></div>}
+                            {<div className='d-flex align-items-center mb-2'><MDBInputGroup onChange={e=>{limit(e.target)}} textBefore='Opção 1' ><input id='option1'  className='form-control' onInput={e=>{document.getElementById("option2").disabled=false }} type='text'/></MDBInputGroup></div>}
+                            {[2,3,4,5,6,7,8,9].map(el=>{
+                                return <div className='d-flex align-items-center mb-2'><MDBInputGroup onChange={e=>{limit(e.target)}} textBefore={"Opção "+el}><input id={'option'+el}  className='form-control' onInput={e=>{document.getElementById("option"+(el+1)).disabled=false }} type='text' disabled/></MDBInputGroup></div>
+                            })}
+                            {<div className='d-flex align-items-center mb-2'><MDBInputGroup onChange={e=>{limit(e.target)}} textBefore='Opção 10'><input id='option10' className='form-control' type='text' disabled/></MDBInputGroup></div>}
                         </div>
                         <div className='d-flex'>
                             <MDBBtn onClick={e=>{setNewQuestion(<></>)}} color='danger' className='ms-auto me-2'>Excluir</MDBBtn>
@@ -398,6 +431,7 @@ export default function Forms(props){
         if (input.id && input.id===id) return input.content 
         else return <></>
     }
+
     return (<>{typeQuestion}{newQuestion}{opcoes.map(element =>{
         switch (element){
             case 1: return(

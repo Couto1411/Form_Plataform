@@ -9,7 +9,7 @@ public partial class Enviado
 
     public uint? FormId { get; set; }
 
-    public bool Respondido { get; set; }
+    public short Respondido { get; set; }
     public string? Nome { get; set; } = null!;
     public string? Email { get; set; } = null!;
     public string? Telefone1 { get; set; } = null!;

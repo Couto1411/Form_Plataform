@@ -6,7 +6,7 @@ public partial class EnviadoDTO
 
     public uint? formId { get; set; } = null!;
 
-    public bool respondido { get; set; } = false!;
+    public short respondido { get; set; } = 0;
 
     public string? nome { get; set; } = null!;
     public string? email { get; set; } = null!;

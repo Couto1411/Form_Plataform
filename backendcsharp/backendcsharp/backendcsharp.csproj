@@ -10,10 +10,7 @@
   <PropertyGroup>
     <ContainerImageName>products-crud-api</ContainerImageName>
 	  <ContainerImageTags>latest</ContainerImageTags>
-	  <PublishProfile>DefaultContainer</PublishProfile>
 	  <RuntimeIdentifier>linux-x64</RuntimeIdentifier>
-    <UserSecretsId>6725a518-dc5f-40f7-b0b7-797dfe9d78b6</UserSecretsId>
-    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
 
   <ItemGroup>

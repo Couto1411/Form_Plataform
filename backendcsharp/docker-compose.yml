@@ -1,3 +1,5 @@
+version: '1.0'
+name: raeg-api
 services:
     api:
         container_name: raeg-api
@@ -6,4 +8,4 @@ services:
             - ASPNETCORE_ENVIRONMENT=docker
             - ASPNETCORE_URLS=https://+:8088
         ports:
-          - 8088:8088
+          - 80:80

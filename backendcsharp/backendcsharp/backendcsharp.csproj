@@ -6,13 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <ServerGarbageCollection>false</ServerGarbageCollection>
   </PropertyGroup>
-
-  <PropertyGroup>
-    <ContainerImageName>products-crud-api</ContainerImageName>
-	  <ContainerImageTags>latest</ContainerImageTags>
-	  <RuntimeIdentifier>linux-x64</RuntimeIdentifier>
-  </PropertyGroup>
-
+  
   <ItemGroup>
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.13">

@@ -1,3 +1,3 @@
-const baseURL= "https://couto1411-001-site1.ctempurl.com"
+const baseURL= "https://sua-url-backend.com"
 
 export default baseURL;

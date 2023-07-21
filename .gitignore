@@ -8,6 +8,7 @@ frontend/coverage
 
 # production
 frontend/build
+frontend/src/config/api.jsx
 backendcsharp/backendcsharp/bin
 backendcsharp/backendcsharp/obj
 backendcsharp/backendcsharp/appsettings.json

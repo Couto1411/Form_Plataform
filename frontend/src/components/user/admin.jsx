@@ -9,14 +9,12 @@ import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import axios from "axios"
 import baseUrl from "../../config/api"
-import {useNavigate} from 'react-router-dom'
 import {
     MDBInputGroup, MDBContainer, MDBRadio, MDBInput,
     MDBListGroup, MDBListGroupItem,
     MDBBtn, MDBModal, MDBModalDialog, MDBModalContent, MDBModalHeader, MDBModalFooter} from 'mdb-react-ui-kit'
 
-export default function Admin(){
-    const navigate = useNavigate();
+export default function Admin({navigate}){
 
     // Utilizado para não existirem usuarios com a mesma chave
     const [count, setCount] = useState(0);
@@ -312,7 +310,7 @@ export default function Admin(){
 
         {newUser}
 
-        <MDBBtn onClick={e=>{handleNewUser()}} outline color='dark' className='border-1 bg-light contatoBotoes mt-3'><i title='Adicionar novo email a enviar' className="edit fas fa-regular fa-plus fa-2x"></i></MDBBtn>
+        <MDBBtn onClick={e=>{handleNewUser()}} outline color='dark' className='border-1 bg-light adminBotoes mt-3'><i title='Adicionar novo email a enviar' className="edit fas fa-regular fa-plus fa-2x"></i></MDBBtn>
     
         {/* Modal para deletar Usuário */}
         <MDBModal tabIndex='-1' show={deletaUsuario} setShow={setDeletaUsuario}>

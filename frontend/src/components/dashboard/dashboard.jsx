@@ -3,8 +3,7 @@ import './dashboard.css'
 import { Chart as ChartJS, Colors, ArcElement, Title, Tooltip, Legend } from 'chart.js';
 import { Pie } from 'react-chartjs-2';
 import Titulo from '../template/Title'
-import {  CarregaForms, CarregaQuestoesUser, CarregaDashboard, RemoveSessao} from '../../config/utils'
-import {useNavigate} from 'react-router-dom'
+import {  CarregaForms, CarregaQuestoesDashboard, CarregaDashboard, RemoveSessao} from '../../config/utils'
 import {
     MDBBtn, MDBContainer, MDBCheckbox, MDBRadio,
     MDBModal,MDBModalContent,MDBModalDialog,MDBModalHeader,MDBModalTitle, MDBDropdown, MDBDropdownToggle, MDBDropdownMenu, MDBDropdownItem, MDBTextArea
@@ -12,8 +11,7 @@ import {
 
 ChartJS.register( ArcElement,Colors, Title, Tooltip, Legend);
 
-export default function Dashboard(){
-    const navigate = useNavigate();
+export default function Dashboard({navigate}){
 
     // Lista de formulários do usuário
     const [forms, setforms] = useState([]);
@@ -59,7 +57,7 @@ export default function Dashboard(){
     useEffect(() => {
         if (sessionStorage.getItem("token")){
             CarregaForms(setforms, navigate)
-            CarregaQuestoesUser(setQuestoes,navigate)
+            CarregaQuestoesDashboard(setQuestoes,navigate)
         }
         else{
             alert("Faça o login")

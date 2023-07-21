@@ -8,10 +8,8 @@ import {
     MDBInput, MDBBtn, MDBContainer, MDBInputGroup,
     MDBModal, MDBModalDialog, MDBModalContent, MDBModalBody
 } from 'mdb-react-ui-kit'
-import { useNavigate } from "react-router-dom"
 
-export default function UserSection() {
-    const navigate = useNavigate()
+export default function UserSection({navigate}) {
     const [user, setUser] = useState({})
     const [cursos, setCursos] = useState([])
     const [tipoCursos, setTipoCursos] = useState([])

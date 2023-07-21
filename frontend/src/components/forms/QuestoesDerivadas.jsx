@@ -2,15 +2,13 @@ import React, {useEffect,useState}from 'react'
 import axios from "axios";
 import { limit, RemoveSessao } from '../../config/utils';
 import baseUrl from "../../config/api";
-import {useNavigate} from 'react-router-dom';
 import {
     MDBInputGroup, MDBTextArea, MDBRadio, MDBCheckbox,
     MDBListGroup, MDBListGroupItem,
     MDBBtn} from 'mdb-react-ui-kit';
 
 
-export default function Forms(props){
-    const navigate = useNavigate();
+export default function QuestoesDerivadas(props,{navigate}){
     
     // Modifia visibilidade da area de nova questao - 1 parte tipo questao
     const [typeQuestion, setTypeQuestion] = useState(<></>);

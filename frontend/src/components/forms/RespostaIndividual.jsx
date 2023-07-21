@@ -7,11 +7,9 @@ import Navbar from '../template/Navbar'
 import Sidebar from '../template/Sidebar'
 import UserSection from '../user/UserSection'
 import {MDBListGroup,MDBListGroupItem, MDBRadio,MDBBtn,MDBInputGroup, MDBTextArea,MDBCheckbox} from 'mdb-react-ui-kit';
-import { useNavigate } from 'react-router-dom';
 import { RemoveSessao } from '../../config/utils';
 
-export default function Resposta(){
-    const navigate = useNavigate()
+export default function Resposta({navigate}){
     // Troca entre informações da página e do usúario
     const [main, setMain] = useState(1)
 
@@ -107,7 +105,7 @@ export default function Resposta(){
         if(main===1){
             return(secaoRespostas)
         }else{
-            (<UserSection/>)
+            (<UserSection navigate={navigate}/>)
         }
     }
 

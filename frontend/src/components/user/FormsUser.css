@@ -11,3 +11,8 @@ a:hover{color: rgb(21, 21, 21)}
     color: rgb(26, 26, 26);
     background-color: #ffffe6;
 }
+
+.addFormButton:hover{
+    background-color: #ffff00;
+    border: #ffa564 solid 1px;
+}

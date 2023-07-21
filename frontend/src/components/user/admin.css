@@ -9,6 +9,11 @@
     border: #aeaeae solid 1px;
 }
 
+.adminBotoes:hover{
+    background-color: #ffff00;
+    border: #ffa564 solid 1px;
+}
+
 .admin{
     margin-right: 1em;
 }

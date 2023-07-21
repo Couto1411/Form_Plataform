@@ -2,7 +2,6 @@ import React, {useEffect,useState}from 'react'
 import './Forms.css'
 import axios from "axios";
 import baseUrl from "../../config/api";
-import {useNavigate} from 'react-router-dom';
 import { CarregaQuestoes, CarregaRespostas, CarregaEnvios, RemoveSessao, CarregaRelatorio } from '../../config/utils';
 import Title from '../template/Title'
 import Navbar from '../template/Navbar'
@@ -14,9 +13,7 @@ import {
     MDBBtn, MDBProgress, MDBProgressBar, MDBContainer, MDBInput,
     MDBModal,MDBModalDialog,MDBModalContent,MDBModalTitle,MDBModalBody,MDBModalHeader} from 'mdb-react-ui-kit';
 
-export default function FormsDerivados(){
-    const navigate = useNavigate();
-
+export default function FormsDerivados({navigate}){
     // Conta cliques para excluir email a ser enviado
     const [click, setClick] = useState([{id:''}]);
 
@@ -25,16 +22,16 @@ export default function FormsDerivados(){
     // Aba de questoes que mostra todas as questoes do formulario
     const [questoes, setQuestoes] = useState([]);
     // Aba de envios que mostra todos os emails a serem enviados do formulario
-    const [contatos, setContatos] = useState([]);
-    const [contatosDB, setContatosDB] = useState([]);
+    const [destinatarioss, setContatos] = useState([]);
+    const [destinatariossDB, setContatosDB] = useState([]);
 
     // Seta qual secao aparece, questoes, repostas ou envios
     const [secao, setsecao] = useState(2)
 
-    // Usado para busca de contatos
+    // Usado para busca de destinatarioss
     const [nomeEmail, setNomeEmail] = useState(true);
 
-    const [contatosPage, setContatosPage] = useState(1);
+    const [destinatariossPage, setContatosPage] = useState(1);
     // Confirmação de envio de email
     const [enviou, setEnviou] = useState(false);
     
@@ -42,24 +39,17 @@ export default function FormsDerivados(){
     const [show, setShow] = useState(false);
     
     // Usado para dizer os valores do relatório de reposta
-    const [contatosResposta, setContatosResposta] = useState([]);
+    const [destinatariossResposta, setContatosResposta] = useState([]);
 
     useEffect(() => {
-        if (sessionStorage.getItem("token")){
-            CarregaQuestoes(setQuestoes,navigate)
-            CarregaEnvios(setContatos,setContatosDB,sessionStorage.getItem('formDeId'),navigate)
+        CarregaQuestoes(setQuestoes,navigate)
+        CarregaEnvios(setContatos,setContatosDB,sessionStorage.getItem('formDeId'),navigate).then(()=>{
             CarregaRespostas(setRespostas,navigate)
-        }
-        else{
-            alert("Faça o login")
-            navigate('/login')
-            RemoveSessao()
-        }
-
+        })
     }, [navigate]);
     
     const searchChange = (e) => {
-        var envio = contatosDB.filter((el)=>{
+        var envio = destinatariossDB.filter((el)=>{
             if (e.target.value === '') {
                 return el;
             }
@@ -204,9 +194,9 @@ export default function FormsDerivados(){
         })
         .then((response)=>{
             elemento.respondido=0
-            setContatos(contatos.filter(a=> a.id !== elemento.id))
+            setContatos(destinatarioss.filter(a=> a.id !== elemento.id))
             setContatos([
-                ...contatos
+                ...destinatarioss
             ])
         })
         .catch((error) => {
@@ -264,7 +254,7 @@ export default function FormsDerivados(){
 
         {/* Emails */}
         <MDBListGroup small className='mt-3' >
-            {contatos?.slice((contatosPage-1)*15,((contatosPage-1)*15)+15).map(element => {
+            {destinatarioss?.slice((destinatariossPage-1)*15,((destinatariossPage-1)*15)+15).map(element => {
                 if(element.respondido===2){
                     return(
                         <MDBListGroupItem className='py-2 px-2' key={element.id}>
@@ -300,40 +290,40 @@ export default function FormsDerivados(){
             </MDBModalDialog>
         </MDBModal>
 
-        {/* Botões de adição e envio de contatos */}
+        {/* Botões de adição e envio de destinatarioss */}
         <div className='d-flex mt-3'>
-            <MDBBtn outline color='dark' className=' ms-auto border-1 bg-light contatoBotoes' onClick={e=>{sendEmails()}}><i title='Enviar à todos os emails da lista' className="edit fas fa-light fa-paper-plane py-1"></i></MDBBtn>
+            <MDBBtn outline color='dark' className=' ms-auto border-1 bg-light destinatariosBotoes' onClick={e=>{sendEmails()}}><i title='Enviar à todos os emails da lista' className="edit fas fa-light fa-paper-plane py-1"></i></MDBBtn>
         </div>
 
         {/* Pagination */}
-        {contatos.length>0
+        {destinatarioss.length>0
         ?<div className="d-flex justify-content-center mt-2">
-            {contatosPage<=3?
+            {destinatariossPage<=3?
             <MDBListGroup horizontal>
                 <MDBListGroupItem className='pages' onClick={e=>{setContatosPage(1)}}>1</MDBListGroupItem>
-                {Math.ceil(contatos.length/15)>1?<MDBListGroupItem className='pages' onClick={e=>{setContatosPage(2)}}>2</MDBListGroupItem>:<></>}
-                {Math.ceil(contatos.length/15)>2?<MDBListGroupItem className='pages' onClick={e=>{setContatosPage(3)}}>3</MDBListGroupItem>:<></>}
-                {Math.ceil(contatos.length/15)>3?<MDBListGroupItem className='pages' onClick={e=>{setContatosPage(4)}}>4</MDBListGroupItem>:<></>}
-                {Math.ceil(contatos.length/15)>4?<MDBListGroupItem className='pages' onClick={e=>{setContatosPage(5)}}>5</MDBListGroupItem>:<></>}
-                {Math.ceil(contatos.length/15)>5?<MDBListGroupItem className='pages'>...</MDBListGroupItem>:<></>}
+                {Math.ceil(destinatarioss.length/15)>1?<MDBListGroupItem className='pages' onClick={e=>{setContatosPage(2)}}>2</MDBListGroupItem>:<></>}
+                {Math.ceil(destinatarioss.length/15)>2?<MDBListGroupItem className='pages' onClick={e=>{setContatosPage(3)}}>3</MDBListGroupItem>:<></>}
+                {Math.ceil(destinatarioss.length/15)>3?<MDBListGroupItem className='pages' onClick={e=>{setContatosPage(4)}}>4</MDBListGroupItem>:<></>}
+                {Math.ceil(destinatarioss.length/15)>4?<MDBListGroupItem className='pages' onClick={e=>{setContatosPage(5)}}>5</MDBListGroupItem>:<></>}
+                {Math.ceil(destinatarioss.length/15)>5?<MDBListGroupItem className='pages'>...</MDBListGroupItem>:<></>}
             </MDBListGroup>
-            :contatosPage>((Math.ceil(contatos.length/15))-3)?
+            :destinatariossPage>((Math.ceil(destinatarioss.length/15))-3)?
             <MDBListGroup horizontal>
-                {Math.ceil(contatos.length/15)-5>0?<MDBListGroupItem className='pages'>...</MDBListGroupItem>:<></>}
-                {Math.ceil(contatos.length/15)-4>0?<MDBListGroupItem className='pages' onClick={e=>{setContatosPage(Math.ceil(contatos.length/15)-4)}}>{Math.ceil(contatos.length/15)-4}</MDBListGroupItem>:<></>}
-                {Math.ceil(contatos.length/15)-3>0?<MDBListGroupItem className='pages' onClick={e=>{setContatosPage(Math.ceil(contatos.length/15)-3)}}>{Math.ceil(contatos.length/15)-3}</MDBListGroupItem>:<></>}
-                <MDBListGroupItem className='pages' onClick={e=>{setContatosPage(Math.ceil(contatos.length/15)-2)}}>{Math.ceil(contatos.length/15)-2}</MDBListGroupItem>
-                <MDBListGroupItem className='pages' onClick={e=>{setContatosPage(Math.ceil(contatos.length/15)-1)}}>{Math.ceil(contatos.length/15)-1}</MDBListGroupItem>
-                <MDBListGroupItem className='pages' onClick={e=>{setContatosPage(Math.ceil(contatos.length/15))}}>{Math.ceil(contatos.length/15)}</MDBListGroupItem>
+                {Math.ceil(destinatarioss.length/15)-5>0?<MDBListGroupItem className='pages'>...</MDBListGroupItem>:<></>}
+                {Math.ceil(destinatarioss.length/15)-4>0?<MDBListGroupItem className='pages' onClick={e=>{setContatosPage(Math.ceil(destinatarioss.length/15)-4)}}>{Math.ceil(destinatarioss.length/15)-4}</MDBListGroupItem>:<></>}
+                {Math.ceil(destinatarioss.length/15)-3>0?<MDBListGroupItem className='pages' onClick={e=>{setContatosPage(Math.ceil(destinatarioss.length/15)-3)}}>{Math.ceil(destinatarioss.length/15)-3}</MDBListGroupItem>:<></>}
+                <MDBListGroupItem className='pages' onClick={e=>{setContatosPage(Math.ceil(destinatarioss.length/15)-2)}}>{Math.ceil(destinatarioss.length/15)-2}</MDBListGroupItem>
+                <MDBListGroupItem className='pages' onClick={e=>{setContatosPage(Math.ceil(destinatarioss.length/15)-1)}}>{Math.ceil(destinatarioss.length/15)-1}</MDBListGroupItem>
+                <MDBListGroupItem className='pages' onClick={e=>{setContatosPage(Math.ceil(destinatarioss.length/15))}}>{Math.ceil(destinatarioss.length/15)}</MDBListGroupItem>
             </MDBListGroup>
-            :contatosPage>3?
+            :destinatariossPage>3?
             <MDBListGroup horizontal>
                 <MDBListGroupItem className='pages'>...</MDBListGroupItem>
-                <MDBListGroupItem className='pages' onClick={e=>{setContatosPage(contatosPage-2)}}>{contatosPage-2}</MDBListGroupItem>
-                <MDBListGroupItem className='pages' onClick={e=>{setContatosPage(contatosPage-1)}}>{contatosPage-1}</MDBListGroupItem>
-                <MDBListGroupItem className='pages' onClick={e=>{setContatosPage(contatosPage)}}>{contatosPage}</MDBListGroupItem>
-                <MDBListGroupItem className='pages' onClick={e=>{setContatosPage(contatosPage+1)}}>{contatosPage+1}</MDBListGroupItem>
-                <MDBListGroupItem className='pages' onClick={e=>{setContatosPage(contatosPage+2)}}>{contatosPage+2}</MDBListGroupItem>
+                <MDBListGroupItem className='pages' onClick={e=>{setContatosPage(destinatariossPage-2)}}>{destinatariossPage-2}</MDBListGroupItem>
+                <MDBListGroupItem className='pages' onClick={e=>{setContatosPage(destinatariossPage-1)}}>{destinatariossPage-1}</MDBListGroupItem>
+                <MDBListGroupItem className='pages' onClick={e=>{setContatosPage(destinatariossPage)}}>{destinatariossPage}</MDBListGroupItem>
+                <MDBListGroupItem className='pages' onClick={e=>{setContatosPage(destinatariossPage+1)}}>{destinatariossPage+1}</MDBListGroupItem>
+                <MDBListGroupItem className='pages' onClick={e=>{setContatosPage(destinatariossPage+2)}}>{destinatariossPage+2}</MDBListGroupItem>
                 <MDBListGroupItem className='pages'>...</MDBListGroupItem>
             </MDBListGroup>
             :<></>}
@@ -407,9 +397,9 @@ export default function FormsDerivados(){
     }
 
     function renderizaRelatorio(){
-        return contatosResposta?.data?.map(contato => {
-            return <MDBInputGroup key={contato.email} className='mb-1'>
-                    <input className='form-control' type='text' defaultValue={contato.email} disabled/>
+        return destinatariossResposta?.data?.map(destinatarios => {
+            return <MDBInputGroup key={destinatarios.email} className='mb-1'>
+                    <input className='form-control' type='text' defaultValue={destinatarios.email} disabled/>
                 </MDBInputGroup>
         })
     }
@@ -425,7 +415,7 @@ export default function FormsDerivados(){
             <MDBModalDialog size='md'>
             <MDBModalContent>
                 <MDBModalHeader>
-                <MDBModalTitle>{contatosResposta?.enunciado}</MDBModalTitle>
+                <MDBModalTitle>{destinatariossResposta?.enunciado}</MDBModalTitle>
                 <MDBBtn className='btn-close' color='none' onClick={e=>setShow(false)}></MDBBtn>
                 </MDBModalHeader>
                 <MDBContainer className='mt-2 mb-3 d-flex row justify-content-center'>

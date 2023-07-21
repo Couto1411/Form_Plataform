@@ -7,7 +7,7 @@ import FormsUser from '../components/user/FormsUser'
 import Admin from '../components/user/admin.jsx'
 import Forms from '../components/forms/Forms'
 import FormsDerivado from '../components/forms/FormsDerivados'
-import Resposta from '../components/forms/Resposta'
+import Resposta from '../components/forms/RespostaIndividual'
 import FormularioResposta from '../components/response/FormularioResp'
 
 export default function Props(){

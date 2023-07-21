@@ -39,7 +39,7 @@ export async function CarregaQuestoes(setQuestoes){
     })
 }
 
-export async function CarregaQuestoesUser(setQuestoes,navigate){
+export async function CarregaQuestoesDashboard(setQuestoes,navigate){
     await axios.get(baseUrl+"/questoes/user/"+sessionStorage.getItem("userId"),{
         headers: {
             'Content-Type': 'application/json',
@@ -115,7 +115,7 @@ export async function CarregaCursosUser(setCursos,navigate){
     })
 }
 
-export async function CarregaEnvios(setContatos,setContatosDB,id,navigate){
+export async function CarregaEnvios(setDestinatarios,setDestinatariosDB,id,navigate){
     await axios.get(baseUrl+"/users/"+sessionStorage.getItem("userId")+"/forms/"+id+"/enviados",{
         headers: {
             'Content-Type' : 'application/json',
@@ -124,16 +124,16 @@ export async function CarregaEnvios(setContatos,setContatosDB,id,navigate){
     })
     .then((response)=>{
         response.data.sort((a,b) => b.respondido-a.respondido);
-        setContatos(response.data);
-        setContatosDB(response.data)
+        setDestinatarios(response.data);
+        setDestinatariosDB(response.data)
     })
     .catch((error) => {
         if (error.response.status===401) {
             navigate('/login')
             RemoveSessao()
             alert("Faça o login")
-        }else if (error.response.status===404){setContatos([])}
-        else { console.log(error);setContatos([])}
+        }else if (error.response.status===404){setDestinatarios([])}
+        else { console.log(error);setDestinatarios([])}
     }) 
 }
 
@@ -174,21 +174,21 @@ export async function CarregaDashboard(setDatasets,setLabels,navigate,id,forms,q
     })
 }
 
-export async function CarregaRelatorio(setContatosResposta,navigate,formid,questid,item){
+export async function CarregaRelatorio(setDestinatariosResposta,navigate,formid,questid,item){
     await axios.get(baseUrl+"/respostas/forms/"+formid+"/questao/"+questid+"/"+item?.opcao,{
         headers: {
             'Content-Type' : 'application/json',
             'Authorization': 'bearer ' + sessionStorage.getItem("token")
         }
     })
-    .then((response)=>{setContatosResposta({data: response.data,enunciado: item?.texto})})
+    .then((response)=>{setDestinatariosResposta({data: response.data,enunciado: item?.texto})})
     .catch((error) => {
         if (error.response.status===401) {
             navigate('/login')
             RemoveSessao()
             alert("Faça o login")
-        }else if (error.response.status===404){setContatosResposta([])}
-        else{ console.log(error);setContatosResposta([])}
+        }else if (error.response.status===404){setDestinatariosResposta([])}
+        else{ console.log(error);setDestinatariosResposta([])}
     })
 }
 

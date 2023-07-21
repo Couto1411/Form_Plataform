@@ -1,44 +1,28 @@
 import React, {useEffect,useState}from 'react'
-import { limit, CarregaQuestoes, CarregaCursosUser, CarregaRespostas, CarregaEnvios, RemoveSessao, CarregaRelatorio } from '../../config/utils';
+import { limit, CarregaQuestoes, CarregaRespostas, RemoveSessao } from '../../config/utils';
 import './Forms.css'
-import Questoes from './Questoes'
+import Questoes from './QuestoesDerivadas'
 import axios from "axios";
-import * as XLSX from "xlsx";
 import baseUrl from "../../config/api";
-import {useNavigate} from 'react-router-dom';
 import Title from '../template/Title'
 import Navbar from '../template/Navbar'
 import Sidebar from '../template/Sidebar'
 import UserSection from '../user/UserSection'
-import InputMask from 'react-input-mask';
 import {
     MDBInputGroup, MDBTextArea, MDBRadio, MDBCheckbox,
     MDBListGroup, MDBListGroupItem,
-    MDBBtn, MDBInput, MDBFile, MDBProgressBar,
-    MDBModal, MDBModalDialog, MDBModalContent, MDBModalBody, MDBModalFooter, MDBModalHeader, MDBModalTitle, MDBContainer, MDBProgress, MDBSpinner} from 'mdb-react-ui-kit';
+    MDBBtn} from 'mdb-react-ui-kit';
+import SecaoRespostas from './SecaoResposta';
+import SecaoDestinatarios from './SecaoDestinatarios';
 
-export default function Forms(){
-    const navigate = useNavigate();
-
-    // Alert de contato respondido em form derivado
-    const [respondidoDerivado, setRespondidoDerivado] = useState(false);
-    // Conta cliques para excluir email a ser enviado
-    const [click, setClick] = useState([{id:''}]);
-
+export default function Forms({navigate}){
     // Aba de respostas da aplicação
     const [respostas, setRespostas] = useState(null);
     // Aba de questoes que mostra todas as questoes do formulario
     const [questoes, setQuestoes] = useState([]);
     // Aba de envios que mostra todos os emails a serem enviados do formulario
-    const [contatos, setContatos] = useState([]);
-    const [contatosDB, setContatosDB] = useState([]);
-    // Responsavel pelo armazenamento das opcões de cursos de envios
-    const [cursos, setCursos] = useState(null);
     // Regula novas opcões
     const [input, setInput] = useState({content:<></>});
-
-    // Modifia visibilidade da area de novo envio
-    const [newContato, setNewContato] = useState(<></>);
 
     // Modifia visibilidade da area de nova questao - 1 parte tipo questao
     const [typeQuestion, setTypeQuestion] = useState(<></>);
@@ -50,59 +34,11 @@ export default function Forms(){
 
     // Seta qual secao aparece, questoes, repostas ou envios
     const [secao, setsecao] = useState(1)
-    // Modifica visibilidade do popup de import de envios
-    const [importModal, setImportModal] = useState(false);
-
-    // Usado para paginação
-    const [contatosPage, setContatosPage] = useState(1);
-    const [qtdPPag, setQtdPPag] = useState(15);
-
-    // Usado para busca de contatos
-    const [nomeEmail, setNomeEmail] = useState(true);
-    // Confirmação de envio de email
-    const [enviou, setEnviou] = useState(false);
-    const [carregandoEnvio, setCarregandoEnvio] = useState(true);
-
-    // Usado para dizer qual a pergunta e o tipo de reposta do relatório
-    const [show, setShow] = useState(false);
-    
-    // Usado para dizer os valores do relatório de reposta
-    const [contatosResposta, setContatosResposta] = useState([]);
 
     useEffect(() => {
-        if (sessionStorage.getItem("token")){
-            CarregaQuestoes(setQuestoes,navigate)
-            CarregaCursosUser(setCursos,navigate)
-            CarregaEnvios(setContatos,setContatosDB,sessionStorage.getItem('formId'),navigate)
-            CarregaRespostas(setRespostas,navigate)
-        }
-        else{
-            alert("Faça o login")
-            navigate('/login')
-            RemoveSessao()
-        }
-
+        CarregaQuestoes(setQuestoes)
+        CarregaRespostas(setRespostas,navigate)
     }, [navigate]);
-
-    const searchChange = (e) => {
-        setContatosPage(1)
-        var envio = contatosDB.filter((el)=>{
-            if (e.target.value === '') {
-                return el;
-            }
-            //return the item which contains the user input
-            else {
-                if (nomeEmail) {
-                    return el.email?.toLowerCase().includes(e.target.value)
-                }
-                else{
-                    return el.nome?.toLowerCase().includes(e.target.value)
-                }
-            }
-
-        })
-        setContatos(envio)
-    }; 
 
     // Questões
     function renderizaQuestoes(){
@@ -229,7 +165,7 @@ export default function Forms(){
                                 <MDBBtn color='success' outline onClick={e=>{editaQuestao(element.id)}} id={'salva'+element.id} style={{display: 'none'}}>Salvar</MDBBtn>
                             </div>
                         </MDBListGroupItem>
-                        <Questoes questao={element}/>
+                        <Questoes questao={element} navigate={navigate}/>
                         </div>
                     )
                 default:
@@ -298,12 +234,6 @@ export default function Forms(){
                 alert("Faça o login")
             }else{ console.log(error)}
         })
-    }
-    function toggleShowExcluiSalva(id, show){
-        let v= document.getElementById("questao"+id)
-        v.disabled=!v.disabled
-        document.getElementById("exclui"+id).style.display==="none"?document.getElementById("exclui"+id).style.display="inline-block":document.getElementById("exclui"+id).style.display="none"
-        document.getElementById("salva"+id).style.display ==="none"?document.getElementById("salva"+id).style.display="inline-block":document.getElementById("salva"+id).style.display="none"
     }
 
     async function excluiQuestao(element){
@@ -517,6 +447,13 @@ export default function Forms(){
         if (input.id && input.id===id) return input.content 
         else return <></>
     }
+    
+    function toggleShowExcluiSalva(id, show){
+        let v= document.getElementById("questao"+id)
+        v.disabled=!v.disabled
+        document.getElementById("exclui"+id).style.display==="none"?document.getElementById("exclui"+id).style.display="inline-block":document.getElementById("exclui"+id).style.display="none"
+        document.getElementById("salva"+id).style.display ==="none"?document.getElementById("salva"+id).style.display="inline-block":document.getElementById("salva"+id).style.display="none"
+    }
 
     const secaoQuestoes = <main className='mt-3 principal'>
         {Title(sessionStorage.getItem('nomePesquisa'))}
@@ -530,673 +467,16 @@ export default function Forms(){
     </main>
     // Questões
 
-    // Contatos
-    function renderizaContatos(){
-        return contatos?.slice((contatosPage-1)*(qtdPPag!==''?qtdPPag:15),((contatosPage-1)*(qtdPPag!==''?qtdPPag:15))+(qtdPPag!==''?qtdPPag:15)).map(element => {
-                if(element.respondido===2){
-                    return(
-                        <MDBListGroupItem className='py-2 px-2' key={element.id}>
-                            <MDBInputGroup>
-                                <MDBBtn outline color='dark' onClick={e=>{handleClick(element)}} className='numQuestao'><i className="trashcan fas fa-trash-can"></i></MDBBtn>
-                                <input className='form-control' type='text' defaultValue={element.email} disabled/>
-                                <div role='button' onClick={e=>{sessionStorage.setItem('enviadoId',element.id);navigate('/resposta')}} color='secondary' className='numQuestao borda-direita' id={'edit'+element.id}><i className='p-2 ms-auto fas fa-solid fa-eye'></i></div>
-                            </MDBInputGroup>
-                            <div className='d-flex'><div className='text-danger p-1' id={'warning'+element.id} style={{display: 'none'}}>Todas as respostas desse email serão apagadas, se tiver certeza clique novamente</div><a href='/#' role='button' onClick={e=>{handleClick(element,true)}} id={'cancel'+element.id} style={{display: 'none'}} className='p-1 ms-auto'>Cancelar</a></div>
-                        </MDBListGroupItem>
-                    )
-                }else{
-                    return(
-                        <MDBListGroupItem className='py-2 px-2' key={element.id}>
-                            <MDBInputGroup id={'send'+element.id} textAfter={<i title='Enviar formulário para este email' onClick={e=>{sendOneEmail(element.id)}} className={element.respondido===1?"edit fas fa-light fa-paper-plane fa-sm greenicon":"edit fas fa-light fa-paper-plane fa-sm"}></i>}>
-                                <MDBBtn outline color='dark' onClick={e=>{showEditContato(element)}} className='numQuestao'>@</MDBBtn>
-                                <input onKeyDown={e=>{limit(e.target)}} onKeyUp={e=>{limit(e.target)}} className='form-control' type='text' id={'contatoEmail'+element.id} defaultValue={element.email} disabled onChange={e=>{contatos[contatos.map(object => object.id).indexOf(element.id)].email=e.target.value}}/>
-                                <div role='button' onClick={e=>{editaContato(element.id)}} className='numQuestao borda-direita' id={'edit'+element.id} style={{display: 'none'}}><i className='p-2 ms-auto fas fa-regular fa-pen'></i></div>
-                                <div role='button' onClick={e=>{excluiContato(element.id)}} className='numQuestao borda-direita' id={'erase'+element.id} style={{display: 'none'}}><i className='p-2 ms-auto trashcan fas fa-trash-can'></i></div>
-                            </MDBInputGroup>
-                            <MDBContainer fluid className='mt-2' id={'contatoForm'+element.id} style={{display: 'none'}}>
-                                <div className='row'>
-                                    <div className="col-md-6 pt-md-2 pt-1">
-                                        <MDBInputGroup>
-                                            <MDBBtn color='secondary' className='novoContatoForm px-2'>Nome</MDBBtn>
-                                            <input onKeyDown={e=>{limit(e.target)}} onKeyUp={e=>{limit(e.target)}} defaultValue={element.nome} onChange={e=>{contatos[contatos.map(object => object.id).indexOf(element.id)].nome=e.target.value}} className='form-control' type='text'/>
-                                        </MDBInputGroup>
-                                    </div>
-                                    <div className="col-md-6 pt-md-2 pt-1">
-                                        <MDBInputGroup>
-                                            <MDBBtn color='secondary' className='novoContatoForm px-2'>Matrícula</MDBBtn>
-                                            <input onKeyDown={e=>{limit(e.target)}} onKeyUp={e=>{limit(e.target)}} defaultValue={element.matricula} onChange={e=>{contatos[contatos.map(object => object.id).indexOf(element.id)].matricula=e.target.value}} className='form-control' type='text'/>
-                                        </MDBInputGroup>
-                                    </div>
-                                    <div className="col-md-6 pt-md-2 pt-1">
-                                        <MDBInputGroup>
-                                            <MDBBtn color='secondary' onChange={e=>{contatos[contatos.map(object => object.id).indexOf(element.id)].telefone1=e.target.value}} className='novoContatoForm px-2'>Telefone 1</MDBBtn>
-                                            <InputMask mask='(99) 99999-9999' className='form-control' type='text' id={'contatoTelefone1'+element.id}/>
-                                        </MDBInputGroup>
-                                    </div>
-                                    <div className="col-md-6 pt-md-2 pt-1">
-                                        <MDBInputGroup>
-                                            <MDBBtn color='secondary' onChange={e=>{contatos[contatos.map(object => object.id).indexOf(element.id)].telefone2=e.target.value}} className='novoContatoForm px-2'>Telefone 2</MDBBtn>
-                                            <InputMask mask='(99) 99999-9999' className='form-control' type='text' id={'contatoTelefone2'+element.id}/>
-                                        </MDBInputGroup>
-                                    </div>
-                                    <div className="col-md-6 pt-md-2 pt-1">
-                                        <MDBInputGroup>
-                                            <MDBBtn color='secondary' className='novoContatoForm px-2'>Curso</MDBBtn>
-                                            <select defaultValue={element.curso} onChange={e=>{contatos[contatos.map(object => object.id).indexOf(element.id)].curso=e.target.value}} className='selectCurso novoContatoCurso'>
-                                                {cursos?.listaCursos?.map(item => {
-                                                    return <option key={element.id+"opcaocurso"+item.id} value={item.curso}>{item.curso}</option>
-                                                })}
-                                            </select>
-                                        </MDBInputGroup>
-                                    </div>
-                                    <div className="col-md-6 pt-md-2 pt-sm-1">
-                                        <MDBInputGroup>
-                                            <MDBBtn color='secondary' className='novoContatoForm px-2'>Modalidade do Curso</MDBBtn>
-                                            <select defaultValue={element.tipoDeCurso} onChange={e=>{contatos[contatos.map(object => object.id).indexOf(element.id)].tipoDeCurso=e.target.value}} className='selectCurso novoContatoTipoCurso'>
-                                                {cursos?.listaTipoCursos?.map(item => {
-                                                    return <option key={element.id+"opcaotipo"+item.id} value={item.tipoCurso}>{item.tipoCurso}</option>
-                                                })}
-                                            </select>
-                                        </MDBInputGroup>
-                                    </div>
-                                    <div className="col-md-6 pt-md-2 pt-sm-1">
-                                        <MDBInputGroup>
-                                            <MDBBtn color='secondary' className='novoContatoForm px-2'>CPF</MDBBtn>
-                                            <InputMask mask='999.999.999-99'  className='form-control' type='text' defaultValue={element.cpf} onChange={e=>{contatos[contatos.map(object => object.id).indexOf(element.id)].cpf=e.target.value}} />
-                                        </MDBInputGroup>
-                                    </div>
-                                    <div className="col-md-6 pt-md-2 pt-sm-1">
-                                        <MDBInputGroup>
-                                            <MDBBtn color='secondary' className='novoContatoForm px-2'>Sexo</MDBBtn>
-                                            <select  defaultValue={element.sexo} onChange={e=>{contatos[contatos.map(object => object.id).indexOf(element.id)].sexo=e.target.value}} className='selectCurso novoContatoSexo'>
-                                                <option value="M">Masculino</option>
-                                                <option value="F">Feminino</option>
-                                                <option value="N">Não informar</option>
-                                            </select>
-                                        </MDBInputGroup>
-                                    </div>
-                                    <div className="col-md-12 pt-md-2 pt-sm-1">
-                                        <MDBInputGroup>
-                                            <MDBBtn color='secondary' className='novoContatoForm px-2'>Data de colação</MDBBtn>
-                                            <input type="date" className='porcentagem selectCurso' onChange={e=>{contatos[contatos.map(object => object.id).indexOf(element.id)].dataColacao=e.target.value}} id={'contatoData'+element.id}/>
-                                        </MDBInputGroup>
-                                    </div>
-                                </div>
-                            </MDBContainer>
-                        </MDBListGroupItem>
-                    )
-                }
-            })
-    }
-
-    async function addContato(){
-        let novocontato ={}
-        novocontato.email=document.getElementById("novoContatoEmail").value
-        novocontato.nome=document.getElementById("novoContatoNome").value
-        novocontato.matricula=document.getElementById("novoContatoMatricula").value
-        novocontato.telefone2=document.getElementById("novoContatoTelefone2").value
-        novocontato.telefone1=document.getElementById("novoContatoTelefone1").value
-        novocontato.curso=document.getElementById("novoContatoCurso").value
-        novocontato.tipoDeCurso=document.getElementById("novoContatoTipoCurso").value
-        novocontato.cpf=document.getElementById("novoContatoCpf").value
-        novocontato.sexo=document.getElementById("novoContatoSexo").value
-        novocontato.dataColacao=document.getElementById("novoContatoData").value
-        if(novocontato.email){
-            document.getElementById("novoContatoEmail").classList.remove("is-invalid")
-            if (novocontato.telefone1 && !/\(\d\d\)\s\d\d\d\d\d-\d\d\d\d/.test(novocontato.telefone1)) {
-                document.getElementById("novoContatoTelefone1").classList.add("is-invalid")
-                return
-            }else{document.getElementById("novoContatoTelefone1").classList.remove("is-invalid")}
-            if (novocontato.telefone2 && !/\(\d\d\)\s\d\d\d\d\d-\d\d\d\d/.test(novocontato.telefone2)) {
-                document.getElementById("novoContatoTelefone2").classList.add("is-invalid")
-                return
-            }else{document.getElementById("novoContatoTelefone2").classList.remove("is-invalid")}
-            if (novocontato.cpf && !/\d\d\d\.\d\d\d\.\d\d\d-\d\d/.test(novocontato.cpf)) {
-                document.getElementById("novoContatoCpf").classList.add("is-invalid")
-                return
-            }else{document.getElementById("novoContatoCpf").classList.remove("is-invalid")}
-            if (!novocontato.dataColacao) novocontato.dataColacao=null
-            novocontato.respondido=0
-            await axios.post(baseUrl+"/users/"+sessionStorage.getItem("userId")+"/forms/"+sessionStorage.getItem("formId")+"/enviados",novocontato,{
-                headers: {
-                    'Authorization': 'bearer ' + sessionStorage.getItem("token")
-                }
-            })
-            .then(resposta=>{
-                novocontato.id=resposta.data
-                setContatos([
-                    ...contatos,
-                    novocontato
-                ])
-                setNewContato(<></>)
-            })
-            .catch((error) => {
-                if (error.response.status===401) {
-                    navigate('/login')
-                    RemoveSessao()
-                    alert("Faça o login")
-                }else{ console.log(error)}
-            })
-        }else{
-            document.getElementById("novoContatoEmail").classList.add("is-invalid")
-        }
-    }
-
-    async function editaContato(id){
-        let dados=contatos[contatos.map(object => object.id).indexOf(id)]
-        await axios.put(baseUrl+"/users/"+sessionStorage.getItem("userId")+"/forms/"+sessionStorage.getItem("formId")+"/enviados/"+id,dados,{
-            headers: {
-                'Authorization': 'bearer ' + sessionStorage.getItem("token")
-            }
-        })
-        .then(resposta =>{
-            document.getElementById("contatoEmail"+id).disabled=true
-            document.getElementById("edit"+id).style.display='none'
-            document.getElementById("contatoForm"+id).style.display='none'
-            let erase=document.getElementById("erase"+id)
-            erase.style.display==='none'?erase.style.display='block':erase.style.display='none'
-            let send=document.getElementById("send"+id)
-            if(send.lastChild.nodeName==='SPAN'){
-                send.removeChild(send.lastChild)
-            }else{
-                let spanBlock = document.createElement('span')
-                spanBlock.className = 'input-group-text'
-                let sendSymbol = document.createElement('i')
-                sendSymbol.title ='Enviar formulário para este email'
-                sendSymbol.onclick = function (e) {sendOneEmail(id)}
-                sendSymbol.className = 'edit fas fa-light fa-paper-plane fa-sm'
-                send.appendChild(spanBlock)
-                send.lastChild.appendChild(sendSymbol)
-            }
-        })
-        .catch((error) => {
-            if (error.response.status===401) {
-                navigate('/login')
-                RemoveSessao()
-                alert("Faça o login")
-            }else if(error.response.status===402){
-                setRespondidoDerivado(true)
-            }
-            else{ console.log(error)}
-        })
-    } 
-
-    async function excluiContato(id){
-        await axios.delete(baseUrl+"/users/"+sessionStorage.getItem("userId")+"/forms/"+sessionStorage.getItem("formId")+"/enviados/"+id+"?deleta=true",{
-            headers: {
-                'Authorization': 'bearer ' + sessionStorage.getItem("token")
-            }
-        })
-        .then((response)=>{
-            if(contatos.map(a=>a.id).indexOf(id)%(qtdPPag!==''?qtdPPag:15)===0) {
-                setContatosPage(contatosPage-1)}
-            setContatos(contatos.filter(a=> a.id !== id))
-        })
-        .catch((error) => {
-            if (error.response.status===401) {
-                navigate('/login')
-                RemoveSessao()
-                alert("Faça o login")
-            }else{ console.log(error)}
-        })
-    }
-
-    async function excluiRespostas(elemento){
-        await axios.delete(baseUrl+"/users/"+sessionStorage.getItem("userId")+"/forms/"+sessionStorage.getItem("formId")+"/enviados/"+elemento.id+"?deleta=false",{
-            headers: {
-                'Authorization': 'bearer ' + sessionStorage.getItem("token")
-            }
-        })
-        .then((response)=>{
-            elemento.respondido=0
-            setContatos(contatos.filter(a=> a.id !== elemento.id))
-            setContatos([
-                ...contatos
-            ])
-        })
-        .catch((error) => {
-            if (error.response.status===401) {
-                navigate('/login')
-                RemoveSessao()
-                alert("Faça o login")
-            }else{ console.log(error)}
-        })
-    }
-
-    function handleNewContato(){
-        return(
-            setNewContato(
-                <MDBListGroupItem noBorders className='rounded-3 mt-3 mb-3'>
-                    <MDBContainer fluid className='mt-2'>
-                    <div className='row'>
-                        <div className="col-12 pt-md-2 pt-sm-1">
-                            <MDBInputGroup>
-                                <MDBBtn color='secondary' className='numQuestao'>@</MDBBtn>
-                                <input onKeyDown={e=>{limit(e.target)}} onKeyUp={e=>{limit(e.target)}} className='form-control' type='text' id={'novoContatoEmail'}/>
-                            </MDBInputGroup>
-                        </div> {/* Email */}
-                        <div className="col-md-6 pt-md-2 pt-sm-1">
-                            <MDBInputGroup>
-                                <MDBBtn color='secondary' className='novoContatoForm px-2'>Nome</MDBBtn>
-                                <input onKeyDown={e=>{limit(e.target)}} onKeyUp={e=>{limit(e.target)}} className='form-control' type='text' id={'novoContatoNome'}/>
-                            </MDBInputGroup>
-                        </div> {/* Nome */}
-                        <div className="col-md-6 pt-md-2 pt-sm-1">
-                            <MDBInputGroup>
-                                <MDBBtn color='secondary' className='novoContatoForm px-2'>Matrícula</MDBBtn>
-                                <input onKeyDown={e=>{limit(e.target)}} onKeyUp={e=>{limit(e.target)}} className='form-control' type='text' id={'novoContatoMatricula'}/>
-                            </MDBInputGroup>
-                        </div> {/* Matrícula */}
-                        <div className="col-md-6 pt-md-2 pt-sm-1">
-                            <MDBInputGroup>
-                                <MDBBtn color='secondary' className='novoContatoForm px-2'>Telefone 1</MDBBtn>
-                                <InputMask mask='(99) 99999-9999' className='form-control' type='text' id={'novoContatoTelefone1'}/>
-                            </MDBInputGroup>
-                        </div> {/* Tel1 */}
-                        <div className="col-md-6 pt-md-2 pt-sm-1">
-                            <MDBInputGroup>
-                                <MDBBtn color='secondary' className='novoContatoForm px-2'>Telefone 2</MDBBtn>
-                                <InputMask mask='(99) 99999-9999' className='form-control' type='text' id={'novoContatoTelefone2'}/>
-                            </MDBInputGroup>
-                        </div> {/* Tel2 */}
-                        <div className="col-md-6 pt-md-2 pt-sm-1">
-                            <MDBInputGroup>
-                                <MDBBtn color='secondary' className='novoContatoForm px-2'>Curso</MDBBtn>
-                                <select id="novoContatoCurso" className='selectCurso novoContatoCurso'>
-                                    {cursos?.listaCursos?.map(item => {
-                                        return <option key={"newopcaocurso"+item.id} value={item.curso}>{item.curso}</option>
-                                    })}
-                                </select>
-                            </MDBInputGroup>
-                        </div> {/* Curso */}
-                        <div className="col-md-6 pt-md-2 pt-sm-1">
-                            <MDBInputGroup>
-                                <MDBBtn color='secondary' className='novoContatoForm px-2'>Modalidade do Curso</MDBBtn>
-                                <select id="novoContatoTipoCurso" className='selectCurso novoContatoTipoCurso'>
-                                    {cursos?.listaTipoCursos?.map(item => {
-                                        return <option key={"newopcaotipo"+item.id} value={item.tipoCurso}>{item.tipoCurso}</option>
-                                    })}
-                                </select>
-                            </MDBInputGroup>
-                        </div> {/* Modalidade */}
-                        <div className="col-md-6 pt-md-2 pt-sm-1">
-                            <MDBInputGroup>
-                                <MDBBtn color='secondary' className='novoContatoForm px-2'>CPF</MDBBtn>
-                                <InputMask mask='999.999.999-99'  className='form-control' type='text' id={'novoContatoCpf'}/>
-                            </MDBInputGroup>
-                        </div> {/* CPF */}
-                        <div className="col-md-6 pt-md-2 pt-sm-1">
-                            <MDBInputGroup>
-                                <MDBBtn color='secondary' className='novoContatoForm px-2'>Sexo</MDBBtn>
-                                <select id='novoContatoSexo' className='selectCurso novoContatoSexo'>
-                                    <option value="M">Masculino</option>
-                                    <option value="F">Feminino</option>
-                                    <option value="N">Não informar</option>
-                                </select>
-                            </MDBInputGroup>
-                        </div> {/* Sexo */}
-                        <div className="col-md-12 pt-md-2 pt-sm-1">
-                            <MDBInputGroup>
-                                <MDBBtn color='secondary' className='novoContatoForm px-2'>Data de colação</MDBBtn>
-                                <input className='selectCurso' type="date" id='novoContatoData'/>
-                            </MDBInputGroup>
-                        </div> {/* Data Colação */}
-                    </div>
-                    <div className='d-flex mt-2 mt-md-0'>
-                        <MDBBtn onClick={e=>{setNewContato(<></>)}} color='danger' className='ms-auto me-2'>Excluir</MDBBtn>
-                        <MDBBtn onClick={e=>{addContato()}}>Salvar</MDBBtn>
-                    </div>
-                    </MDBContainer>
-                </MDBListGroupItem>
-            )
-        )
-    } 
-
-    function showEditContato(element){
-        let v=document.getElementById("contatoEmail"+element.id)
-        v.disabled=!v.disabled
-        let p=document.getElementById("edit"+element.id)
-        p.style.display==='none'?p.style.display='block':p.style.display='none'
-        let erase=document.getElementById("erase"+element.id)
-        erase.style.display==='none'?erase.style.display='block':erase.style.display='none'
-        let send=document.getElementById("send"+element.id)
-        if(send.lastChild.nodeName==='SPAN'){
-            send.removeChild(send.lastChild)
-        }else{
-            let spanBlock = document.createElement('span')
-            spanBlock.className = 'input-group-text'
-            let sendSymbol = document.createElement('i')
-            sendSymbol.title ='Enviar formulário para este email'
-            sendSymbol.onclick = function (e) {sendOneEmail(element.id)}
-            sendSymbol.className = 'edit fas fa-light fa-paper-plane fa-sm'
-            send.appendChild(spanBlock)
-            send.lastChild.appendChild(sendSymbol)
-        }
-        let x=document.getElementById("contatoForm"+element.id)
-        x.style.display==='none'?x.style.display='block':x.style.display='none'
-        element.dataColacao?document.getElementById("contatoData"+element.id).value=element.dataColacao.substr(0,10):<></>;
-        document.getElementById("contatoTelefone1"+element.id).value=element.telefone1
-        document.getElementById("contatoTelefone2"+element.id).value=element.telefone2
-    }
-
-    function handleClick(elemento, cancel){
-        if(click.find((element)=>element?.id === elemento.id)){
-            setClick(click.filter(a=> a.id !== elemento.id))
-            document.getElementById('warning'+elemento.id).style.display='none'
-            document.getElementById('cancel'+elemento.id).style.display='none'
-            if(!cancel) excluiRespostas(elemento)
-        }else{
-            document.getElementById('warning'+elemento.id).style.display='block'
-            document.getElementById('cancel'+elemento.id).style.display='block'
-            setClick([...click,{id:elemento.id}])
-        }
-    }
-
-    async function sendEmails(){
-        setEnviou(true)
-        setCarregandoEnvio(true)
-        await axios.post(baseUrl+"/enviar",{UserId: sessionStorage.getItem("userId"),FormId: sessionStorage.getItem("formId")},{
-            headers: {
-                'Authorization': 'bearer ' + sessionStorage.getItem("token")
-            }
-        })
-        .then(()=>{setCarregandoEnvio(false)})
-        .catch((error) => {
-            if (error.response.status===401) {
-                navigate('/login')
-                RemoveSessao()
-                alert("Faça o login")
-            }else if(error.response.status===402){alert("Usuário não possui uma senha de aplicativo de gmail. Acesse a página do usuário para saber mais.")}
-            else{ console.log(error)}
-        })
-    }
-
-    async function sendOneEmail(id){
-        setEnviou(true)
-        setCarregandoEnvio(true)
-        await axios.post(baseUrl+"/enviarUnico",{UserId: sessionStorage.getItem("userId"),FormId: sessionStorage.getItem("formId"),EmailId:id},{
-            headers: {
-                'Authorization': 'bearer ' + sessionStorage.getItem("token")
-            }
-        })
-        .then(()=>{setCarregandoEnvio(false)})
-        .catch((error) => {
-            if (error.response.status===401) {
-                navigate('/login')
-                RemoveSessao()
-                alert("Faça o login")
-            }else if(error.response.status===402){alert("Usuário não possui uma senha de aplicativo de gmail. Acesse a página do usuário para saber mais.")}
-            else{ console.log(error)}
-        })
-    }
-
-    async function importEmails(){
-        let selectedFiles = document.getElementById('formFile').files;
-        if (selectedFiles.length>0) { 
-            document.getElementById('cancelmodalimports').disabled=true
-            var i,f;
-            for (i = 0, f = selectedFiles[i]; i !== selectedFiles.length; ++i) {
-                if(f.name.substr(f.name.length-5,5).toLowerCase()==='.xlsx'){
-                    let reader = new FileReader();
-                    reader.readAsArrayBuffer(f);
-                    reader.onload = (e) => {
-                        let binarystr = new Uint8Array(e.target.result);
-                        let wb = XLSX.read(binarystr, {cellDates:true});
-                        let wsname = wb.SheetNames[0];
-                        let data = XLSX.utils.sheet_to_json(wb.Sheets[wsname]);
-                        let json = JSON.stringify(data)
-                        json = json.replace(/":\s*[^"0-9.]*([0-9.Z]+)/g, '":"$1"');
-                        json = JSON.parse(json)
-                        axios.post(baseUrl+"/users/"+sessionStorage.getItem("userId")+"/forms/"+sessionStorage.getItem("formId")+"/cefetModel",json,{
-                            headers: {
-                                'Authorization': 'bearer ' + sessionStorage.getItem("token")
-                            }
-                        })
-                        .then(responsta=>{
-                            document.getElementById('cancelmodalimports').disabled=false
-                            CarregaEnvios(setContatos,setContatosDB,sessionStorage.getItem('formId'),navigate)
-                            CarregaCursosUser(setCursos,navigate)
-                            setImportModal(false)
-                        })
-                        .catch((error) => {
-                            if (error.response.status===401) {
-                                navigate('/login')
-                                RemoveSessao()
-                                alert("Faça o login")
-                            }else{ console.log(error)}
-                        })
-                    }
-                }else{
-                    document.getElementById('formFile').classList.add("is-invalid")
-                    break;
-                }
-            }
-        }else{
-            document.getElementById('formFile').classList.add("is-invalid")
-        }
-    }
-
-    const secaoContatos = <main className='mt-3 principal'> 
-        {Title(sessionStorage.getItem('nomePesquisa'),()=>{CarregaEnvios(setContatos,setContatosDB,sessionStorage.getItem('formId'),navigate)})}
-
-        {/* Barra de busca */}
-        <MDBContainer fluid className='shadow mt-3 p-3 rounded-3 bg-light'>
-            <MDBRadio name='buscaContato' label='Buscar por email' onClick={e=>{setNomeEmail(true)}} defaultChecked inline />
-            <MDBRadio name='buscaContato' label='Buscar por nome' onClick={e=>{setNomeEmail(false)}} inline />
-            <MDBInput 
-                className='mt-1'
-                type="text"
-                label="Busque aqui"
-                onChange={searchChange} />
-        </MDBContainer>
-
-        {/* Emails */}
-        <MDBListGroup small className='shadow mt-3' >
-            {renderizaContatos()}
-        </MDBListGroup>
-
-        {/* Novo Contato Form */}
-        {newContato}
-
-        {/* Botões de adição e envio de contatos */}
-        <div className='d-flex mt-3'>
-            <MDBBtn outline color='dark' className='border-1 bg-light contatoBotoes' onClick={e=>{handleNewContato()}}><i title='Adicionar novo email a enviar' className="edit fas fa-regular fa-plus fa-2x"></i></MDBBtn>
-            <div className='mx-1'><input value={qtdPPag} onChange={e=>{
-                if(e.target.value!=='' && Number(e.target.value>=1)){
-                    setQtdPPag(Number(e.target.value))
-                }else setQtdPPag('')
-                setContatosPage(1)
-            }} className="inputnumero form-control form-control-3 p-2" id="typeNumber" size='3' maxLength="3"/></div>
-            <MDBBtn outline color='dark' className='border-1 bg-light contatoBotoes ms-auto mx-2' onClick={e=>{setImportModal(true)}} ><i title='Importar emails de modelo CEFET-MG' className="edit fas fa-regular fa-file-import"></i></MDBBtn>
-            <MDBBtn outline color='dark' className='border-1 bg-light contatoBotoes' onClick={e=>{sendEmails()}}><i title='Enviar à todos os emails da lista' className="edit fas fa-light fa-paper-plane"></i></MDBBtn>
-        </div>
-        
-        {/* Modal para adicionar contatos no modelo Cefet */}
-        <MDBModal tabIndex='-1' show={importModal} setShow={setImportModal}>
-            <MDBModalDialog centered>
-                <MDBModalContent>
-                    <MDBModalHeader className='py-2'>
-                        Importar envios de arquivo (xslx)
-                    </MDBModalHeader>
-                    <MDBModalBody>
-                        <MDBFile label='Insira seu arquivo' size='lg' id='formFile' />
-                    </MDBModalBody>
-                    <MDBModalFooter>
-                        <MDBBtn id="cancelmodalimports" color='secondary' onClick={e=>{setImportModal(false)}}> Cancelar </MDBBtn>
-                        <MDBBtn onClick={e=>{importEmails()}}>Importar</MDBBtn>
-                    </MDBModalFooter>
-                </MDBModalContent>
-            </MDBModalDialog>
-        </MDBModal>
-
-        {/* Modal de avisar que foi enviado */}
-        <MDBModal tabIndex='-1' show={enviou} setShow={setEnviou}>
-            <MDBModalDialog centered>
-                <MDBModalContent>
-                    <MDBModalBody className='py-2'>
-                        {carregandoEnvio?
-                            <div><MDBSpinner color='primary' size='sm' role='status'/><span className='px-2'>Enviando...</span></div>:
-                            "Enviado com sucesso"}
-                    </MDBModalBody>
-                </MDBModalContent>
-            </MDBModalDialog>
-        </MDBModal>
-
-        {/* Modal de alerta de resposta presente em outro form */}
-        <MDBModal tabIndex='-1' show={respondidoDerivado} setShow={setRespondidoDerivado}>
-            <MDBModalDialog centered>
-                <MDBModalContent>
-                    <MDBModalHeader className='py-2'>
-                        Formulário derivado possui resposta, exclua primeiro a resposta dele.
-                    </MDBModalHeader>
-                    <MDBModalFooter>
-                        <MDBBtn color='secondary' onClick={e=>{setRespondidoDerivado(false)}}> Fechar </MDBBtn>
-                    </MDBModalFooter>
-                </MDBModalContent>
-            </MDBModalDialog>
-        </MDBModal>
-
-        {/* Pagination */}
-        {contatos.length>(qtdPPag!==''?qtdPPag:15)
-        ?<div className="d-flex justify-content-center mt-2">
-            {contatosPage<=3?
-            <MDBListGroup horizontal>
-                <MDBListGroupItem className='pages' onClick={e=>{setContatosPage(1)}}>1</MDBListGroupItem>
-                {Math.ceil(contatos.length/(qtdPPag!==''?qtdPPag:15))>1?<MDBListGroupItem className='pages' onClick={e=>{setContatosPage(2)}}>2</MDBListGroupItem>:<></>}
-                {Math.ceil(contatos.length/(qtdPPag!==''?qtdPPag:15))>2?<MDBListGroupItem className='pages' onClick={e=>{setContatosPage(3)}}>3</MDBListGroupItem>:<></>}
-                {Math.ceil(contatos.length/(qtdPPag!==''?qtdPPag:15))>3?<MDBListGroupItem className='pages' onClick={e=>{setContatosPage(4)}}>4</MDBListGroupItem>:<></>}
-                {Math.ceil(contatos.length/(qtdPPag!==''?qtdPPag:15))>4?<MDBListGroupItem className='pages' onClick={e=>{setContatosPage(5)}}>5</MDBListGroupItem>:<></>}
-                {Math.ceil(contatos.length/(qtdPPag!==''?qtdPPag:15))>5?<MDBListGroupItem className='pages' onClick={e=>{setContatosPage(Math.ceil(contatos.length/(qtdPPag!==''?qtdPPag:15)))}}>...</MDBListGroupItem>:<></>}
-            </MDBListGroup>
-            :contatosPage>((Math.ceil(contatos.length/(qtdPPag!==''?qtdPPag:15)))-3)?
-            <MDBListGroup horizontal>
-                {Math.ceil(contatos.length/(qtdPPag!==''?qtdPPag:15))-5>0?<MDBListGroupItem className='pages' onClick={e=>{setContatosPage(1)}} >...</MDBListGroupItem>:<></>}
-                {Math.ceil(contatos.length/(qtdPPag!==''?qtdPPag:15))-4>0?<MDBListGroupItem className='pages' onClick={e=>{setContatosPage(Math.ceil(contatos.length/(qtdPPag!==''?qtdPPag:15))-4)}}>{Math.ceil(contatos.length/(qtdPPag!==''?qtdPPag:15))-4}</MDBListGroupItem>:<></>}
-                {Math.ceil(contatos.length/(qtdPPag!==''?qtdPPag:15))-3>0?<MDBListGroupItem className='pages' onClick={e=>{setContatosPage(Math.ceil(contatos.length/(qtdPPag!==''?qtdPPag:15))-3)}}>{Math.ceil(contatos.length/(qtdPPag!==''?qtdPPag:15))-3}</MDBListGroupItem>:<></>}
-                <MDBListGroupItem className='pages' onClick={e=>{setContatosPage(Math.ceil(contatos.length/(qtdPPag!==''?qtdPPag:15))-2)}}>{Math.ceil(contatos.length/(qtdPPag!==''?qtdPPag:15))-2}</MDBListGroupItem>
-                <MDBListGroupItem className='pages' onClick={e=>{setContatosPage(Math.ceil(contatos.length/(qtdPPag!==''?qtdPPag:15))-1)}}>{Math.ceil(contatos.length/(qtdPPag!==''?qtdPPag:15))-1}</MDBListGroupItem>
-                <MDBListGroupItem className='pages' onClick={e=>{setContatosPage(Math.ceil(contatos.length/(qtdPPag!==''?qtdPPag:15)))}}>{Math.ceil(contatos.length/(qtdPPag!==''?qtdPPag:15))}</MDBListGroupItem>
-            </MDBListGroup>
-            :contatosPage>3?
-            <MDBListGroup horizontal>
-                <MDBListGroupItem className='pages' onClick={e=>{setContatosPage(1)}}>...</MDBListGroupItem>
-                <MDBListGroupItem className='pages' onClick={e=>{setContatosPage(contatosPage-2)}}>{contatosPage-2}</MDBListGroupItem>
-                <MDBListGroupItem className='pages' onClick={e=>{setContatosPage(contatosPage-1)}}>{contatosPage-1}</MDBListGroupItem>
-                <MDBListGroupItem className='pages' onClick={e=>{setContatosPage(contatosPage)}}>{contatosPage}</MDBListGroupItem>
-                <MDBListGroupItem className='pages' onClick={e=>{setContatosPage(contatosPage+1)}}>{contatosPage+1}</MDBListGroupItem>
-                <MDBListGroupItem className='pages' onClick={e=>{setContatosPage(contatosPage+2)}}>{contatosPage+2}</MDBListGroupItem>
-                <MDBListGroupItem className='pages' onClick={e=>{setContatosPage(Math.ceil(contatos.length/(qtdPPag!==''?qtdPPag:15)))}}>...</MDBListGroupItem>
-            </MDBListGroup>
-            :<></>}
-        </div>:<></>}
-    </main>
-    // Contatos
-
-    // Secao Respostas
-    function renderizaRepostas(){
-        return respostas?.respostas?.map(element => {
-            return(
-                <div key={element.id} className='col-md-6 col-xxl-4'>
-                <MDBListGroupItem className='shadow mt-3 rounded-3'>
-                    <div className='porcentagem'>
-                        {element.type===1?
-                        <MDBRadio disabled defaultChecked={true} className='mt-1' value='' inline/>:
-                        <MDBCheckbox disabled defaultChecked={true} className='mt-1' value='' inline/>}
-                        {element.numero+") "+element.enunciado}
-                    </div>
-                    <hr className='mt-0 mb-2'></hr>
-                    <div id={"resposta"+element.id} className='mx-2'>
-                        {element.type===9?makeBar(element,true):makeBar(element,false)}
-                    </div>
-                </MDBListGroupItem>
-                {element.derivadas.length>0?renderizaRepostasDerivadas(element.derivadas,element):<></>}</div>
-            )
-        })
-    }
-
-    function renderizaRepostasDerivadas(derivadas, questaoOrig){
-        let opcoes = [1,2,3,4,5,6,7,8,9,10]
-        return opcoes.map(opcao=>{
-            return (
-                <MDBListGroup key={questaoOrig.id+'respostasopcao'+opcao} className='mt-1 rounded-3' >
-                    {derivadas?.filter(s=>s.derivadaDeOpcao===opcao)?.map(element=>{
-                        return (<MDBListGroupItem key={element.id} className={'mt-1 rounded-3 opcao'+opcao}>
-                                    <div className='d-flex porcentagem'>{element.numero}) {element.enunciado}<div className='ms-auto'>{element.type===1?<MDBRadio disabled defaultChecked={true} className='mt-1' value='' inline/>:<MDBCheckbox disabled defaultChecked={true} className='mt-1' value='' inline/>}</div></div>
-                                    <hr className='mt-0 mb-2'></hr>
-                                    <div id={"resposta"+element.id} className='mx-2'>
-                                        {makeBar(element,false)}
-                                    </div>
-                                </MDBListGroupItem>)})}
-                </MDBListGroup>)
-        })
-    }
-
-    function makeBar(element,tipo){
-        let numero=0
-        let sum = element.resposta.reduce((partialSum, a) => partialSum + a.quantidade, 0);
-        let count=0
-        return element.resposta?.map((item,index)=>{
-            numero+=1
-            count+=1
-            let parcial=Math.trunc((item.quantidade/sum)*100)
-            if(!parcial) parcial=0
-            return(
-                <div key={'Barra'+element.id+count} className='mb-2 porcentagem'> 
-                    <div className={tipo?'rounded-3 px-1 mt-1 opcao'+count:"px-1 mt-1"}>{numero}) 
-                        <div style={{cursor:'pointer',display:'inline'}} onClick={()=>{
-                            setShow(item);
-                            CarregaRelatorio(setContatosResposta,navigate,sessionStorage.getItem('formId'),element?.id,item);}}>{" "+item.texto}
-                        </div>
-                    </div>
-                    <MDBProgress height='20' className='rounded-3'>
-                        <MDBProgressBar className='porcentagem' width={parcial} valuemin={0} valuemax={100}>{parcial}%</MDBProgressBar>
-                    </MDBProgress>
-                </div>
-            )
-        })
-    }
-
-    function renderizaRelatorio(){
-        return contatosResposta?.data?.map(contato => {
-            return <MDBInputGroup key={contato.email} className='mb-1'>
-                    <input className='form-control' type='text' defaultValue={contato.email} disabled/>
-                </MDBInputGroup>
-        })
-    }
-
-    const secaoRespostas = <main className='mt-3 principal'> 
-        {Title(sessionStorage.getItem('nomePesquisa'))}
-        <MDBListGroup small className='mt-3' >
-            <div className='row'>
-                {renderizaRepostas()}
-            </div>
-        </MDBListGroup>
-        <MDBModal show={show} tabIndex='-1' setShow={setShow}>
-            <MDBModalDialog size='md'>
-            <MDBModalContent>
-                <MDBModalHeader>
-                <MDBModalTitle>{contatosResposta?.enunciado}</MDBModalTitle>
-                <MDBBtn className='btn-close' color='none' onClick={e=>setShow(false)}></MDBBtn>
-                </MDBModalHeader>
-                <MDBContainer className='mt-2 mb-3 d-flex row justify-content-center'>
-                    {renderizaRelatorio()}
-                </MDBContainer>
-            </MDBModalContent>
-            </MDBModalDialog>
-        </MDBModal>
-    </main>
-    // Secao Respostas
-
 
     function makeSecao() {
         if(secao===1){
             return(secaoQuestoes)
         }else if(secao===2){
-            return(secaoContatos)
+            return(<SecaoDestinatarios navigate={navigate}/>)
         }else if(secao===3){
-            return(secaoRespostas)
+            return(<SecaoRespostas navigate={navigate} respostas={respostas}/>)
         }else{
-            return(<UserSection/>)
+            return(<UserSection navigate={navigate}/>)
         }
     }
 

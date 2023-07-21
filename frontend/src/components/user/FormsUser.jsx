@@ -8,14 +8,13 @@ import Sidebar from '../template/Sidebar'
 import UserSection from './UserSection'
 import axios from "axios"
 import baseUrl from "../../config/api"
-import {useNavigate, Link} from 'react-router-dom'
+import {Link} from 'react-router-dom'
 import {
     MDBInput, MDBTextArea,
     MDBListGroup, MDBListGroupItem,
     MDBBtn, MDBModal, MDBModalDialog, MDBModalContent, MDBModalHeader, MDBModalBody, MDBModalFooter} from 'mdb-react-ui-kit'
 
-export default function PaginaUsuario(){
-    const navigate = useNavigate();
+export default function PaginaUsuario({navigate}){
 
     // Modal para criar formulário
     const [centredModal, setCentredModal] = useState(false);
@@ -287,6 +286,7 @@ export default function PaginaUsuario(){
         <MDBListGroup small className='shadow mt-3 rounded-3 bg-light' >
             {renderizaForms()}
         </MDBListGroup>
+        
         <MDBBtn onClick={e=>{
             setAddForm(true)
             toggleShow({id: '', titulo:'', msgEmail: ''})
@@ -295,47 +295,47 @@ export default function PaginaUsuario(){
             document.getElementById('linkForm').value=null
             document.getElementById('rodEmailModal').value=null
             document.getElementById('formModal').readOnly = false
-            }} outline color='dark' className='border-1 bg-light contatoBotoes mt-3'><i className="edit fas fa-light fa-plus fa-2x"></i></MDBBtn>
+            }} outline color='dark' className='border-1 addFormButton bg-light mt-3'><i className="edit fas fa-light fa-plus fa-2x"></i></MDBBtn>
     
-            {/* Modal de Adicionar Form */}
-            <MDBModal staticBackdrop tabIndex='-1' show={centredModal} setShow={setCentredModal}>
-                <MDBModalDialog centered size='lg'>
-                    <MDBModalContent>
-                        <MDBModalBody>
-                            <MDBInput onKeyDown={changeActive} onKeyUp={changeActive} label='Titulo' id="formModal" type='text' className='active'/>
-                            <MDBTextArea onKeyDown={changeActive} onKeyUp={changeActive} rows={4} label='Mensagem do Email' id="msgEmailModal" className='mt-2 active' type='text'/>
-                            <MDBInput tabIndex='-1' label='Link do Formulário' className='mt-2 active' id="linkForm" readOnly/>
-                            <MDBTextArea onKeyDown={changeActive} onKeyUp={changeActive} rows={4} label='Rodapé do Email' id="rodEmailModal" className='mt-2 active' type='text'/>
-                        </MDBModalBody>
-                        <MDBModalFooter>
-                            <MDBBtn color='secondary' onClick={e=>{toggleShow({id: null, titulo:'', msgEmail: ''})}}> Cancelar </MDBBtn>
-                            <MDBBtn onClick={e=>{editForm()}}>Salvar mudanças</MDBBtn>
-                        </MDBModalFooter>
-                    </MDBModalContent>
-                </MDBModalDialog>
-            </MDBModal>
-            
-            {/* Modal de excluir Form */}
-            <MDBModal staticBackdrop tabIndex='-1' show={deletaFormulario} setShow={setDeletaFormulario}>
-                <MDBModalDialog centered>
-                    <MDBModalContent>
-                        <MDBModalHeader className='py-2'>
-                            Tem certeza que deseja excluir o formulário e todas as informações dele? (Emails, questões, dados)
-                        </MDBModalHeader>
-                        <MDBModalFooter>
-                            <MDBBtn color='secondary' onClick={e=>{setDeletaFormulario(false)}}> Cancelar </MDBBtn>
-                            <MDBBtn color='danger' onClick={e=>{deleteForm()}}>Excluir tudo</MDBBtn>
-                        </MDBModalFooter>
-                    </MDBModalContent>
-                </MDBModalDialog>
-            </MDBModal>
+        {/* Modal de Adicionar Form */}
+        <MDBModal staticBackdrop tabIndex='-1' show={centredModal} setShow={setCentredModal}>
+            <MDBModalDialog centered size='lg'>
+                <MDBModalContent>
+                    <MDBModalBody>
+                        <MDBInput onKeyDown={changeActive} onKeyUp={changeActive} label='Titulo' id="formModal" type='text' className='active'/>
+                        <MDBTextArea onKeyDown={changeActive} onKeyUp={changeActive} rows={4} label='Mensagem do Email' id="msgEmailModal" className='mt-2 active' type='text'/>
+                        <MDBInput tabIndex='-1' label='Link do Formulário' className='mt-2 active' id="linkForm" readOnly/>
+                        <MDBTextArea onKeyDown={changeActive} onKeyUp={changeActive} rows={4} label='Rodapé do Email' id="rodEmailModal" className='mt-2 active' type='text'/>
+                    </MDBModalBody>
+                    <MDBModalFooter>
+                        <MDBBtn color='secondary' onClick={e=>{toggleShow({id: null, titulo:'', msgEmail: ''})}}> Cancelar </MDBBtn>
+                        <MDBBtn onClick={e=>{editForm()}}>Salvar mudanças</MDBBtn>
+                    </MDBModalFooter>
+                </MDBModalContent>
+            </MDBModalDialog>
+        </MDBModal>
+        
+        {/* Modal de excluir Form */}
+        <MDBModal staticBackdrop tabIndex='-1' show={deletaFormulario} setShow={setDeletaFormulario}>
+            <MDBModalDialog centered>
+                <MDBModalContent>
+                    <MDBModalHeader className='py-2'>
+                        Tem certeza que deseja excluir o formulário e todas as informações dele? (Emails, questões, dados)
+                    </MDBModalHeader>
+                    <MDBModalFooter>
+                        <MDBBtn color='secondary' onClick={e=>{setDeletaFormulario(false)}}> Cancelar </MDBBtn>
+                        <MDBBtn color='danger' onClick={e=>{deleteForm()}}>Excluir tudo</MDBBtn>
+                    </MDBModalFooter>
+                </MDBModalContent>
+            </MDBModalDialog>
+        </MDBModal>
     </main>
        
     function makeSecao() {
         if(secao===1){
             return(secaoForms)
         }else if(secao===2){
-            return (<Dashboard />)
+            return (<Dashboard navigate={navigate}/>)
         }else{
             return (<UserSection navigate={navigate}/>)
         }

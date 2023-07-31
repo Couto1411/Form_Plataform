@@ -14,13 +14,13 @@ import {
     MDBBtn} from 'mdb-react-ui-kit';
 import SecaoRespostas from './SecaoResposta';
 import SecaoDestinatarios from './SecaoDestinatarios';
+import SecaoRelatorios from './SecaoRelatórios';
 
 export default function Forms({navigate}){
     // Aba de respostas da aplicação
     const [respostas, setRespostas] = useState(null);
     // Aba de questoes que mostra todas as questoes do formulario
     const [questoes, setQuestoes] = useState([]);
-    // Aba de envios que mostra todos os emails a serem enviados do formulario
     // Regula novas opcões
     const [input, setInput] = useState({content:<></>});
 
@@ -32,7 +32,7 @@ export default function Forms({navigate}){
     // Auxilia no processo de adicao da questao na pagina
     const [novaQuestao, setNovaQuestao] = useState({});
 
-    // Seta qual secao aparece, questoes, repostas ou envios
+    // Seta qual secao aparece, questoes, respostas, relatorios ou destinatarios
     const [secao, setsecao] = useState(1)
 
     useEffect(() => {
@@ -50,9 +50,8 @@ export default function Forms({navigate}){
                         <MDBListGroupItem key={element.id} className='shadow rounded-2 mb-3'>
                             <MDBInputGroup className='mb-2 mt-1'>
                                 <MDBBtn outline color='dark' onClick={e=>{toggleShowExcluiSalva(element.id)}} className='numQuestao'>{element.numero}</MDBBtn>
-                                <textarea className='form-control' id={'questao'+element.id} 
+                                <textarea className='form-control textAreaEnunciado' id={'questao'+element.id} 
                                     defaultValue={element.enunciado} disabled 
-                                    style={{borderTopLeftRadius:'0px',borderBottomLeftRadius:'0px'}} rows={2}
                                     onChange={e=>{limit(e.target);questoes[questoes.map(object => object.id).indexOf(element.id)].enunciado=e.target.value}}/>
                             </MDBInputGroup>
                             <div id={"opcoes"+element.id} className='mx-2'>
@@ -80,9 +79,8 @@ export default function Forms({navigate}){
                         <MDBListGroupItem key={element.id} className='shadow rounded-2 mb-3'>
                             <MDBInputGroup className='mb-2 mt-1'>
                                 <MDBBtn outline color='dark'  onClick={e=>{toggleShowExcluiSalva(element.id)}} className='numQuestao'>{element.numero}</MDBBtn>
-                                <textarea className='form-control' id={'questao'+element.id} 
+                                <textarea className='form-control textAreaEnunciado' id={'questao'+element.id} 
                                     defaultValue={element.enunciado} disabled 
-                                    style={{borderTopLeftRadius:'0px',borderBottomLeftRadius:'0px'}} rows={2}
                                     onChange={e=>{limit(e.target);questoes[questoes.map(object => object.id).indexOf(element.id)].enunciado=e.target.value}}/>
                             </MDBInputGroup>
                             <MDBTextArea rows={4} label='Resposta' readOnly className='mb-2'/>
@@ -98,9 +96,8 @@ export default function Forms({navigate}){
                         <MDBListGroupItem key={element.id} className='shadow rounded-2 mb-3'>
                             <MDBInputGroup className='mb-2 mt-1'>
                                 <MDBBtn outline color='dark' onClick={e=>{toggleShowExcluiSalva(element.id)}} className='numQuestao'>{element.numero}</MDBBtn>
-                                <textarea className='form-control' id={'questao'+element.id} 
+                                <textarea className='form-control textAreaEnunciado' id={'questao'+element.id} 
                                     defaultValue={element.enunciado} disabled 
-                                    style={{borderTopLeftRadius:'0px',borderBottomLeftRadius:'0px'}} rows={2}
                                     onChange={e=>{limit(e.target);questoes[questoes.map(object => object.id).indexOf(element.id)].enunciado=e.target.value}}/>
                             </MDBInputGroup>
                             <div id={"opcoes"+element.id} className='mx-2'>
@@ -142,9 +139,8 @@ export default function Forms({navigate}){
                         <MDBListGroupItem className='shadow rounded-2 mb-3'>
                             <MDBInputGroup className='mb-2 mt-1'>
                                 <MDBBtn outline color='dark' onClick={e=>{toggleShowExcluiSalva(element.id)}} className='numQuestao'>{element.numero}</MDBBtn>
-                                <textarea className='form-control' id={'questao'+element.id} 
+                                <textarea className='form-control textAreaEnunciado' id={'questao'+element.id} 
                                     defaultValue={element.enunciado} disabled 
-                                    style={{borderTopLeftRadius:'0px',borderBottomLeftRadius:'0px'}} rows={2}
                                     onChange={e=>{limit(e.target);questoes[questoes.map(object => object.id).indexOf(element.id)].enunciado=e.target.value}}/>
                             </MDBInputGroup>
                             <div id={"opcoes"+element.id} className='mx-2'>
@@ -357,7 +353,11 @@ export default function Forms({navigate}){
     }
 
     function handleNewQuestion(){
-        novaQuestao.type===4?questoes[0]?novaQuestao.numero=questoes.at(-1).numero:novaQuestao.numero=0:questoes[0]?novaQuestao.numero=questoes.at(-1).numero+1:novaQuestao.numero=1
+        novaQuestao.type===4?
+            questoes[0]?
+                novaQuestao.numero=questoes.at(-1).numero:novaQuestao.numero=0
+            :questoes[0]?
+                novaQuestao.numero=questoes.at(-1).numero+1:novaQuestao.numero=1
         setTypeQuestion(<></>)
         switch (novaQuestao.type) {
             case 1:
@@ -475,6 +475,8 @@ export default function Forms({navigate}){
             return(<SecaoDestinatarios navigate={navigate}/>)
         }else if(secao===3){
             return(<SecaoRespostas navigate={navigate} respostas={respostas}/>)
+        }else if(secao===4){
+            return(<SecaoRelatorios navigate={navigate}/>)
         }else{
             return(<UserSection navigate={navigate}/>)
         }
@@ -482,7 +484,7 @@ export default function Forms({navigate}){
 
     return(
         <section>
-            {Sidebar('questoes',setsecao, respostas?.quantidadeRespostas)}
+            {Sidebar({area:'questoes',setSecao:setsecao,qtdRespostas: respostas?.quantidadeRespostas})}
             {Navbar()}
 
             {makeSecao()} 

@@ -42,7 +42,7 @@ export default function FormularioResposta(props){
                         <MDBListGroupItem noBorders key={element.id} className={derivada?'rounded-3 mb-3 opcao1':'rounded-3 mb-3'}>
                             <div className='mt-1 rounded-3'>
                                 <MDBInputGroup id={element.id} className='mb-2 rounded-3'>
-                                    <MDBBtn disabled color='secondary' className='numQuestao'>{element.numero}</MDBBtn>
+                                    <MDBBtn disabled color='secondary' className='numQuestao'>{derivada?derivada+'.'+element.numero:element.numero}</MDBBtn>
                                     <div className='col-8 col-xs-9 col-sm-10 col-md-11'>
                                         <textarea className='form-control' style={{borderTopLeftRadius:'0px',borderBottomLeftRadius:'0px'}} id={'questao'+element.id} value={element.enunciado} disabled rows={2} />
                                     </div>
@@ -67,7 +67,7 @@ export default function FormularioResposta(props){
                         <MDBListGroupItem noBorders key={element.id} className={derivada?'rounded-3 mb-3 opcao1':'rounded-3 mb-3'}>
                             <div className='mt-1 rounded-3'>
                                 <MDBInputGroup id={element.id} className='mb-2 rounded-3'>
-                                    <MDBBtn disabled color='secondary' className='numQuestao'>{element.numero}</MDBBtn>
+                                    <MDBBtn disabled color='secondary' className='numQuestao'>{derivada?derivada+'.'+element.numero:element.numero}</MDBBtn>
                                     <div className='col-8 col-xs-9 col-sm-10 col-md-11'>
                                         <textarea className='form-control' style={{borderTopLeftRadius:'0px',borderBottomLeftRadius:'0px'}} id={'questao'+element.id} value={element.enunciado} disabled rows={2} />
                                     </div>
@@ -81,7 +81,7 @@ export default function FormularioResposta(props){
                         <MDBListGroupItem noBorders key={element.id} className={derivada?'rounded-3 mb-3 opcao1':'rounded-3 mb-3'}>
                             <div className='mt-1 rounded-3' >
                                 <MDBInputGroup id={element.id} className='mb-2 rounded-3'>
-                                    <MDBBtn disabled color='secondary' className='numQuestao'>{element.numero}</MDBBtn>
+                                    <MDBBtn disabled color='secondary' className='numQuestao'>{derivada?derivada+'.'+element.numero:element.numero}</MDBBtn>
                                     <div className='col-8 col-xs-9 col-sm-10 col-md-11'>
                                         <textarea className='form-control' style={{borderTopLeftRadius:'0px',borderBottomLeftRadius:'0px'}} id={'questao'+element.id} value={element.enunciado} disabled rows={2} />
                                     </div>
@@ -152,7 +152,7 @@ export default function FormularioResposta(props){
         return opcoes.map(element=> { 
             return(
                 <MDBListGroup id={questao.id+'opcao'+element} key={questao.id+'opcao'+element} style={{display: 'none'}} small>
-                    {questao.derivadas?.filter(s=>s.derivadaDeOpcao===element)?.length?renderizaQuestoes(questao.derivadas?.filter(s=>s.derivadaDeOpcao===element),true):null}
+                    {questao.derivadas?.filter(s=>s.derivadaDeOpcao===element)?.length?renderizaQuestoes(questao.derivadas?.filter(s=>s.derivadaDeOpcao===element),questao.numero):null}
                 </MDBListGroup>
             )
         })

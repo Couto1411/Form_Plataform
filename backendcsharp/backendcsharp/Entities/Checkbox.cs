@@ -33,5 +33,5 @@ public partial class Checkbox
 
     public virtual Questoes Questao { get; set; } = null!;
 
-    public virtual Enviado Resposta { get; set; } = null!;
+    public virtual Destinatario Resposta { get; set; } = null!;
 }

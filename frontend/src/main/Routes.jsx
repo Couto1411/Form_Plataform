@@ -9,6 +9,7 @@ import Forms from '../components/forms/Forms'
 import FormsDerivado from '../components/forms/FormsDerivados'
 import Resposta from '../components/forms/RespostaIndividual'
 import FormularioResposta from '../components/response/FormularioResp'
+import Relatorios, {LoadRelatorio} from '../components/dashboard/relatorio'
 
 export default function Props(){
     const navigate = useNavigate();
@@ -19,6 +20,8 @@ export default function Props(){
         <Route path='/admin' element={<Admin navigate={navigate}/>} exact/>
         <Route path='/forms/:formDeId' element={<FormsDerivado  navigate={navigate}/>} exact/>
         <Route path='/user' element={<FormsUser  navigate={navigate}/>} exact/>
+        <Route path='/load/relatorio' element={<LoadRelatorio  navigate={navigate}/>} exact/>
+        <Route path='/relatorio' element={<Relatorios  navigate={navigate}/>} exact/>
         <Route path='/login' element={<Login  navigate={navigate}/>} exact/>
         <Route path="*" element={<Navigate to="/login" replace navigate={navigate}/>}/>
     </Routes>

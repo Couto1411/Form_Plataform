@@ -1,6 +1,8 @@
-﻿namespace backendcsharp.DTO;
+﻿using backendcsharp.Entities;
 
-public partial class EnviadoDTO
+namespace backendcsharp.DTO;
+
+public partial class DestinatarioDTO
 {
     public uint? id { get; set; } = null!;
 
@@ -16,7 +18,7 @@ public partial class EnviadoDTO
     public string? cpf { get; set; } = null!;
     public string? sexo { get; set; } = null!;
     public string? curso { get; set; } = null!;
-    public string? tipoDeCurso { get; set; } = null!;
+    public string? modalidade { get; set; } = null!;
     public DateTime? dataColacao { get; set; } = null!;
 
     public virtual ICollection<CheckboxDTO> checkboxes { get; } = new List<CheckboxDTO>();
@@ -26,4 +28,23 @@ public partial class EnviadoDTO
     public virtual ICollection<RadioboxDTO> radioboxes { get; } = new List<RadioboxDTO>();
 
     public virtual ICollection<TextDTO> texts { get; } = new List<TextDTO>();
+
+    public DestinatarioDTO() { }
+
+    public DestinatarioDTO(Destinatario envio) : this()
+    {
+        id = envio.Id;
+        nome = envio.Nome;
+        formId = envio.FormId;
+        respondido = envio.Respondido;
+        email = envio.Email;
+        telefone1 = envio.Telefone1;
+        telefone2 = envio.Telefone2;
+        matricula = envio.Matricula;
+        cpf = envio.Cpf;
+        sexo = envio.Sexo;
+        curso = envio.Curso;
+        modalidade = envio.Modalidade;
+        dataColacao = envio.DataColacao;
+    }
 }

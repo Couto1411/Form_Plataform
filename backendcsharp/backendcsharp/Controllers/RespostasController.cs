@@ -55,8 +55,8 @@ namespace backendcsharp.Controllers
                     })
                     .Where(s => s.id == FormId)
                     .FirstOrDefaultAsync();
-                var enviado = await ProjetoDbContext.Enviados
-                    .Select(s => new EnviadoDTO
+                var destinatario = await ProjetoDbContext.Destinatarios
+                    .Select(s => new DestinatarioDTO
                     {
                         id = s.Id,
                         formId = s.FormId,
@@ -65,7 +65,7 @@ namespace backendcsharp.Controllers
                     })
                     .Where(s => (s.formId == FormId && s.email == Resp.email && (s.respondido == 0 || s.respondido == 1)))
                     .FirstOrDefaultAsync();
-                if (Form is not null && enviado is not null) {
+                if (Form is not null && destinatario is not null) {
                     FormId = Form.derivadoDeId is not null? (int)Form.derivadoDeId:FormId;
                     foreach (var item in Resp.respostas)
                     {
@@ -77,24 +77,23 @@ namespace backendcsharp.Controllers
                                 numero = s.Numero
                             })
                             .Where(s => (s.formId == FormId && s.id==item.id))
-                            .FirstOrDefaultAsync();
-                        if (questao is null) throw new Exception("Questao não encontrada");
+                            .FirstOrDefaultAsync() ?? throw new Exception("Questao não encontrada");
                         if (item.radio is not null)
                         {
                             var entity = new Radiobox()
                             {
                                 QuestaoId = questao.id != null ? (uint)questao.id : throw new Exception("Questao id nulo"),
-                                RespostaId = enviado.id != null ? (uint)enviado.id : throw new Exception("Resposta id nulo"),
+                                RespostaId = destinatario.id != null ? (uint)destinatario.id : throw new Exception("Resposta id nulo"),
                                 Radio = item.radio
                             };
                             ProjetoDbContext.Radioboxes.Add(entity);
                         }
-                        else if (item.opcoes.Count() > 0)
+                        else if (item.opcoes.Count > 0)
                         {
                             var entity = new Checkbox()
                             {
                                 QuestaoId = questao.id != null ? (uint)questao.id : throw new Exception("Questao id nulo"),
-                                RespostaId = enviado.id != null ? (uint)enviado.id : throw new Exception("Resposta id nulo"),
+                                RespostaId = destinatario.id != null ? (uint)destinatario.id : throw new Exception("Resposta id nulo"),
                                 Opcao1 = item.opcoes.IndexOf(1) != -1 ? true : null,
                                 Opcao2 = item.opcoes.IndexOf(2) != -1 ? true : null,
                                 Opcao3 = item.opcoes.IndexOf(3) != -1 ? true : null,
@@ -113,21 +112,21 @@ namespace backendcsharp.Controllers
                             var entity = new Text()
                             {
                                 QuestaoId = questao.id != null ? (uint)questao.id : throw new Exception("Questao id nulo"),
-                                RespostaId = enviado.id != null ? (uint)enviado.id : throw new Exception("Resposta id nulo"),
+                                RespostaId = destinatario.id != null ? (uint)destinatario.id : throw new Exception("Resposta id nulo"),
                                 Texto = string.IsNullOrEmpty(item.texto)? throw new Exception("Texto vazio") : item.texto
                             };
                             ProjetoDbContext.Texts.Add(entity);
                         }
                         else throw new Exception("Entrada errada");
                     }
-                    var enviadoUpdate = await ProjetoDbContext.Enviados.FirstOrDefaultAsync(s => s.Id == enviado.id);
-                    if (enviadoUpdate != null)
+                    var destinatarioUpdate = await ProjetoDbContext.Destinatarios.FirstOrDefaultAsync(s => s.Id == destinatario.id);
+                    if (destinatarioUpdate != null)
                     {
-                        enviadoUpdate.Respondido = 2;
+                        destinatarioUpdate.Respondido = 2;
                         await ProjetoDbContext.SaveChangesAsync();
                         return StatusCode(204);
                     }
-                    else throw new Exception("Id não encontrado (UpdateEnvio)");
+                    else throw new Exception("Id não encontrado (InsertResposta)");
 
                 }
                 else throw new Exception("Usuario nao permitido para responder ou Formulario ja respondido por usuario");
@@ -151,18 +150,24 @@ namespace backendcsharp.Controllers
             public virtual List<string> opcoes { get; set; } = new List<string>();
         }
 
+        public class RespostaIndividual
+        {
+            public List<TipoResposta> Respostas { get; set; } = new();
+            public string? Nome { get; set; } = "";
+        }
+
         // Pegar as respostas de um email especifico
-        [HttpGet("users/{Id}/forms/{FormId}/respostas/{EnviadoId}")]
+        [HttpGet("users/{Id}/forms/{FormId}/respostas/{DestinatarioId}")]
         [Authorize("Bearer")]
-        public async Task<ActionResult<List<TipoResposta>>> GetRespostasByEnviadoId([FromRoute] int FormId, [FromRoute] int EnviadoId)
+        public async Task<ActionResult<RespostaIndividual>> GetRespostasByDestinatarioId([FromRoute] int FormId, [FromRoute] int DestinatarioId)
         {
             try
             {
-                List<TipoResposta> response = new List<TipoResposta>();
+                RespostaIndividual response = new();
                 Handlers.ExistsOrError(FormId.ToString(), "Id do formulário não informado");
                 Handlers.IdNegative(FormId, "Id do formulário inválido");
-                Handlers.ExistsOrError(EnviadoId.ToString(), "Id do email não informado");
-                Handlers.IdNegative(EnviadoId, "Id do email inválido");
+                Handlers.ExistsOrError(DestinatarioId.ToString(), "Id do email não informado");
+                Handlers.IdNegative(DestinatarioId, "Id do email inválido");
                 var questoes =await
                        (from questao in ProjetoDbContext.Questoes
                        where questao.FormId == FormId && questao.DerivadaDeId == null
@@ -186,8 +191,9 @@ namespace backendcsharp.Controllers
                            opcao10 = questao.Opcao10
                        }).ToListAsync();
                 // Adiciona as respostas para cada questão numa lista
-                response = await PegarRespostasIndividual(questoes, FormId, EnviadoId);
-                 // Retorna resposta
+                response.Respostas = await PegarRespostasIndividual(questoes, FormId, DestinatarioId);
+                // Retorna resposta
+                response.Nome = await (from destinatario in ProjetoDbContext.Destinatarios where destinatario.Id == DestinatarioId select destinatario.Nome).FirstOrDefaultAsync();
                 return response;
             }
             catch (Exception ex)
@@ -195,16 +201,16 @@ namespace backendcsharp.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-        public async Task<List<TipoResposta>> PegarRespostasIndividual(List<QuestoesDTO> questoes, int FormId, int EnviadoId)
+        public async Task<List<TipoResposta>> PegarRespostasIndividual(List<QuestoesDTO> questoes, int FormId, int DestinatarioId)
         {
-            List<TipoResposta> response = new List<TipoResposta>();
+            List<TipoResposta> response = new();
             foreach (var item in questoes)
             {
                 switch (item.type)
                 {
                     // Adiciona questões do tipo RadioBox
                     case 1:
-                        TipoResposta radio = new TipoResposta();
+                        TipoResposta radio = new();
                         if (item.opcao1 is not null)
                         {
                             // Acha a resposta da questão
@@ -215,7 +221,7 @@ namespace backendcsharp.Controllers
                                     questaoId = s.QuestaoId,
                                     respostaId = s.RespostaId
                                 })
-                                .Where(s => (s.questaoId == item.id && s.respostaId == EnviadoId))
+                                .Where(s => (s.questaoId == item.id && s.respostaId == DestinatarioId))
                                 .FirstOrDefaultAsync();
                             if (radioBoxDB is not null)
                             {
@@ -268,7 +274,7 @@ namespace backendcsharp.Controllers
 
                     // Adiciona questões do tipo Texto
                     case 2:
-                        TipoResposta texto = new TipoResposta();
+                        TipoResposta texto = new();
 
                         // Acha a resposta da questão
                         var textDB = await ProjetoDbContext.Texts
@@ -278,7 +284,7 @@ namespace backendcsharp.Controllers
                                 questaoId = s.QuestaoId,
                                 respostaId = s.RespostaId
                             })
-                            .Where(s => (s.questaoId == item.id && s.respostaId == EnviadoId))
+                            .Where(s => (s.questaoId == item.id && s.respostaId == DestinatarioId))
                             .FirstOrDefaultAsync();
 
                         // Coloca o texto respondido na estrutura "TipoResposta"
@@ -297,7 +303,7 @@ namespace backendcsharp.Controllers
 
                     // Adiciona questões do tipo Checkbox
                     case 3:
-                        TipoResposta check = new TipoResposta();
+                        TipoResposta check = new();
                         if (item.opcao1 is not null)
                         {
                             // Acha a resposta da questão
@@ -317,7 +323,7 @@ namespace backendcsharp.Controllers
                                     questaoId = s.QuestaoId,
                                     respostaId = s.RespostaId
                                 })
-                                .Where(s => (s.questaoId == item.id && s.respostaId == EnviadoId))
+                                .Where(s => (s.questaoId == item.id && s.respostaId == DestinatarioId))
                                 .FirstOrDefaultAsync();
                             if (checkBoxDB is not null)
                             {
@@ -343,16 +349,18 @@ namespace backendcsharp.Controllers
                         response.Add(check);
                         break;
                     case 4:
-                        TipoResposta descricao = new TipoResposta();
-                        descricao.enunciado = item.enunciado;
-                        descricao.id = item.id != null ? (uint)item.id : throw new Exception("Id da questão não encontrado");
-                        descricao.type = item.type;
-                        descricao.numero = item.numero;
+                        TipoResposta descricao = new()
+                        {
+                            enunciado = item.enunciado,
+                            id = item.id != null ? (uint)item.id : throw new Exception("Id da questão não encontrado"),
+                            type = item.type,
+                            numero = item.numero
+                        };
                         response.Add(descricao);
                         break;
                     case 9:
-                        TipoResposta questaoOrig = new TipoResposta();
-                        List<TipoResposta> derivadas = new List<TipoResposta>();
+                        TipoResposta questaoOrig = new();
+                        List<TipoResposta> derivadas = new();
                         if (item.opcao1 is not null)
                         {
                             // Acha a resposta da questão
@@ -363,7 +371,7 @@ namespace backendcsharp.Controllers
                                     questaoId = s.QuestaoId,
                                     respostaId = s.RespostaId
                                 })
-                                .Where(s => (s.questaoId == item.id && s.respostaId == EnviadoId))
+                                .Where(s => (s.questaoId == item.id && s.respostaId == DestinatarioId))
                                 .FirstOrDefaultAsync();
                             if (questaoOrigDB is not null)
                             {
@@ -426,7 +434,7 @@ namespace backendcsharp.Controllers
                                             opcao9 = questaodb.Opcao9,
                                             opcao10 = questaodb.Opcao10
                                         }).ToListAsync();
-                                derivadas = await PegarRespostasIndividual(questoesDerivadas, FormId, EnviadoId);
+                                derivadas = await PegarRespostasIndividual(questoesDerivadas, FormId, DestinatarioId);
                             }
                         }
 
@@ -484,10 +492,10 @@ namespace backendcsharp.Controllers
         }
 
 
-        // Pegar os contatos de uma certa pergunta e opcao
+        // Pegar os destinatarios de uma certa pergunta e opcao
         [HttpGet("respostas/forms/{FormId}/questao/{QuestId}/{Opcao}")]
         [Authorize("Bearer")]
-        public async Task<ActionResult<List<EnviadoDTO>>> SelecionarContatos([FromRoute] int QuestId, [FromRoute] int FormId, [FromRoute] int Opcao )
+        public async Task<ActionResult<List<DestinatarioDTO>>> SelecionarDestinatarios([FromRoute] int QuestId, [FromRoute] int FormId, [FromRoute] int Opcao )
         {
             try
             {
@@ -497,20 +505,19 @@ namespace backendcsharp.Controllers
                 Handlers.IdNegative(QuestId, "Id da questão inválido");
                 Handlers.ExistsOrError(Opcao.ToString(), "Opção da questão não informado");
                 Handlers.IdNegative(Opcao, "Opção da questão inválido");
-                var questao = await ProjetoDbContext.Questoes.Where(s => (s.Id == QuestId)).FirstOrDefaultAsync();
-                if (questao == null) throw new Exception("Questão não encontrada");
-                List<EnviadoDTO> contatos = new();
+                var questao = await ProjetoDbContext.Questoes.Where(s => (s.Id == QuestId)).FirstOrDefaultAsync() ?? throw new Exception("Questão não encontrada");
+                List<DestinatarioDTO> destinatarios = new();
                 if (questao.Type == 1 || questao.Type == 9)
                 {
-                    contatos = await
-                    (from enviado in ProjetoDbContext.Enviados
-                     join radio in ProjetoDbContext.Radioboxes on enviado.Id equals radio.RespostaId
-                     where radio.QuestaoId==QuestId && radio.Radio==Opcao && enviado.FormId==FormId
-                     select new EnviadoDTO
+                    destinatarios = await
+                    (from destinatario in ProjetoDbContext.Destinatarios
+                     join radio in ProjetoDbContext.Radioboxes on destinatario.Id equals radio.RespostaId
+                     where radio.QuestaoId==QuestId && radio.Radio==Opcao && destinatario.FormId==FormId
+                     select new DestinatarioDTO
                      {
-                         id = enviado.Id,
-                         email = enviado.Email,
-                         nome = enviado.Nome
+                         id = destinatario.Id,
+                         email = destinatario.Email,
+                         nome = destinatario.Nome
                      }).ToListAsync();
                 }
                 else if (questao.Type == 3)
@@ -518,80 +525,80 @@ namespace backendcsharp.Controllers
                     switch (Opcao)
                     {
                         case 1:
-                            contatos = await
-                            (from enviado in ProjetoDbContext.Enviados
-                             join check in ProjetoDbContext.Checkboxes on enviado.Id equals check.RespostaId
-                             where check.QuestaoId == QuestId && check.Opcao1 == true && enviado.FormId == FormId
-                             select new EnviadoDTO { id = enviado.Id, email = enviado.Email, nome = enviado.Nome }).ToListAsync();
+                            destinatarios = await
+                            (from destinatario in ProjetoDbContext.Destinatarios
+                             join check in ProjetoDbContext.Checkboxes on destinatario.Id equals check.RespostaId
+                             where check.QuestaoId == QuestId && check.Opcao1 == true && destinatario.FormId == FormId
+                             select new DestinatarioDTO { id = destinatario.Id, email = destinatario.Email, nome = destinatario.Nome }).ToListAsync();
                             break;
                         case 2:
-                            contatos = await
-                            (from enviado in ProjetoDbContext.Enviados
-                             join check in ProjetoDbContext.Checkboxes on enviado.Id equals check.RespostaId
-                             where check.QuestaoId == QuestId && check.Opcao2 == true && enviado.FormId == FormId
-                             select new EnviadoDTO { id = enviado.Id, email = enviado.Email, nome = enviado.Nome }).ToListAsync();
+                            destinatarios = await
+                            (from destinatario in ProjetoDbContext.Destinatarios
+                             join check in ProjetoDbContext.Checkboxes on destinatario.Id equals check.RespostaId
+                             where check.QuestaoId == QuestId && check.Opcao2 == true && destinatario.FormId == FormId
+                             select new DestinatarioDTO { id = destinatario.Id, email = destinatario.Email, nome = destinatario.Nome }).ToListAsync();
                             break;
                         case 3:
-                            contatos = await
-                            (from enviado in ProjetoDbContext.Enviados
-                             join check in ProjetoDbContext.Checkboxes on enviado.Id equals check.RespostaId
-                             where check.QuestaoId == QuestId && check.Opcao3 == true && enviado.FormId == FormId
-                             select new EnviadoDTO { id = enviado.Id, email = enviado.Email, nome = enviado.Nome }).ToListAsync();
+                            destinatarios = await
+                            (from destinatario in ProjetoDbContext.Destinatarios
+                             join check in ProjetoDbContext.Checkboxes on destinatario.Id equals check.RespostaId
+                             where check.QuestaoId == QuestId && check.Opcao3 == true && destinatario.FormId == FormId
+                             select new DestinatarioDTO { id = destinatario.Id, email = destinatario.Email, nome = destinatario.Nome }).ToListAsync();
                             break;
                         case 4:
-                            contatos = await
-                            (from enviado in ProjetoDbContext.Enviados
-                             join check in ProjetoDbContext.Checkboxes on enviado.Id equals check.RespostaId
-                             where check.QuestaoId == QuestId && check.Opcao4 == true && enviado.FormId == FormId
-                             select new EnviadoDTO { id = enviado.Id, email = enviado.Email, nome = enviado.Nome }).ToListAsync();
+                            destinatarios = await
+                            (from destinatario in ProjetoDbContext.Destinatarios
+                             join check in ProjetoDbContext.Checkboxes on destinatario.Id equals check.RespostaId
+                             where check.QuestaoId == QuestId && check.Opcao4 == true && destinatario.FormId == FormId
+                             select new DestinatarioDTO { id = destinatario.Id, email = destinatario.Email, nome = destinatario.Nome }).ToListAsync();
                             break;
                         case 5:
-                            contatos = await
-                            (from enviado in ProjetoDbContext.Enviados
-                             join check in ProjetoDbContext.Checkboxes on enviado.Id equals check.RespostaId
-                             where check.QuestaoId == QuestId && check.Opcao5 == true && enviado.FormId == FormId
-                             select new EnviadoDTO { id = enviado.Id, email = enviado.Email, nome = enviado.Nome }).ToListAsync();
+                            destinatarios = await
+                            (from destinatario in ProjetoDbContext.Destinatarios
+                             join check in ProjetoDbContext.Checkboxes on destinatario.Id equals check.RespostaId
+                             where check.QuestaoId == QuestId && check.Opcao5 == true && destinatario.FormId == FormId
+                             select new DestinatarioDTO { id = destinatario.Id, email = destinatario.Email, nome = destinatario.Nome }).ToListAsync();
                             break;
                         case 6:
-                            contatos = await
-                            (from enviado in ProjetoDbContext.Enviados
-                             join check in ProjetoDbContext.Checkboxes on enviado.Id equals check.RespostaId
-                             where check.QuestaoId == QuestId && check.Opcao6 == true && enviado.FormId == FormId
-                             select new EnviadoDTO { id = enviado.Id, email = enviado.Email, nome = enviado.Nome }).ToListAsync();
+                            destinatarios = await
+                            (from destinatario in ProjetoDbContext.Destinatarios
+                             join check in ProjetoDbContext.Checkboxes on destinatario.Id equals check.RespostaId
+                             where check.QuestaoId == QuestId && check.Opcao6 == true && destinatario.FormId == FormId
+                             select new DestinatarioDTO { id = destinatario.Id, email = destinatario.Email, nome = destinatario.Nome }).ToListAsync();
                             break;
                         case 7:
-                            contatos = await
-                            (from enviado in ProjetoDbContext.Enviados
-                             join check in ProjetoDbContext.Checkboxes on enviado.Id equals check.RespostaId
-                             where check.QuestaoId == QuestId && check.Opcao7 == true && enviado.FormId == FormId
-                             select new EnviadoDTO { id = enviado.Id, email = enviado.Email, nome = enviado.Nome }).ToListAsync();
+                            destinatarios = await
+                            (from destinatario in ProjetoDbContext.Destinatarios
+                             join check in ProjetoDbContext.Checkboxes on destinatario.Id equals check.RespostaId
+                             where check.QuestaoId == QuestId && check.Opcao7 == true && destinatario.FormId == FormId
+                             select new DestinatarioDTO { id = destinatario.Id, email = destinatario.Email, nome = destinatario.Nome }).ToListAsync();
                             break;
                         case 8:
-                            contatos = await
-                            (from enviado in ProjetoDbContext.Enviados
-                             join check in ProjetoDbContext.Checkboxes on enviado.Id equals check.RespostaId
-                             where check.QuestaoId == QuestId && check.Opcao8 == true && enviado.FormId == FormId
-                             select new EnviadoDTO { id = enviado.Id, email = enviado.Email, nome = enviado.Nome }).ToListAsync();
+                            destinatarios = await
+                            (from destinatario in ProjetoDbContext.Destinatarios
+                             join check in ProjetoDbContext.Checkboxes on destinatario.Id equals check.RespostaId
+                             where check.QuestaoId == QuestId && check.Opcao8 == true && destinatario.FormId == FormId
+                             select new DestinatarioDTO { id = destinatario.Id, email = destinatario.Email, nome = destinatario.Nome }).ToListAsync();
                             break;
                         case 9:
-                            contatos = await
-                            (from enviado in ProjetoDbContext.Enviados
-                             join check in ProjetoDbContext.Checkboxes on enviado.Id equals check.RespostaId
-                             where check.QuestaoId == QuestId && check.Opcao9 == true && enviado.FormId == FormId
-                             select new EnviadoDTO { id = enviado.Id, email = enviado.Email, nome = enviado.Nome }).ToListAsync();
+                            destinatarios = await
+                            (from destinatario in ProjetoDbContext.Destinatarios
+                             join check in ProjetoDbContext.Checkboxes on destinatario.Id equals check.RespostaId
+                             where check.QuestaoId == QuestId && check.Opcao9 == true && destinatario.FormId == FormId
+                             select new DestinatarioDTO { id = destinatario.Id, email = destinatario.Email, nome = destinatario.Nome }).ToListAsync();
                             break;
                         case 10:
-                            contatos = await
-                            (from enviado in ProjetoDbContext.Enviados
-                             join check in ProjetoDbContext.Checkboxes on enviado.Id equals check.RespostaId
-                             where check.QuestaoId == QuestId && check.Opcao10 == true && enviado.FormId == FormId
-                             select new EnviadoDTO { id = enviado.Id, email = enviado.Email, nome = enviado.Nome }).ToListAsync();
+                            destinatarios = await
+                            (from destinatario in ProjetoDbContext.Destinatarios
+                             join check in ProjetoDbContext.Checkboxes on destinatario.Id equals check.RespostaId
+                             where check.QuestaoId == QuestId && check.Opcao10 == true && destinatario.FormId == FormId
+                             select new DestinatarioDTO { id = destinatario.Id, email = destinatario.Email, nome = destinatario.Nome }).ToListAsync();
                             break;
                         default:
                             break;
                     }
                 }
-                return contatos;
+                return destinatarios;
 
             }
             catch (Exception ex)
@@ -607,7 +614,7 @@ namespace backendcsharp.Controllers
         {
             try
             {
-                List<QuantidadeResposta> response = new List<QuantidadeResposta>();
+                List<QuantidadeResposta> response = new();
                 Handlers.ExistsOrError(FormId.ToString(), "Id do formulário não informado");
                 Handlers.IdNegative(FormId, "Id do formulário inválido");
                 var formulario = await ProjetoDbContext.Formularios.Where(s => (s.Id == FormId)).FirstOrDefaultAsync();
@@ -639,9 +646,9 @@ namespace backendcsharp.Controllers
                 response = await PegarRespostas(questoes, FormId, FormularioId);
                 // Pega quantidade de respostas total
                 var respostasquant = await
-                    (from envio in ProjetoDbContext.Enviados
-                     where envio.FormId == FormId && envio.Respondido == 2
-                     select new { id = envio.Id }
+                    (from destinatario in ProjetoDbContext.Destinatarios
+                     where destinatario.FormId == FormId && destinatario.Respondido == 2
+                     select new { id = destinatario.Id }
                     ).CountAsync();
                 // Retorna resposta
                 return new RetornoRespostas(respostasquant, response);
@@ -653,7 +660,7 @@ namespace backendcsharp.Controllers
         }
         public async Task<List<QuantidadeResposta>> PegarRespostas( List<QuestoesDTO> questoes, int FormId, int FormularioId)
         {
-            List<QuantidadeResposta> response = new List<QuantidadeResposta>();
+            List<QuantidadeResposta> response = new();
             foreach (var item in questoes)
             {
                 switch (item.type)
@@ -662,12 +669,12 @@ namespace backendcsharp.Controllers
                     case 1:
                         if (item.opcao1 is not null)
                         {
-                            QuantidadeResposta radio = new QuantidadeResposta();
+                            QuantidadeResposta radio = new();
 
                             // Acha as respostas da questão
                             var radioBoxDB =
                                    from radiobox in ProjetoDbContext.Radioboxes
-                                   join resposta in ProjetoDbContext.Enviados on radiobox.RespostaId equals resposta.Id
+                                   join resposta in ProjetoDbContext.Destinatarios on radiobox.RespostaId equals resposta.Id
                                    where radiobox.QuestaoId == item.id && resposta.FormId == FormId
                                    select new RadioboxDTO
                                    {
@@ -698,12 +705,12 @@ namespace backendcsharp.Controllers
                     case 3:
                         if (item.opcao1 is not null)
                         {
-                            QuantidadeResposta check = new QuantidadeResposta();
+                            QuantidadeResposta check = new();
 
                             // Acha a resposta da questão
                             var checkBoxDB =
                                    from checkbox in ProjetoDbContext.Checkboxes
-                                   join resposta in ProjetoDbContext.Enviados on checkbox.RespostaId equals resposta.Id
+                                   join resposta in ProjetoDbContext.Destinatarios on checkbox.RespostaId equals resposta.Id
                                    where checkbox.QuestaoId == item.id && resposta.FormId == FormId
                                    select new CheckboxDTO
                                    {
@@ -741,11 +748,11 @@ namespace backendcsharp.Controllers
                         }
                         break;
                     case 9:
-                        QuantidadeResposta questao = new QuantidadeResposta();
+                        QuantidadeResposta questao = new();
                         // Acha as respostas da questão
                         var questaoDB =
                                from radiobox in ProjetoDbContext.Radioboxes
-                               join resposta in ProjetoDbContext.Enviados on radiobox.RespostaId equals resposta.Id
+                               join resposta in ProjetoDbContext.Destinatarios on radiobox.RespostaId equals resposta.Id
                                where radiobox.QuestaoId == item.id && resposta.FormId == FormId
                                select new RadioboxDTO
                                {

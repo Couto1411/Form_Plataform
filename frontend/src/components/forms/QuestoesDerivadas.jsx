@@ -8,7 +8,7 @@ import {
     MDBBtn} from 'mdb-react-ui-kit';
 
 
-export default function QuestoesDerivadas(props,{navigate}){
+export default function QuestoesDerivadas({navigate,questao}){
     
     // Modifia visibilidade da area de nova questao - 1 parte tipo questao
     const [typeQuestion, setTypeQuestion] = useState(<></>);
@@ -27,26 +27,8 @@ export default function QuestoesDerivadas(props,{navigate}){
 
     useEffect(() => {
         if (sessionStorage.getItem("token")){
-            async function CarregaQuestoes(){
-                await axios.get(baseUrl+"/questoes/"+sessionStorage.getItem("formId")+"/derivada/"+props.questao.id,{
-                    headers: {
-                        'Content-Type' : 'application/json',
-                        'Authorization': 'bearer ' + sessionStorage.getItem("token")
-                    }
-                })
-                .then((response)=>{
-                    response.data.sort((a,b) => a.numero - b.numero);
-                    setQuestoes(response.data)
-                })
-                .catch((error) => {
-                    if (error.response.status===401) {
-                        navigate('/login')
-                        RemoveSessao()
-                        alert("Faça o login")
-                    }else{ console.log(error);setQuestoes([])}
-                })
-            }
-            CarregaQuestoes()
+            questao.derivadas.sort((a,b)=>a.numero-b.numero)
+            setQuestoes(questao.derivadas)
         }
         else{
             alert("Faça o login")
@@ -54,7 +36,7 @@ export default function QuestoesDerivadas(props,{navigate}){
             RemoveSessao()
         }
 
-    }, [navigate,props]);
+    }, [navigate,questao]);
 
     function renderizaQuestoes(opcao,cor){
         return questoes.filter(e=>e.derivadaDeOpcao===opcao)?.map(element => {
@@ -64,10 +46,9 @@ export default function QuestoesDerivadas(props,{navigate}){
                     return(
                         <MDBListGroupItem className={cor} key={element.id}>
                             <MDBInputGroup className='mb-2 mt-1'>
-                                <MDBBtn outline color='dark' onClick={e=>{toggleShowExcluiSalva(element.id)}} className='numQuestao'>{element.numero}</MDBBtn>
-                                <textarea id={'questao'+element.id} className='form-control'
-                                    defaultValue={element.enunciado} disabled 
-                                    style={{borderTopLeftRadius:'0px',borderBottomLeftRadius:'0px'}}
+                                <MDBBtn outline color='dark' onClick={e=>{toggleShowExcluiSalva(element.id)}} className='numQuestao'>{questao.numero+'.'+element.numero}</MDBBtn>
+                                <textarea id={'questao'+element.id} className='form-control textAreaEnunciado'
+                                    defaultValue={element.enunciado} disabled
                                     onChange={e=>{limit(e.target);questoes[questoes.map(object => object.id).indexOf(element.id)].enunciado=e.target.value}}/>
                             </MDBInputGroup>
                             <div className='mx-2'>
@@ -94,10 +75,9 @@ export default function QuestoesDerivadas(props,{navigate}){
                     return(
                         <MDBListGroupItem className={cor} key={element.id}>
                             <MDBInputGroup className='mb-2 mt-1'>
-                                <MDBBtn outline color='dark'  onClick={e=>{toggleShowExcluiSalva(element.id)}} className='numQuestao'>{element.numero}</MDBBtn>
-                                <textarea id={'questao'+element.id} className='form-control'
+                                <MDBBtn outline color='dark'  onClick={e=>{toggleShowExcluiSalva(element.id)}} className='numQuestao'>{questao.numero+'.'+element.numero}</MDBBtn>
+                                <textarea id={'questao'+element.id} className='form-control textAreaEnunciado'
                                     defaultValue={element.enunciado} disabled
-                                    style={{borderTopLeftRadius:'0px',borderBottomLeftRadius:'0px'}}
                                     onChange={e=>{limit(e.target);questoes[questoes.map(object => object.id).indexOf(element.id)].enunciado=e.target.value}}/>
                             </MDBInputGroup>
                             <MDBTextArea rows={4} label='Resposta' readOnly className='mb-2'/>
@@ -112,10 +92,9 @@ export default function QuestoesDerivadas(props,{navigate}){
                     return(
                         <MDBListGroupItem className={cor} key={element.id}>
                             <MDBInputGroup className='mb-2 mt-1'>
-                                <MDBBtn outline color='dark' onClick={e=>{toggleShowExcluiSalva(element.id)}} className='numQuestao'>{element.numero}</MDBBtn>
-                                <textarea id={'questao'+element.id} className='form-control'
+                                <MDBBtn outline color='dark' onClick={e=>{toggleShowExcluiSalva(element.id)}} className='numQuestao'>{questao.numero+'.'+element.numero}</MDBBtn>
+                                <textarea id={'questao'+element.id} className='form-control textAreaEnunciado'
                                     defaultValue={element.enunciado} disabled
-                                    style={{borderTopLeftRadius:'0px',borderBottomLeftRadius:'0px'}}
                                     onChange={e=>{limit(e.target);questoes[questoes.map(object => object.id).indexOf(element.id)].enunciado=e.target.value}}/>
                             </MDBInputGroup>
                             <div id={"opcoes"+element.id} className='mx-2'>
@@ -346,14 +325,14 @@ export default function QuestoesDerivadas(props,{navigate}){
     
     function handleNewQuestion(opcao){
         novaQuestao.derivadaDeOpcao = opcao
-        novaQuestao.derivadaDeId = props.questao.id
+        novaQuestao.derivadaDeId = questao.id
         if (novaQuestao.type===4) {
             if(questoes.filter(e=>e.derivadaDeOpcao===opcao)[0]) novaQuestao.numero=questoes.filter(e=>e.derivadaDeOpcao===opcao).at(-1).numero
-            else novaQuestao.numero=props.questao.numero
+            else novaQuestao.numero=questao.numero=0
         }
         else{
             if(questoes.filter(e=>e.derivadaDeOpcao===opcao)[0]) novaQuestao.numero=questoes.filter(e=>e.derivadaDeOpcao===opcao).at(-1).numero+1
-            else novaQuestao.numero=props.questao.numero+1
+            else novaQuestao.numero=1
         }
         setTypeQuestion(<></>)
         switch (novaQuestao.type) {
@@ -362,7 +341,7 @@ export default function QuestoesDerivadas(props,{navigate}){
                 setNewQuestion(<MDBListGroupItem noBorders key={"novaQuestao"} className='shadow rounded-3 mb-3'>
                         <div className='enunciado mt-1'>
                             <MDBInputGroup className='mb-2'>
-                                <MDBBtn color='secondary' className='numQuestao'>{novaQuestao.numero}</MDBBtn>
+                                <MDBBtn color='secondary' className='numQuestao'>{questao.numero+'.'+novaQuestao.numero}</MDBBtn>
                                 <input onKeyDown={e=>{limit(e.target)}} onKeyUp={e=>{limit(e.target)}} className='form-control' type='text' id={'novaQuestaoEnunciado'} defaultValue=''/>
                             </MDBInputGroup>
                         </div>
@@ -383,7 +362,7 @@ export default function QuestoesDerivadas(props,{navigate}){
                 setNewQuestion(<MDBListGroupItem noBorders key={"novaQuestao"} className='rounded-3 mb-3'>
                         <div className='enunciado mt-1'>
                             <MDBInputGroup className='mb-2'>
-                                <MDBBtn color='secondary' className='numQuestao'>{novaQuestao.numero}</MDBBtn>
+                                <MDBBtn color='secondary' className='numQuestao'>{questao.numero+'.'+novaQuestao.numero}</MDBBtn>
                                 <input className='form-control' type='text' id={'novaQuestaoEnunciado'} defaultValue=''/>
                             </MDBInputGroup>
                         </div>
@@ -434,72 +413,72 @@ export default function QuestoesDerivadas(props,{navigate}){
         switch (element){
             case 1: return(
                 <div key='questoesopcao1'><MDBListGroup small className='my-1' >
-                    {props.questao.opcao1?renderizaQuestoes(1,'opcao1'):null}
+                    {questao.opcao1?renderizaQuestoes(1,'opcao1'):null}
                     </MDBListGroup>
-                    {props.questao.opcao1?
+                    {questao.opcao1?
                     <MDBBtn onClick={e=>{handleNewTypeQuestion(1)}} className='opcao1 border-1 btn-secondary'><i className="edit fas fa-regular fa-plus fa-2x"></i></MDBBtn>
                     :null}</div>)
             case 2: return(
                 <div key='questoesopcao2'><MDBListGroup small className='my-1' >
-                    {props.questao.opcao2?renderizaQuestoes(2,'opcao2'):null}
+                    {questao.opcao2?renderizaQuestoes(2,'opcao2'):null}
                     </MDBListGroup>
-                    {props.questao.opcao2?
+                    {questao.opcao2?
                     <MDBBtn onClick={e=>{handleNewTypeQuestion(2)}} className='opcao2 border-1 btn-secondary'><i className="edit fas fa-regular fa-plus fa-2x"></i></MDBBtn>
                     :null}</div>)
             case 3: return(
                 <div key='questoesopcao3'><MDBListGroup small className='my-1'>
-                    {props.questao.opcao3?renderizaQuestoes(3,'opcao3'):null}
+                    {questao.opcao3?renderizaQuestoes(3,'opcao3'):null}
                     </MDBListGroup>
-                    {props.questao.opcao3?
+                    {questao.opcao3?
                     <MDBBtn onClick={e=>{handleNewTypeQuestion(3)}} className='opcao3 border-1 btn-secondary'><i className="edit fas fa-regular fa-plus fa-2x"></i></MDBBtn>
                     :null}</div>)
             case 4: return(
                 <div key='questoesopcao4'><MDBListGroup small className='my-1' >
-                    {props.questao.opcao4?renderizaQuestoes(4,'opcao4'):null}
+                    {questao.opcao4?renderizaQuestoes(4,'opcao4'):null}
                     </MDBListGroup>
-                    {props.questao.opcao4?
+                    {questao.opcao4?
                     <MDBBtn onClick={e=>{handleNewTypeQuestion(4)}} className='opcao4 border-1 btn-secondary'><i className="edit fas fa-regular fa-plus fa-2x"></i></MDBBtn>
                     :null}</div>)
             case 5: return(
                 <div key='questoesopcao5'><MDBListGroup small className='my-1' >
-                    {props.questao.opcao5?renderizaQuestoes(5,'opcao5'):null}
+                    {questao.opcao5?renderizaQuestoes(5,'opcao5'):null}
                     </MDBListGroup>
-                    {props.questao.opcao5?
+                    {questao.opcao5?
                     <MDBBtn onClick={e=>{handleNewTypeQuestion(5)}} className='opcao5 border-1 btn-secondary'><i className="edit fas fa-regular fa-plus fa-2x"></i></MDBBtn>
                     :null}</div>)
             case 6: return(
                 <div key='questoesopcao6'><MDBListGroup small className='my-1' >
-                    {props.questao.opcao6?renderizaQuestoes(6,'opcao6'):null}
+                    {questao.opcao6?renderizaQuestoes(6,'opcao6'):null}
                     </MDBListGroup>
-                    {props.questao.opcao6?
+                    {questao.opcao6?
                     <MDBBtn onClick={e=>{handleNewTypeQuestion(6)}} className='opcao6 border-1 btn-secondary'><i className="edit fas fa-regular fa-plus fa-2x"></i></MDBBtn>
                     :null}</div>)
             case 7: return(
                 <div key='questoesopcao7'><MDBListGroup small className='my-1' >
-                    {props.questao.opcao7?renderizaQuestoes(7,'opcao7'):null}
+                    {questao.opcao7?renderizaQuestoes(7,'opcao7'):null}
                     </MDBListGroup>
-                    {props.questao.opcao7?
+                    {questao.opcao7?
                     <MDBBtn onClick={e=>{handleNewTypeQuestion(7)}} className='opcao7 border-1 btn-secondary'><i className="edit fas fa-regular fa-plus fa-2x"></i></MDBBtn>
                     :null}</div>)
             case 8: return(
                 <div key='questoesopcao8'><MDBListGroup small className='my-1' >
-                    {props.questao.opcao8?renderizaQuestoes(8,'opcao8'):null}
+                    {questao.opcao8?renderizaQuestoes(8,'opcao8'):null}
                     </MDBListGroup>
-                    {props.questao.opcao8?
+                    {questao.opcao8?
                     <MDBBtn onClick={e=>{handleNewTypeQuestion(8)}} className='opcao8 border-1 btn-secondary'><i className="edit fas fa-regular fa-plus fa-2x"></i></MDBBtn>
                     :null}</div>)
             case 9: return(
                 <div key='questoesopcao9'><MDBListGroup small className='my-1' >
-                    {props.questao.opcao9?renderizaQuestoes(9,'opcao9'):null}
+                    {questao.opcao9?renderizaQuestoes(9,'opcao9'):null}
                     </MDBListGroup>
-                    {props.questao.opcao9?
+                    {questao.opcao9?
                     <MDBBtn onClick={e=>{handleNewTypeQuestion(9)}} className='opcao9 border-1 btn-secondary'><i className="edit fas fa-regular fa-plus fa-2x"></i></MDBBtn>
                     :null}</div>)
             case 10: return(
                 <div key='questoesopcao10'><MDBListGroup small className='my-1' >
-                    {props.questao.opcao10?renderizaQuestoes(10,'opcao10'):null}
+                    {questao.opcao10?renderizaQuestoes(10,'opcao10'):null}
                     </MDBListGroup>
-                    {props.questao.opcao10?
+                    {questao.opcao10?
                     <MDBBtn onClick={e=>{handleNewTypeQuestion(10)}} className='opcao10 border-1 btn-secondary'><i className="edit fas fa-regular fa-plus fa-2x"></i></MDBBtn>
                     :null}</div>)
             default: return(<></>)

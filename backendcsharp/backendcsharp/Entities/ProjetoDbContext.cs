@@ -19,7 +19,7 @@ public partial class ProjetoDbContext : DbContext
     public virtual DbSet<Checkbox> Checkboxes { get; set; }
     public virtual DbSet<Cursos> Cursos { get; set; }
 
-    public virtual DbSet<Enviado> Enviados { get; set; }
+    public virtual DbSet<Destinatario> Destinatarios { get; set; }
 
     public virtual DbSet<Formulario> Formularios { get; set; }
 
@@ -28,7 +28,7 @@ public partial class ProjetoDbContext : DbContext
     public virtual DbSet<Radiobox> Radioboxes { get; set; }
 
     public virtual DbSet<Text> Texts { get; set; }
-    public virtual DbSet<TiposCursos> TiposCursos { get; set; }
+    public virtual DbSet<Modalidades> Modalidades { get; set; }
 
     public virtual DbSet<Users> Users { get; set; }
 
@@ -90,7 +90,7 @@ public partial class ProjetoDbContext : DbContext
                 .HasConstraintName("cursos_responsavelid_foreign");
         });
 
-        modelBuilder.Entity<Enviado>(entity =>
+        modelBuilder.Entity<Destinatario>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PRIMARY");
 
@@ -124,7 +124,7 @@ public partial class ProjetoDbContext : DbContext
             entity.Property(e => e.Curso)
                 .HasMaxLength(255)
                 .HasColumnName("curso");
-            entity.Property(e => e.TipoDeCurso)
+            entity.Property(e => e.Modalidade)
                 .HasMaxLength(1)
                 .HasColumnName("tipodecurso");
             entity.Property(e => e.DataColacao).HasColumnName("datacolacao");
@@ -275,7 +275,7 @@ public partial class ProjetoDbContext : DbContext
                 .HasConstraintName("text_respostaid_foreign");
         });
 
-        modelBuilder.Entity<TiposCursos>(entity =>
+        modelBuilder.Entity<Modalidades>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PRIMARY");
 
@@ -285,11 +285,11 @@ public partial class ProjetoDbContext : DbContext
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.ResponsavelId).HasColumnName("responsavelId");
-            entity.Property(e => e.TipoCurso)
+            entity.Property(e => e.Modalidade)
                 .HasMaxLength(255)
                 .HasColumnName("tipo_curso");
 
-            entity.HasOne(d => d.Responsavel).WithMany(p => p.TiposCursos)
+            entity.HasOne(d => d.Responsavel).WithMany(p => p.Modalidades)
                 .HasForeignKey(d => d.ResponsavelId)
                 .HasConstraintName("tipocursos_responsavelid_foreign");
         });

@@ -20,7 +20,7 @@ namespace backendcsharp.Controllers
         public class ObjetoCursos
         {
             public uint? userId { get; set; }
-            public List<TiposCursosDTO> listaTipoCursos { get; set; } = new List<TiposCursosDTO>();
+            public List<ModalidadesDTO> listaModalidades { get; set; } = new List<ModalidadesDTO>();
             public List<CursosDTO> listaCursos { get; set; } = new List<CursosDTO>();
         }
 
@@ -34,8 +34,8 @@ namespace backendcsharp.Controllers
                 Handlers.ExistsOrError(Id.ToString(), "Id do usuário não informado");
                 Handlers.IdNegative(Id, "Id do usuário inválido");
 
-                HashSet<string> cursosDB = new HashSet<string>(await ProjetoDbContext.Cursos.Where(s=>s.ResponsavelId==Id).Select(c=>c.Curso).ToListAsync());
-                HashSet<string> tipoCursosDB = new HashSet<string>(await ProjetoDbContext.TiposCursos.Where(s => s.ResponsavelId == Id).Select(c => c.TipoCurso).ToListAsync());
+                HashSet<string> cursosDB = new (await ProjetoDbContext.Cursos.Where(s=>s.ResponsavelId==Id).Select(c=>c.Curso).ToListAsync());
+                HashSet<string> modalidadeDB = new (await ProjetoDbContext.Modalidades.Where(s => s.ResponsavelId == Id).Select(c => c.Modalidade).ToListAsync());
 
                 foreach (var item in ListaCurso.listaCursos)
                 {
@@ -49,16 +49,16 @@ namespace backendcsharp.Controllers
                         ProjetoDbContext.Cursos.Add(entity);
                     }
                 }
-                foreach (var item in ListaCurso.listaTipoCursos)
+                foreach (var item in ListaCurso.listaModalidades)
                 {
-                    var entity = new TiposCursos()
+                    var entity = new Modalidades()
                     {
-                        TipoCurso = item.tipoCurso is not null ? item.tipoCurso : throw new Exception("Um dos itens não possui nome do tipo do curso"),
+                        Modalidade = item.modalidade is not null ? item.modalidade : throw new Exception("Um dos itens não possui nome da modalidade"),
                         ResponsavelId = (uint)Id
                     };
-                    if (!tipoCursosDB.Contains(entity.TipoCurso))
+                    if (!modalidadeDB.Contains(entity.Modalidade))
                     {
-                        ProjetoDbContext.TiposCursos.Add(entity);
+                        ProjetoDbContext.Modalidades.Add(entity);
                     }
                 }
                 await ProjetoDbContext.SaveChangesAsync();
@@ -104,14 +104,14 @@ namespace backendcsharp.Controllers
             }
         }
 
-        // Modificar Tipo de Curso
-        [HttpPut("users/{Id}/tipocurso/{CursoId}")]
+        // Modificar Modalidade
+        [HttpPut("users/{Id}/modalidade/{CursoId}")]
         [Authorize("Bearer")]
-        public async Task<ActionResult> UpdateTipoCurso([FromBody] TiposCursosDTO Curso, [FromRoute] int Id, [FromRoute] int CursoId)
+        public async Task<ActionResult> UpdateModalidade([FromBody] ModalidadesDTO Curso, [FromRoute] int Id, [FromRoute] int CursoId)
         {
             try
             {
-                Handlers.ExistsOrError(Curso.tipoCurso, "Tipo do curso não informado");
+                Handlers.ExistsOrError(Curso.modalidade, "Modalidade não informada");
                 Handlers.ExistsOrError(Id.ToString(), "Id do responsável não informado");
                 Handlers.IdNegative(Id, "Id do usuário inválido");
                 Handlers.ExistsOrError(CursoId.ToString(), "Id do curso não informado");
@@ -120,17 +120,17 @@ namespace backendcsharp.Controllers
                 Curso.responsavelId = ((uint)Id);
                 if (Curso.id is not null)
                 {
-                    var entity = await ProjetoDbContext.TiposCursos.FirstOrDefaultAsync(s => s.Id == CursoId);
+                    var entity = await ProjetoDbContext.Modalidades.FirstOrDefaultAsync(s => s.Id == CursoId);
                     if (entity != null)
                     {
-                        entity.TipoCurso = Curso.tipoCurso is null ? "" : Curso.tipoCurso;
+                        entity.Modalidade = Curso.modalidade is null ? "" : Curso.modalidade;
                         entity.ResponsavelId = Curso.responsavelId;
                         await ProjetoDbContext.SaveChangesAsync();
                         return StatusCode(204);
                     }
-                    else throw new Exception("Id não encontrado (UpdateTipoCurso)");
+                    else throw new Exception("Id não encontrado (UpdateModalidade)");
                 }
-                else throw new Exception("Tipo do curso não informado");
+                else throw new Exception("Modalidade não informada");
             }
             catch (Exception ex)
             {
@@ -145,10 +145,10 @@ namespace backendcsharp.Controllers
         {
             try
             {
-                ObjetoCursos listaResposta = new ObjetoCursos();
+                ObjetoCursos listaResposta = new();
                 Handlers.ExistsOrError(Id.ToString(), "Id do usuário não informado");
                 Handlers.IdNegative(Id, "Id do usuário inválido");
-                var GetCursos = await ProjetoDbContext.Cursos
+                listaResposta.listaCursos = await ProjetoDbContext.Cursos
                     .Select(s => new CursosDTO
                     {
                         id = s.Id,
@@ -157,17 +157,15 @@ namespace backendcsharp.Controllers
                     })
                     .Where(s => s.responsavelId == Id)
                     .ToListAsync();
-                var GetTipoCursos = await ProjetoDbContext.TiposCursos
-                    .Select(s => new TiposCursosDTO
+                listaResposta.listaModalidades = await ProjetoDbContext.Modalidades
+                    .Select(s => new ModalidadesDTO
                     {
                         id = s.Id,
-                        tipoCurso = s.TipoCurso,
+                        modalidade = s.Modalidade,
                         responsavelId = s.ResponsavelId
                     })
                     .Where(s => s.responsavelId == Id)
-                    .ToListAsync();
-                listaResposta.listaCursos = GetCursos;
-                listaResposta.listaTipoCursos = GetTipoCursos;
+                    .ToListAsync() ;
                 return listaResposta;
             }
             catch (Exception ex)
@@ -199,20 +197,20 @@ namespace backendcsharp.Controllers
             }
         }
 
-        // Deleta Tipo de Curso 
-        [HttpDelete("users/{Id}/tipocurso/{CursoId}")]
+        // Deleta Modalidade 
+        [HttpDelete("users/{Id}/modalidade/{CursoId}")]
         [Authorize("Bearer")]
-        public async Task<ActionResult> DeleteTipoCurso([FromRoute] int CursoId)
+        public async Task<ActionResult> DeleteModalidade([FromRoute] int CursoId)
         {
             try
             {
                 Handlers.ExistsOrError(CursoId.ToString(), "Id do curso não informado");
                 Handlers.IdNegative(CursoId, "Id do curso inválido");
-                var entity = new TiposCursos()
+                var entity = new Modalidades()
                 {
                     Id = ((uint)CursoId)
                 };
-                ProjetoDbContext.TiposCursos.Remove(entity);
+                ProjetoDbContext.Modalidades.Remove(entity);
                 await ProjetoDbContext.SaveChangesAsync();
                 return StatusCode(204);
             }

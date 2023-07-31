@@ -30,5 +30,5 @@ public partial class CheckboxDTO
 
     public virtual QuestoesDTO questao { get; set; } = null!;
 
-    public virtual EnviadoDTO resposta { get; set; } = null!;
+    public virtual DestinatarioDTO resposta { get; set; } = null!;
 }

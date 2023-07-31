@@ -8,22 +8,30 @@ import Sidebar from '../template/Sidebar'
 import UserSection from '../user/UserSection'
 import {MDBListGroup,MDBListGroupItem, MDBRadio,MDBBtn,MDBInputGroup, MDBTextArea,MDBCheckbox} from 'mdb-react-ui-kit';
 import { RemoveSessao } from '../../config/utils';
+import { useLocation } from 'react-router-dom';
 
 export default function Resposta({navigate}){
+    const location = useLocation()
+
     // Troca entre informações da página e do usúario
     const [main, setMain] = useState(1)
 
     const [respostas,setRespostas] = useState([{}])
+    const [nome,setNome] = useState("")
 
     useEffect(() => {
         if (sessionStorage.getItem("token")){
             async function carregaResposta(){
-                await axios.get(baseUrl+"/users/"+sessionStorage.getItem("userId")+"/forms/"+sessionStorage.getItem("formId")+"/respostas/"+sessionStorage.getItem("enviadoId"),{
+                await axios.get(baseUrl+"/users/"+sessionStorage.getItem("userId")+"/forms/"+sessionStorage.getItem("formId")+"/respostas/"+sessionStorage.getItem("destinatarioId"),{
                     headers: {
                         'Content-Type' : 'application/json',
                         'Authorization': 'bearer ' + sessionStorage.getItem("token")
                     }
-                }).then(response => setRespostas(response.data))
+                }).then(response => {
+                    console.log(response)
+                    setRespostas(response.data.respostas)
+                    setNome(response.data.nome)
+                })
             }
             carregaResposta()
         }
@@ -93,7 +101,7 @@ export default function Resposta({navigate}){
     }
 
     const secaoRespostas = <main className='mt-3 principal'> 
-        {Title("Nome")}
+        {Title(nome??"Nome")}
         <MDBListGroup small className='mt-3' >
             {renderizaRepostas()}
         </MDBListGroup>
@@ -111,7 +119,7 @@ export default function Resposta({navigate}){
 
     return(
         <section>
-            {sessionStorage.getItem("formDeId")?Sidebar('respostaDerivados',setMain):Sidebar('resposta',setMain)}
+            {Sidebar({area:'resposta',setSecao:setMain,derivado:location?.state?.derivado})}
             {Navbar()}
 
             {makeSecao()}

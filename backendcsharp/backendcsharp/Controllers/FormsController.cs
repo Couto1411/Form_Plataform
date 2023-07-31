@@ -43,10 +43,10 @@ namespace backendcsharp.Controllers
                     await ProjetoDbContext.SaveChangesAsync();
                     if (entity.DerivadoDeId is not null)
                     {
-                        var EnviadosOrig = await ProjetoDbContext.Enviados.Where(s => s.FormId == entity.DerivadoDeId).ToListAsync();
-                        foreach (var item in EnviadosOrig)
+                        var DestinatariosOrig = await ProjetoDbContext.Destinatarios.Where(s => s.FormId == entity.DerivadoDeId).ToListAsync();
+                        foreach (var item in DestinatariosOrig)
                         {
-                            var envio = new Enviado()
+                            ProjetoDbContext.Destinatarios.Add(new Destinatario()
                             {
                                 Respondido = 0,
                                 FormId = entity.Id,
@@ -55,13 +55,12 @@ namespace backendcsharp.Controllers
                                 Matricula = item.Matricula,
                                 Curso = item.Curso,
                                 DataColacao = item.DataColacao,
-                                TipoDeCurso = item.TipoDeCurso,
+                                Modalidade = item.Modalidade,
                                 Telefone1 = item.Telefone1,
                                 Telefone2 = item.Telefone2,
                                 Sexo = item.Sexo,
                                 Cpf = item.Cpf
-                            };
-                            ProjetoDbContext.Enviados.Add(envio);
+                            });
                         }
                     }
                     await ProjetoDbContext.SaveChangesAsync();
@@ -212,14 +211,14 @@ namespace backendcsharp.Controllers
                 var forms = await ProjetoDbContext.Formularios.Where(s => s.DerivadoDeId == FormId).ToListAsync();
                 foreach (var item in forms)
                 {
-                    var envios = await ProjetoDbContext.Enviados.Where(s => s.FormId == item.Id).ToListAsync();
-                    foreach (var envio in envios)
+                    var destinatarios = await ProjetoDbContext.Destinatarios.Where(s => s.FormId == item.Id).ToListAsync();
+                    foreach (var envio in destinatarios)
                     {
                         ProjetoDbContext.Radioboxes.RemoveRange(ProjetoDbContext.Radioboxes.Where(s => s.RespostaId == envio.Id));
                         ProjetoDbContext.Texts.RemoveRange(ProjetoDbContext.Texts.Where(s => s.RespostaId == envio.Id));
                         ProjetoDbContext.Checkboxes.RemoveRange(ProjetoDbContext.Checkboxes.Where(s => s.RespostaId == envio.Id));
                     }
-                    ProjetoDbContext.Enviados.RemoveRange(ProjetoDbContext.Enviados.Where(s => s.FormId == item.Id));
+                    ProjetoDbContext.Destinatarios.RemoveRange(ProjetoDbContext.Destinatarios.Where(s => s.FormId == item.Id));
                     ProjetoDbContext.Formularios.Remove(item);
                 }
                 Handlers.ExistsOrError(FormId.ToString(), "Id do formulário não informado");
@@ -238,13 +237,9 @@ namespace backendcsharp.Controllers
                     ProjetoDbContext.Texts.RemoveRange(ProjetoDbContext.Texts.Where(s => s.QuestaoId == item.id));
                     ProjetoDbContext.Checkboxes.RemoveRange(ProjetoDbContext.Checkboxes.Where(s => s.QuestaoId == item.id));
                 }
-                ProjetoDbContext.Enviados.RemoveRange(ProjetoDbContext.Enviados.Where(s => s.FormId == FormId));
+                ProjetoDbContext.Destinatarios.RemoveRange(ProjetoDbContext.Destinatarios.Where(s => s.FormId == FormId));
                 ProjetoDbContext.Questoes.RemoveRange(ProjetoDbContext.Questoes.Where(s => s.FormId == FormId));
-                var entity = new Formulario()
-                {
-                    Id = ((uint)FormId)
-                };
-                ProjetoDbContext.Formularios.Remove(entity);
+                ProjetoDbContext.Formularios.Remove(new Formulario() { Id = ((uint)FormId) });
                 await ProjetoDbContext.SaveChangesAsync();
                 return StatusCode(204);
             }

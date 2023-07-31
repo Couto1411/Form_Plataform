@@ -235,7 +235,6 @@ export default function PaginaUsuario({navigate}){
                         {numero}. <Link className='zoom' style={{color:'black'}} to="/forms" onClick={e=>{
                             sessionStorage.setItem("formId",element.id);
                             sessionStorage.setItem("nomePesquisa",element.titulo);
-                            sessionStorage.removeItem("formDeId");
                         }}>{element.titulo} </Link>
                         {element.dataEnviado?<i className='mx-1'>({tempDate.toLocaleDateString('en-GB')})</i>:<></>}
                         {element.derivados?.length?<i id={'icone'+element.id} aberto='F' onClick={e=>{toggleDerivados(element.id)}} className=" mx-1 fas fa-regular fa-angle-down"></i>:null}
@@ -256,9 +255,8 @@ export default function PaginaUsuario({navigate}){
                                     let tempDate2= new Date( Date.parse(item.dataEnviado))
                                     return (
                                         <MDBListGroupItem key={'formderivado'+item.id} className='pb-0 formsDuplicates d-flex'>
-                                            <Link className='formsDuplicates zoom' to={"/forms/"+item.id} onClick={e=>{
+                                            <Link className='formsDuplicates zoom' to={"/forms/"+item.id} state={{derivado:item.id}} onClick={e=>{
                                                 sessionStorage.setItem("formId",element.id);
-                                                sessionStorage.setItem("formDeId",item.id)
                                                 sessionStorage.setItem("nomePesquisa",element.titulo);
                                             }}>{item.titulo}</Link>
                                             {item.dataEnviado?<i className='mx-1'>({tempDate2.toLocaleDateString('en-GB')})</i>:<></>}
@@ -343,7 +341,7 @@ export default function PaginaUsuario({navigate}){
 
     return(
         <section>
-            {Sidebar('forms',setSecao)}
+            {Sidebar({area:'forms',setSecao:setSecao})}
             {Navbar()}
 
             {makeSecao()}

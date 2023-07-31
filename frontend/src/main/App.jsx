@@ -7,9 +7,11 @@ import { BrowserRouter } from 'react-router-dom'
 
 import Routes from './Routes'
 
-export default props =>
+const props = () =>
     <BrowserRouter>
         <div className="inteiro">
             <Routes />
         </div>
     </BrowserRouter>
+
+export default props

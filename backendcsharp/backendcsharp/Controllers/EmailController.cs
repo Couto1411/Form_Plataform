@@ -56,8 +56,8 @@ namespace backendcsharp.Controllers
                 else {
                     if (User.appPassword is null) return StatusCode(402);
                     // Busca emails dos destinatários 
-                    var Envios = await ProjetoDbContext.Enviados
-                        .Select(s => new EnviadoDTO
+                    var Destinatarios = await ProjetoDbContext.Destinatarios
+                        .Select(s => new DestinatarioDTO
                         {
                             id = s.Id,
                             email = s.Email,
@@ -67,20 +67,19 @@ namespace backendcsharp.Controllers
                         .Where(s => s.formId == model.FormId)
                         .ToListAsync();
 
-                    if (Envios == null) throw new Exception("Formulário não possui emails");
+                    if (Destinatarios == null) throw new Exception("Formulário não possui emails");
                     else {
                         var Form = await ProjetoDbContext.Formularios
                             .Where(s => s.Id == model.FormId)
-                            .FirstOrDefaultAsync();
-                        if (Form == null) throw new Exception("Formulário não encontrado");
+                            .FirstOrDefaultAsync() ?? throw new Exception("Formulário não encontrado");
 
                         // Configura SMTP
                         SmtpClient SmtpServer = new("smtp.gmail.com", 587)
                         {
                             DeliveryMethod = SmtpDeliveryMethod.Network
                         };
-                        var EnviosPartidos = SplitList(Envios,100);
-                        foreach (var envios in EnviosPartidos)
+                        var DestinatariosPartidos = SplitList(Destinatarios, 100);
+                        foreach (var destinatario in DestinatariosPartidos)
                         {
                             MailMessage email = new();
 
@@ -91,10 +90,10 @@ namespace backendcsharp.Controllers
                             else throw new Exception("Sem email de remetente");
 
                             // Seta destinatários
-                            foreach (var element in envios)
+                            foreach (var element in destinatario)
                             {
                                 if (element.respondido == 0) {
-                                    var contato = await ProjetoDbContext.Enviados.Select(e => new Enviado()).FirstOrDefaultAsync(s => s.Id == element.id);
+                                    var contato = await ProjetoDbContext.Destinatarios.Select(e => new Destinatario()).FirstOrDefaultAsync(s => s.Id == element.id);
                                     if (contato is not null) contato.Respondido = 1;
                                     if (Handlers.IsValidEmail(element.email)) email.Bcc.Add(element.email);
                                 }
@@ -161,8 +160,7 @@ namespace backendcsharp.Controllers
                                 titulo = s.Titulo,
                             })
                             .Where(s => s.id == model.FormId)
-                            .FirstOrDefaultAsync();
-                        if (Form == null) throw new Exception("Formulário não encontrado");
+                            .FirstOrDefaultAsync() ?? throw new Exception("Formulário não encontrado");
 
                         // Configura SMTP
                         SmtpClient SmtpServer = new("smtp.gmail.com", 587)
@@ -178,10 +176,10 @@ namespace backendcsharp.Controllers
                         else throw new Exception("Sem email de remetente");
 
                         // Seta destinatário
-                        var enviado = await ProjetoDbContext.Enviados.Where(s => s.Id == model.EmailId).FirstOrDefaultAsync();
-                        if (enviado is not null) { 
-                            if (Handlers.IsValidEmail(enviado.Email)) email.To.Add(enviado.Email);
-                            enviado.Respondido = 1;
+                        var destinatario = await ProjetoDbContext.Destinatarios.Where(s => s.Id == model.EmailId).FirstOrDefaultAsync();
+                        if (destinatario is not null) { 
+                            if (Handlers.IsValidEmail(destinatario.Email)) email.To.Add(destinatario.Email);
+                            destinatario.Respondido = 1;
                         }
                         //email.To.Add("gabriel.couto14@hotmail.com");
 

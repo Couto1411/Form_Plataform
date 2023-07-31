@@ -18,6 +18,6 @@
 
         public virtual ICollection<FormularioDTO>? Formularios { get; } = new List<FormularioDTO>();
         public virtual ICollection<CursosDTO>? Cursos { get; } = new List<CursosDTO>();
-        public virtual ICollection<TiposCursosDTO>? TiposCursos { get; } = new List<TiposCursosDTO>();
+        public virtual ICollection<ModalidadesDTO>? TiposCursos { get; } = new List<ModalidadesDTO>();
     }
 }

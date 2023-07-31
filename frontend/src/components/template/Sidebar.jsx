@@ -1,13 +1,13 @@
 import React from "react"
 import './Sidebar.css'
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
     MDBListGroup, MDBListGroupItem,
     MDBContainer
 } from 'mdb-react-ui-kit';
 
 
-export default function Sidebar(area, setSecao,qtdRespostas) {
+export default function Sidebar({area, setSecao,qtdRespostas,derivado}) {
     const navigate = useNavigate();
 
     function updateSelected(id) {
@@ -27,28 +27,29 @@ export default function Sidebar(area, setSecao,qtdRespostas) {
             return (
                 <MDBListGroup className="rounded-0" id='sidebar'>
                     <MDBListGroupItem tag='a' action id='Forms' className='px-3 sidebarItem' onClick={e => { updateSelected(e.target.id); setSecao(1) }}>Formulários</MDBListGroupItem>
-                    <MDBListGroupItem tag='a' action id='Dashboard' className='px-3 sidebarItem' onClick={e => { updateSelected(e.target.id); setSecao(2) }}>Relatórios</MDBListGroupItem>
+                    <MDBListGroupItem tag='a' action id='Dashboard' className='px-3 sidebarItem' onClick={e => { updateSelected(e.target.id); setSecao(2) }}>Gráficos</MDBListGroupItem>
                 </MDBListGroup>
             )
         } else if (area === 'questoes') {
             return (
                 <MDBListGroup id='sidebar' className="rounded-0">
-                    <MDBListGroupItem tag='a' action id='QuestoesBar' className='px-3 sidebarItem' onClick={e => { updateSelected(e.target.id); setSecao(1) }}>Questões</MDBListGroupItem>
-                    <MDBListGroupItem tag='a' action id='DeBar' className='px-3 sidebarItem' onClick={e => { updateSelected(e.target.id); setSecao(2) }}>Destinatários</MDBListGroupItem>
-                    <MDBListGroupItem tag='a' action id='RespostasBar' className='px-3 sidebarItem' onClick={e => { updateSelected(e.target.id); setSecao(3) }}>Respostas {qtdRespostas??""}</MDBListGroupItem>
-                    <MDBListGroupItem tag='a' action id='VoltarBar' className='px-3 sidebarItem' onClick={e => { navigate('/user') }}>Voltar</MDBListGroupItem>
+                    <MDBListGroupItem tag='a' action id='Questoes'      className='px-3 sidebarItem' onClick={e => { updateSelected(e.target.id); setSecao(1) }}>Questões</MDBListGroupItem>
+                    <MDBListGroupItem tag='a' action id='Destinatarios' className='px-3 sidebarItem' onClick={e => { updateSelected(e.target.id); setSecao(2) }}>Destinatários</MDBListGroupItem>
+                    <MDBListGroupItem tag='a' action id='Respostas'     className='px-3 sidebarItem' onClick={e => { updateSelected(e.target.id); setSecao(3) }}>Respostas {qtdRespostas??""}</MDBListGroupItem>
+                    <MDBListGroupItem tag='a' action id='Relatorios'    className='px-3 sidebarItem' onClick={e => { updateSelected(e.target.id); setSecao(4) }}>Relatórios</MDBListGroupItem>
+                    <MDBListGroupItem tag='a' action id='VoltarForm'    className='px-3 sidebarItem' onClick={e => { navigate('/user') }}>Voltar</MDBListGroupItem>
                 </MDBListGroup>
             )
         } else if (area === 'resposta') {
             return (
                 <MDBListGroup className="rounded-0" id='sidebar'>
-                    <MDBListGroupItem tag='a' action id='VoltarResp' className='px-3 sidebarItem' onClick={e => { navigate('/forms') }}>Voltar</MDBListGroupItem>
+                    <Link to={derivado? '/forms/' + derivado : '/forms'} state={{derivado:derivado}}><MDBListGroupItem id='VoltarResp' className='px-3 sidebarItem'>Voltar</MDBListGroupItem></Link>
                 </MDBListGroup>
             )
         } else if (area === 'respostaDerivados') {
             return (
                 <MDBListGroup className="rounded-0" id='sidebar'>
-                    <MDBListGroupItem tag='a' action id='VoltarResp' className='px-3 sidebarItem' onClick={e => { navigate('/forms/' + sessionStorage.getItem('formDeId')); setSecao(1) }}>Voltar</MDBListGroupItem>
+                    <MDBListGroupItem tag='a' action id='VoltarResp' className='px-3 sidebarItem' onClick={e => {  }}>Voltar</MDBListGroupItem>
                 </MDBListGroup>
             )
         } else if (area === 'admin') {

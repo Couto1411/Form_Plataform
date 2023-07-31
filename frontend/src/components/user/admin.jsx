@@ -21,7 +21,7 @@ export default function Admin({navigate}){
 
     // Lista de usuários
     const [users, setUsers] = useState([]);
-    // Modifica visibilidade da area de novo envio
+    // Modifica visibilidade da area de novo usuário
     const [newUser, setNewUser] = useState(<></>);
     // Modal para deletar usuários
     const [deletaUsuario, setDeletaUsuario] = useState(false);
@@ -406,7 +406,7 @@ export default function Admin({navigate}){
 
     return(
         <section>
-            {Sidebar('admin',setsecao)}
+            {Sidebar({area:'admin',setSecao:setsecao})}
             {Navbar()}
 
             {makeSecao()}

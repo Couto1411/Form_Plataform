@@ -142,8 +142,7 @@ namespace backendcsharp.Controllers
                         derivadoDeId = s.DerivadoDeId,
                     })
                     .Where(s => s.id == FormId)
-                    .FirstOrDefaultAsync();
-                if (Form is null) throw new Exception("Não encontrou formulário");
+                    .FirstOrDefaultAsync() ?? throw new Exception("Não encontrou formulário");
                 FormId = Form.derivadoDeId is not null? (int)Form.derivadoDeId:FormId;
                 var Questoes = await ProjetoDbContext.Questoes
                     .Select(s => new QuestoesDTO
@@ -258,7 +257,7 @@ namespace backendcsharp.Controllers
                         opcao9 = s.Opcao9,
                         opcao10 = s.Opcao10
                     })
-                    .Where(s => s.derivadaDeId == item.id)
+                    .Where(s => (s.derivadaDeId == item.id && s.type!=2 && s.type!=4))
                     .ToListAsync();
                 }
                 if (Questoes.Count < 0) return NotFound();
@@ -288,8 +287,7 @@ namespace backendcsharp.Controllers
                         derivadoDeId = s.DerivadoDeId,
                     })
                     .Where(s => s.id == FormId)
-                    .FirstOrDefaultAsync();
-                if (Form is null) throw new Exception("Não encontrou formulário");
+                    .FirstOrDefaultAsync() ?? throw new Exception("Não encontrou formulário");
                 FormId = Form.derivadoDeId is not null ? (int)Form.derivadoDeId : FormId;
                 var Questoes = await ProjetoDbContext.Questoes
                     .Select(s => new QuestoesDTO

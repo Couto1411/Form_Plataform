@@ -16,7 +16,7 @@ public partial class Formulario
 
     public virtual ICollection<Formulario> Derivados { get; } = new List<Formulario>();
 
-    public virtual ICollection<Enviado> Enviados { get; } = new List<Enviado>();
+    public virtual ICollection<Destinatario> Enviados { get; } = new List<Destinatario>();
 
     public virtual ICollection<Questoes> Questoes { get; } = new List<Questoes>();
 

@@ -1,5 +1,5 @@
 import React, {useState}from 'react'
-import {CarregaRelatorio } from '../../config/utils';
+import {CarregaDestinatariosResposta } from '../../config/utils';
 import './Forms.css'
 import Title from '../template/Title'
 import {
@@ -68,7 +68,7 @@ export default function SecaoRespostas({respostas,navigate}){
                     <div className={tipo?'rounded-3 px-1 mt-1 opcao'+count:"px-1 mt-1"}>{numero}) 
                         <div style={{cursor:'pointer',display:'inline'}} onClick={()=>{
                             setShow(item);
-                            CarregaRelatorio(setDestinatariosResposta,navigate,sessionStorage.getItem('formId'),element?.id,item);}}>{" "+item.texto}
+                            CarregaDestinatariosResposta(setDestinatariosResposta,navigate,sessionStorage.getItem('formId'),element?.id,item);}}>{" "+item.texto}
                         </div>
                     </div>
                     <MDBProgress height='20' className='rounded-3'>

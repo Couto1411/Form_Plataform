@@ -1,9 +1,7 @@
 import React from "react"
 import './Navbar.css'
 import Logo from "./Logo"
-import {
-    MDBDropdown, MDBDropdownMenu, MDBDropdownToggle, MDBDropdownItem,
-    MDBContainer} from 'mdb-react-ui-kit';
+import {MDBContainer} from 'mdb-react-ui-kit';
 
 
 export default function Navbar(props){

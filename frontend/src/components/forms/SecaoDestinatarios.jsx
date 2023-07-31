@@ -1,5 +1,5 @@
 import React, {useEffect,useState}from 'react'
-import { limit, CarregaCursosUser, CarregaEnvios, RemoveSessao } from '../../config/utils';
+import { limit, CarregaCursosUser, CarregaDestinatarios, RemoveSessao } from '../../config/utils';
 import './Forms.css'
 import axios from "axios";
 import * as XLSX from "xlsx";
@@ -16,18 +16,18 @@ export default function SecaoDestinatarios({navigate}){
 
     // Alert de destinário já respondeu em form derivado
     const [respondidoDerivado, setRespondidoDerivado] = useState(false);
-    // Conta cliques para excluir email a ser enviado
+    // Conta cliques para excluir o destinatário
     const [click, setClick] = useState([{id:''}]);
-    // Aba de envios que mostra todos os emails a serem enviados do formulario
+    // Lista de destinatários
     const [destinatarios, setDestinatarios] = useState([]);
     const [destinatariosDB, setDestinatariosDB] = useState([]);
-    // Responsavel pelo armazenamento das opcões de cursos de envios
+    // Responsavel pelo armazenamento das opcões de cursos
     const [cursos, setCursos] = useState(null);
 
-    // Modifia visibilidade da area de novo envio
+    // Modifica visibilidade da area de novo destinatário
     const [newDestinatario, setNewDestinatario] = useState(<></>);
 
-    // Modifica visibilidade do popup de import de envios
+    // Modifica visibilidade do popup de import de destinatários
     const [importModal, setImportModal] = useState(false);
 
     // Usado para paginação
@@ -42,7 +42,7 @@ export default function SecaoDestinatarios({navigate}){
 
     useEffect(() => {
         CarregaCursosUser(setCursos,navigate).then(()=>{
-            CarregaEnvios(setDestinatarios,setDestinatariosDB,sessionStorage.getItem('formId'),navigate)
+            CarregaDestinatarios(setDestinatarios,setDestinatariosDB,sessionStorage.getItem('formId'),navigate)
         })
     }, [navigate]);
 
@@ -74,7 +74,7 @@ export default function SecaoDestinatarios({navigate}){
                             <MDBInputGroup>
                                 <MDBBtn outline color='dark' onClick={e=>{handleClick(element)}} className='numQuestao'><i className="trashcan fas fa-trash-can"></i></MDBBtn>
                                 <input className='form-control' type='text' defaultValue={element.email} disabled/>
-                                <div role='button' onClick={e=>{sessionStorage.setItem('enviadoId',element.id);navigate('/resposta')}} color='secondary' className='numQuestao borda-direita' id={'edit'+element.id}><i className='p-2 ms-auto fas fa-solid fa-eye'></i></div>
+                                <div role='button' onClick={e=>{sessionStorage.setItem('destinatarioId',element.id);navigate('/resposta')}} color='secondary' className='numQuestao borda-direita' id={'edit'+element.id}><i className='p-2 ms-auto fas fa-solid fa-eye'></i></div>
                             </MDBInputGroup>
                             <div className='d-flex'><div className='text-danger p-1' id={'warning'+element.id} style={{display: 'none'}}>Todas as respostas desse email serão apagadas, se tiver certeza clique novamente</div><a href='/#' role='button' onClick={e=>{handleClick(element,true)}} id={'cancel'+element.id} style={{display: 'none'}} className='p-1 ms-auto'>Cancelar</a></div>
                         </MDBListGroupItem>
@@ -127,9 +127,9 @@ export default function SecaoDestinatarios({navigate}){
                                     <div className="col-md-6 pt-md-2 pt-sm-1">
                                         <MDBInputGroup>
                                             <MDBBtn color='secondary' className='novoDestinatarioForm px-2'>Modalidade do Curso</MDBBtn>
-                                            <select defaultValue={element.tipoDeCurso} onChange={e=>{destinatarios[destinatarios.map(object => object.id).indexOf(element.id)].tipoDeCurso=e.target.value}} className='selectCurso novoDestinatarioTipoCurso'>
-                                                {cursos?.listaTipoCursos?.map(item => {
-                                                    return <option key={element.id+"opcaotipo"+item.id} value={item.tipoCurso}>{item.tipoCurso}</option>
+                                            <select defaultValue={element.modalidade} onChange={e=>{destinatarios[destinatarios.map(object => object.id).indexOf(element.id)].modalidade=e.target.value}} className='selectCurso'>
+                                                {cursos?.listaModalidades?.map(item => {
+                                                    return <option key={element.id+"opcaotipo"+item.id} value={item.modalidade}>{item.modalidade}</option>
                                                 })}
                                             </select>
                                         </MDBInputGroup>
@@ -172,7 +172,7 @@ export default function SecaoDestinatarios({navigate}){
         novodestinatario.telefone2=document.getElementById("novoDestinatarioTelefone2").value
         novodestinatario.telefone1=document.getElementById("novoDestinatarioTelefone1").value
         novodestinatario.curso=document.getElementById("novoDestinatarioCurso").value
-        novodestinatario.tipoDeCurso=document.getElementById("novoDestinatarioTipoCurso").value
+        novodestinatario.modalidade=document.getElementById("novoDestinatarioModalidade").value
         novodestinatario.cpf=document.getElementById("novoDestinatarioCpf").value
         novodestinatario.sexo=document.getElementById("novoDestinatarioSexo").value
         novodestinatario.dataColacao=document.getElementById("novoDestinatarioData").value
@@ -347,9 +347,9 @@ export default function SecaoDestinatarios({navigate}){
                         <div className="col-md-6 pt-md-2 pt-sm-1">
                             <MDBInputGroup>
                                 <MDBBtn color='secondary' className='novoDestinatarioForm px-2'>Modalidade do Curso</MDBBtn>
-                                <select id="novoDestinatarioTipoCurso" className='selectCurso novoDestinatarioTipoCurso'>
-                                    {cursos?.listaTipoCursos?.map(item => {
-                                        return <option key={"newopcaotipo"+item.id} value={item.tipoCurso}>{item.tipoCurso}</option>
+                                <select id="novoDestinatarioModalidade" className='selectCurso'>
+                                    {cursos?.listaModalidades?.map(item => {
+                                        return <option key={"newopcaotipo"+item.id} value={item.modalidade}>{item.modalidade}</option>
                                     })}
                                 </select>
                             </MDBInputGroup>
@@ -489,7 +489,7 @@ export default function SecaoDestinatarios({navigate}){
                         })
                         .then(responsta=>{
                             document.getElementById('cancelmodalimports').disabled=false
-                            CarregaEnvios(setDestinatarios,setDestinatariosDB,sessionStorage.getItem('formId'),navigate)
+                            CarregaDestinatarios(setDestinatarios,setDestinatariosDB,sessionStorage.getItem('formId'),navigate)
                             CarregaCursosUser(setCursos,navigate)
                             setImportModal(false)
                         })
@@ -513,7 +513,7 @@ export default function SecaoDestinatarios({navigate}){
 
     return(
         <main className='mt-3 principal'> 
-            {Title(sessionStorage.getItem('nomePesquisa'),()=>{CarregaEnvios(setDestinatarios,setDestinatariosDB,sessionStorage.getItem('formId'),navigate)})}
+            {Title(sessionStorage.getItem('nomePesquisa'),()=>{CarregaDestinatarios(setDestinatarios,setDestinatariosDB,sessionStorage.getItem('formId'),navigate)})}
 
             {/* Barra de busca */}
             <MDBContainer fluid className='shadow mt-3 p-3 rounded-3 bg-light'>

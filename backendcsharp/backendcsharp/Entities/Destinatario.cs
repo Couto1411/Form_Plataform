@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace backendcsharp.Entities;
 
-public partial class Enviado
+public partial class Destinatario
 {
     public uint Id { get; set; }
 
@@ -18,7 +18,7 @@ public partial class Enviado
     public string? Cpf { get; set; } = null!;
     public string? Sexo { get; set; } = null!;
     public string? Curso { get; set; } = null!;
-    public string? TipoDeCurso { get; set; } = null!;
+    public string? Modalidade { get; set; } = null!;
     public DateTime? DataColacao { get; set; } = null!;
 
     public virtual ICollection<Checkbox> Checkboxes { get; } = new List<Checkbox>();

@@ -131,10 +131,10 @@ namespace backendcsharp.Controllers
                         // Salva usuário no banco MySQL
                         var entity = new Users()
                         {
-                            Nome = User.nome,
-                            Email = User.email,
-                            Universidade = User.universidade,
-                            AppPassword = User.appPassword,
+                            Nome = User.nome ?? "",
+                            Email = User.email ?? "",
+                            Universidade = User.universidade ?? "",
+                            AppPassword = User.appPassword ?? "",
                             Senha = BCrypt.Net.BCrypt.HashPassword(User.senha),
                             Admin = User.admin,
                         };
@@ -254,14 +254,14 @@ namespace backendcsharp.Controllers
                         var FormsDeriv = await ProjetoDbContext.Formularios.Where(s => s.DerivadoDeId == form.Id).ToListAsync();
                         foreach (var item in FormsDeriv)
                         {
-                            var envios = await ProjetoDbContext.Enviados.Where(s => s.FormId == item.Id).ToListAsync();
-                            foreach (var envio in envios)
+                            var destinatarios = await ProjetoDbContext.Destinatarios.Where(s => s.FormId == item.Id).ToListAsync();
+                            foreach (var envio in destinatarios)
                             {
                                 ProjetoDbContext.Radioboxes.RemoveRange(ProjetoDbContext.Radioboxes.Where(s => s.RespostaId == envio.Id));
                                 ProjetoDbContext.Texts.RemoveRange(ProjetoDbContext.Texts.Where(s => s.RespostaId == envio.Id));
                                 ProjetoDbContext.Checkboxes.RemoveRange(ProjetoDbContext.Checkboxes.Where(s => s.RespostaId == envio.Id));
                             }
-                            ProjetoDbContext.Enviados.RemoveRange(ProjetoDbContext.Enviados.Where(s => s.FormId == item.Id));
+                            ProjetoDbContext.Destinatarios.RemoveRange(ProjetoDbContext.Destinatarios.Where(s => s.FormId == item.Id));
                             ProjetoDbContext.Formularios.Remove(item);
                         }
                         var questoes = await ProjetoDbContext.Questoes
@@ -278,12 +278,12 @@ namespace backendcsharp.Controllers
                             ProjetoDbContext.Texts.RemoveRange(ProjetoDbContext.Texts.Where(s => s.QuestaoId == item.id));
                             ProjetoDbContext.Checkboxes.RemoveRange(ProjetoDbContext.Checkboxes.Where(s => s.QuestaoId == item.id));
                         }
-                        ProjetoDbContext.Enviados.RemoveRange(ProjetoDbContext.Enviados.Where(s => s.FormId == form.Id));
+                        ProjetoDbContext.Destinatarios.RemoveRange(ProjetoDbContext.Destinatarios.Where(s => s.FormId == form.Id));
                         ProjetoDbContext.Questoes.RemoveRange(ProjetoDbContext.Questoes.Where(s => s.FormId == form.Id));
                         ProjetoDbContext.Formularios.Remove(form);
                     }
                     ProjetoDbContext.Cursos.RemoveRange(ProjetoDbContext.Cursos.Where(s => s.ResponsavelId == Id));
-                    ProjetoDbContext.TiposCursos.RemoveRange(ProjetoDbContext.TiposCursos.Where(s => s.ResponsavelId == Id));
+                    ProjetoDbContext.Modalidades.RemoveRange(ProjetoDbContext.Modalidades.Where(s => s.ResponsavelId == Id));
 
                     var UsuarioDeleta = new Users()
                     {

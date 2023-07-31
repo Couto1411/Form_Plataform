@@ -72,7 +72,7 @@ export default function Dashboard({navigate}){
             let tempDate= new Date( Date.parse(element.dataEnviado))
             return(
                 <div key={element.id} className='pb-1 align-items-center'>
-                    <MDBRadio name='Formularios' value={element.id} inline onClick={e=>{setFormSelected(element)}}/> {element.titulo} {element.dataEnviado?<i>({tempDate.toLocaleDateString('en-GB')})</i>:<></>}
+                    <MDBRadio name='Formularios' value={element.id} labelStyle={{wordBreak: 'break-word'}} label={<>{element.titulo} {element.dataEnviado?<i>({tempDate.toLocaleDateString('en-GB')})</i>:<></>}</>} inline onClick={e=>{setFormSelected(element)}}/> 
                 </div>
             )
         });
@@ -90,7 +90,7 @@ export default function Dashboard({navigate}){
                             let tempDate= new Date( Date.parse(item.dataEnviado))
                             return(
                                 <div key={item.id} className='pb-1 align-items-center'>
-                                    <MDBCheckbox name='FormulariosDev' value={item.id} inline/> {item.titulo} {item.dataEnviado?<i>({tempDate.toLocaleDateString('en-GB')})</i>:<></>}
+                                    <MDBCheckbox labelStyle={{wordBreak: 'break-word'}} label={<> {item.titulo} {item.dataEnviado?<i>({tempDate.toLocaleDateString('en-GB')})</i>:<></>}</>} name='FormulariosDev' value={item.id} inline/>
                                 </div>
                             )
                         })}
@@ -109,10 +109,10 @@ export default function Dashboard({navigate}){
                         {questoes.filter(e=>e.formId===formSelected.id).map(item =>{
                             return(
                                 <div key={item.id} className='pb-1 align-items-center'>
-                                    <MDBCheckbox name='Questoes' value={item.id} inline/> {item.enunciado}
-                                    {item.derivadas.map(element=>{
-                                        return (<div key={element.id} className={'align-items-center opcao'+element.derivadaDeOpcao}>
-                                            <MDBCheckbox name='Questoes' value={element.id} inline/> {element.enunciado}
+                                    <MDBCheckbox name='Questoes' value={item.id} label={item.enunciado} labelStyle={{wordBreak: 'break-word'}} inline/>
+                                    {item.derivadas.sort((a,b)=>a.derivadaDeOpcao-b.derivadaDeOpcao).map(element=>{
+                                        return (<div key={element.id} className={'questaoderivada rounded px-1 align-items-center opcao'+element.derivadaDeOpcao}>
+                                            <MDBCheckbox name='Questoes' value={element.id} label={element.enunciado} inline/>
                                         </div>)
                                     })}
                                 </div>
@@ -176,7 +176,7 @@ export default function Dashboard({navigate}){
 
     return(
         <main className='mt-3 principal'>
-            {Titulo("Relatórios")}
+            {Titulo("Gráficos")}
 
             {/* Informações do usuários */}
             <MDBContainer className="shadow bg-light mt-3 rounded-3 p-3 ">

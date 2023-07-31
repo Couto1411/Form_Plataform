@@ -14,7 +14,7 @@
         {
             if (value < 0) throw new Exception(msg);
         }
-        public static bool IsValidGmail(string email)
+        public static bool IsValidGmail(string? email)
         {
             if (email is null) return false;
             var trimmedEmail = email.Trim();
@@ -34,7 +34,7 @@
                 return false;
             }
         }
-        public static bool IsValidEmail(string email)
+        public static bool IsValidEmail(string? email)
         {
             if (email is null) return false;
             var trimmedEmail = email.Trim();

@@ -12,13 +12,13 @@ import {
 export default function UserSection({navigate}) {
     const [user, setUser] = useState({})
     const [cursos, setCursos] = useState([])
-    const [tipoCursos, setTipoCursos] = useState([])
+    const [modalidades, setModalidades] = useState([])
     const [count, setCount] = useState(0)
     const [modalAjuda, setModalAjuda] = useState(false)
 
     useEffect(() => {
         CarregaUsuario(setUser,navigate)
-        CarregaCursos(setCursos,setTipoCursos,navigate)
+        CarregaCursos(setCursos,setModalidades,navigate)
     }, [navigate]);
 
     async function handleSave() {
@@ -68,12 +68,12 @@ export default function UserSection({navigate}) {
         if (cursos.length === 0) { document.getElementById("labelCurso").style.color = 'red' }
         else {
             document.getElementById("labelCurso").style.color = '#4f4f4f'
-            if (tipoCursos.length === 0) { document.getElementById("labelTipoCurso").style.color = 'red' }
+            if (modalidades.length === 0) { document.getElementById("labelModalidade").style.color = 'red' }
             else {
-                document.getElementById("labelTipoCurso").style.color = '#4f4f4f'
+                document.getElementById("labelModalidade").style.color = '#4f4f4f'
                 let objeto = {}
                 objeto.listaCursos = cursos
-                objeto.listaTipoCursos = tipoCursos
+                objeto.listaModalidades = modalidades
                 await axios.post(baseUrl + "/users/" + sessionStorage.getItem("userId") + "/cursos", objeto, {
                     headers: {
                         'Authorization': 'bearer ' + sessionStorage.getItem("token")
@@ -109,8 +109,8 @@ export default function UserSection({navigate}) {
         }
         else {
             let objeto = {}
-            objeto.tipoCurso = document.getElementById("tipocursonome" + item.id).value
-            await axios.put(baseUrl + "/users/" + sessionStorage.getItem("userId") + "/tipocurso/" + item.id, objeto, {
+            objeto.modalidade = document.getElementById("modalidadeNome" + item.id).value
+            await axios.put(baseUrl + "/users/" + sessionStorage.getItem("userId") + "/modalidade/" + item.id, objeto, {
                 headers: {
                     'Authorization': 'bearer ' + sessionStorage.getItem("token")
                 }
@@ -144,13 +144,13 @@ export default function UserSection({navigate}) {
                 })
         }
         else {
-            await axios.delete(baseUrl + "/users/" + sessionStorage.getItem("userId") + "/tipocurso/" + item.id, {
+            await axios.delete(baseUrl + "/users/" + sessionStorage.getItem("userId") + "/modalidade/" + item.id, {
                 headers: {
                     'Authorization': 'bearer ' + sessionStorage.getItem("token")
                 }
             })
                 .then((response) => {
-                    setTipoCursos(tipoCursos.filter(a => a.id !== item.id))
+                    setModalidades(modalidades.filter(a => a.id !== item.id))
                 })
                 .catch((error) => {
                     if (error.response.status === 401) {
@@ -282,40 +282,40 @@ export default function UserSection({navigate}) {
                         <i role='button' className="addQuestao mx-1 edit fas fa-regular fa-plus" onClick={e => document.getElementById("novoCurso").style.display = 'inline-block'} ></i>
                     </div>
 
-                    <h6 id="labelTipoCurso" className="mt-2">Modalidades dos Cursos:</h6>
+                    <h6 id="labelModalidade" className="mt-2">Modalidades dos Cursos:</h6>
                     <div className='row g-3'>
-                        {tipoCursos?.map(item => {
+                        {modalidades?.map(item => {
                             if (item.novo) {
                                 return <div key={item.name} className='col-12'>
-                                    <MDBInput value={item?.tipoCurso} disabled label='Modalidade dos cursos' />
+                                    <MDBInput value={item?.modalidade} disabled label='Modalidade dos cursos' />
                                 </div>
                             } else {
-                                return (<MDBInputGroup key={"tipocurso" + item.id} className='col-12'
+                                return (<MDBInputGroup key={"modalidade" + item.id} className='col-12'
                                     textBefore={<div onClick={e => { editCursos(false, item) }}><i className="fa-regular fa-floppy-disk"></i></div>}
                                     textAfter={<div onClick={e => { deleteCursos(false, item) }}><i className="trashcan pt-1 fas fa-trash-can"></i></div>}>
                                     <input
                                         onKeyDown={e => { limit(e.target, 250) }} onKeyUp={e => { limit(e.target, 250) }}
-                                        id={"tipocursonome" + item.id} defaultValue={item?.tipoCurso} className='form-control' type='text' />
+                                        id={"modalidadeNome" + item.id} defaultValue={item?.modalidade} className='form-control' type='text' />
                                 </MDBInputGroup>)
                             }
                         })}
-                        <div id="novoTipoCurso" style={{ display: "none" }}>
+                        <div id="novaModalidade" style={{ display: "none" }}>
                             <MDBInputGroup className='col-12' textAfter={<div onClick={e => {
-                                setTipoCursos([...tipoCursos, { novo: true, name: "tipocursonovo" + count, tipoCurso: document.getElementById("novoTipoCursoNome").value }])
+                                setModalidades([...modalidades, { novo: true, name: "modalidadenova" + count, modalidade: document.getElementById("novaModalidadeNome").value }])
                                 setCount(count + 1)
-                                document.getElementById("novoTipoCurso").style.display = 'none'
+                                document.getElementById("novaModalidade").style.display = 'none'
                             }}><i className="fa-regular fa-floppy-disk"></i></div>}>
-                                <input onKeyDown={e => { limit(e.target, 250) }} onKeyUp={e => { limit(e.target, 250) }} id="novoTipoCursoNome" className='form-control' type='text' />
+                                <input onKeyDown={e => { limit(e.target, 250) }} onKeyUp={e => { limit(e.target, 250) }} id="novaModalidadeNome" className='form-control' type='text' />
                             </MDBInputGroup>
                         </div>
-                        <i role='button' className="addQuestao mx-1 edit fas fa-regular fa-plus" onClick={e => document.getElementById("novoTipoCurso").style.display = 'inline-block'} ></i>
+                        <i role='button' className="addQuestao mx-1 edit fas fa-regular fa-plus" onClick={e => document.getElementById("novaModalidade").style.display = 'inline-block'} ></i>
                     </div>
 
                     <div className='d-flex mt-2'>
                         <MDBBtn color='secondary' onClick={e => {
                             document.getElementById("novoCurso").style.display = 'none'
-                            document.getElementById("novoTipoCurso").style.display = 'none'
-                            setTipoCursos(tipoCursos.filter(x => x.novo !== true))
+                            document.getElementById("novaModalidade").style.display = 'none'
+                            setModalidades(modalidades.filter(x => x.novo !== true))
                             setCursos(cursos.filter(x => x.novo !== true))
                         }} className="ms-auto">Cancelar</MDBBtn>
                         <MDBBtn onClick={e => addCursos()}>Salvar</MDBBtn>

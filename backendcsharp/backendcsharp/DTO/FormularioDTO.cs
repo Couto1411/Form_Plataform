@@ -13,7 +13,7 @@ public partial class FormularioDTO
 
     public virtual ICollection<FormularioDTO> derivados { get; set; } = new List<FormularioDTO>();
 
-    public virtual ICollection<EnviadoDTO> enviados { get; } = new List<EnviadoDTO>();
+    public virtual ICollection<DestinatarioDTO> enviados { get; } = new List<DestinatarioDTO>();
 
     public virtual ICollection<QuestoesDTO> questoes { get; set; } = new List<QuestoesDTO>();
 

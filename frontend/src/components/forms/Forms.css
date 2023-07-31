@@ -18,6 +18,12 @@
     border: #aeaeae solid 1px;
 }
 
+.textAreaEnunciado{
+    border-top-left-radius: 0px;
+    border-bottom-left-radius: 0px;
+    font-size: 0.97em;
+}
+
 .borda-direita{
     border: 1px solid rgb(187, 187, 187);
     border-radius: 0px 5px 5px 0px;
@@ -76,6 +82,14 @@
     font-size: 1em;
 }
 
+.dataRelatorios{
+    color: #222222;
+    border: #aeaeae solid 1px;
+    border-radius: 5px;
+    padding-left: 0.3em;
+    font-size: 1em;
+}
+
 .opcao1{background-color: #ccfcfc ;}
 .opcao2{background-color: #fa87eebf;}
 .opcao3{background-color: #b8f2b2 ;}
@@ -88,7 +102,11 @@
 .opcao10{background-color: #bfefff ;}
 
 .shadow{
-    box-shadow: rgba(0, 0, 0, 0.074) 0px 0.1px 0.1px, rgba(0, 0, 0, 0.156) 0px 0.1px 0.1px;
+    box-shadow: rgba(0, 0, 0, 0.02) 0px 0.1px 0.1px, rgba(0, 0, 0, 0.053) 0px 0.1px 0.1px;
+}
+
+.ovHidden{
+    overflow: hidden;
 }
 
 .inputnumero{
@@ -116,4 +134,12 @@
     .novoDestinatarioCurso{width: 83%;}
     .novoDestinatarioSexo{width: 85%;}
     .novoDestinatarioModalidade{width: 68%;}
+}
+
+.new-page {
+    page-break-before: always;
+}
+
+.testes{
+    font-size: 1em;
 }

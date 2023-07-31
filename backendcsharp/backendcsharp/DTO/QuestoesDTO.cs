@@ -1,4 +1,6 @@
-﻿namespace backendcsharp.DTO;
+﻿using backendcsharp.Entities;
+
+namespace backendcsharp.DTO;
 
 public partial class QuestoesDTO
 {
@@ -43,4 +45,26 @@ public partial class QuestoesDTO
 
     public virtual ICollection<TextDTO> texts { get; } = new List<TextDTO>();
     public virtual QuestoesDTO? questaoOrig { get; set; }
+
+    public QuestoesDTO() { }
+    public QuestoesDTO(Questoes questoes)
+    {
+        id  = questoes.Id;
+        numero = questoes.Numero;
+        type = questoes.Type;
+        formId = questoes.FormId;
+        enunciado = questoes.Enunciado;
+        opcao1 = questoes.Opcao1;
+        opcao2 = questoes.Opcao2;
+        opcao3 = questoes.Opcao3;
+        opcao4 = questoes.Opcao4;
+        opcao5 = questoes.Opcao5;
+        opcao6 = questoes.Opcao6;
+        opcao7 = questoes.Opcao7;
+        opcao8 = questoes.Opcao8;
+        opcao9 = questoes.Opcao9;
+        opcao10 = questoes.Opcao10;
+        derivadaDeId = questoes.DerivadaDeId;
+        derivadaDeOpcao = questoes.DerivadaDeOpcao;
+}
 }

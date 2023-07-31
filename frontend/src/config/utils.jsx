@@ -3,8 +3,7 @@ import axios from "axios"
 
 export function RemoveSessao(){
     sessionStorage.removeItem('token')
-    sessionStorage.removeItem('enviadoId')
-    sessionStorage.removeItem('formDeId')
+    sessionStorage.removeItem('destinatarioId')
     sessionStorage.removeItem('formId')
 }
 
@@ -78,7 +77,7 @@ export async function CarregaUsuario(setUser,navigate){
     })
 }
 
-export async function CarregaCursos(setCursos,setTipoCursos,navigate){
+export async function CarregaCursos(setCursos,setModalidades,navigate){
     await axios.get(baseUrl + "/users/" + sessionStorage.getItem("userId") + "/cursos", {
         headers: {
             'Content-Type': 'application/json',
@@ -87,7 +86,7 @@ export async function CarregaCursos(setCursos,setTipoCursos,navigate){
     })
     .then(res=>{
         setCursos(res.data.listaCursos)
-        setTipoCursos(res.data.listaTipoCursos)
+        setModalidades(res.data.listaModalidades)
     })
     .catch((error) => {
         if (error.response.status === 401) {
@@ -115,7 +114,7 @@ export async function CarregaCursosUser(setCursos,navigate){
     })
 }
 
-export async function CarregaEnvios(setDestinatarios,setDestinatariosDB,id,navigate){
+export async function CarregaDestinatarios(setDestinatarios,setDestinatariosDB,id,navigate){
     await axios.get(baseUrl+"/users/"+sessionStorage.getItem("userId")+"/forms/"+id+"/enviados",{
         headers: {
             'Content-Type' : 'application/json',
@@ -137,8 +136,8 @@ export async function CarregaEnvios(setDestinatarios,setDestinatariosDB,id,navig
     }) 
 }
 
-export async function CarregaRespostas(setRespostas,navigate){
-    let temp = sessionStorage.getItem("formDeId") || sessionStorage.getItem("formId")
+export async function CarregaRespostas(setRespostas,navigate,derivado){
+    let temp = derivado || sessionStorage.getItem("formId")
     await axios.get(baseUrl+"/users/"+sessionStorage.getItem("userId")+"/forms/"+temp+"/respostas",{
         headers: {
             'Content-Type' : 'application/json',
@@ -174,7 +173,35 @@ export async function CarregaDashboard(setDatasets,setLabels,navigate,id,forms,q
     })
 }
 
-export async function CarregaRelatorio(setDestinatariosResposta,navigate,formid,questid,item){
+export async function CarregaRelatorio(setDados,navigate,queryObject,loadNewPage){
+    await axios.get(baseUrl+'/users/relatorio/'+JSON.stringify(queryObject.id)+'?avancado='+
+        JSON.stringify(queryObject.avancado)+'&&questoes='+
+        JSON.stringify(queryObject.questoesEscolhidas)+'&&cursos='+
+        JSON.stringify(queryObject.cursoFiltros)+'&&modalidades='+
+        JSON.stringify(queryObject.modalidadeFiltros)
+        .concat(queryObject.dataAntes?('&&dataAntes='+queryObject.dataAntes):'')
+        .concat(queryObject.dataDepois?('&&dataDepois='+queryObject.dataDepois):''),{
+        headers: {
+            'Content-Type' : 'application/json',
+            'Authorization': 'bearer ' + sessionStorage.getItem("token")
+        }
+    })
+    .then((response)=>{
+        if(loadNewPage)
+            navigate('/relatorio',{state:{dados:response.data.relatorio,pesquisa:response.data.nomePesquisa}})
+        else setDados(response.data.relatorio)
+    })
+    .catch((error) => {
+        if (error.response.status===401) {
+            navigate('/login')
+            RemoveSessao()
+            alert("Faça o login")
+        }else if (error.response.status===404){}
+        else{ console.log(error);}
+    })
+}
+
+export async function CarregaDestinatariosResposta(setDestinatariosResposta,navigate,formid,questid,item){
     await axios.get(baseUrl+"/respostas/forms/"+formid+"/questao/"+questid+"/"+item?.opcao,{
         headers: {
             'Content-Type' : 'application/json',

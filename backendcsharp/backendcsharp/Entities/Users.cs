@@ -21,5 +21,5 @@ public partial class Users
 
     public virtual ICollection<Formulario> Formularios { get; } = new List<Formulario>();
     public virtual ICollection<Cursos> Cursos { get; } = new List<Cursos>();
-    public virtual ICollection<TiposCursos> TiposCursos { get; } = new List<TiposCursos>();
+    public virtual ICollection<Modalidades> Modalidades { get; } = new List<Modalidades>();
 }

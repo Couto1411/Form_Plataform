@@ -111,33 +111,33 @@ namespace backendcsharp.Controllers
                             where formularios.Id == form && questoesId.Contains((int)check.QuestaoId)
                             select new CheckboxDTO
                             {
-                                questaoId=check.QuestaoId,
-                                opcao1=check.Opcao1 == null?false:check.Opcao1,
-                                opcao2=check.Opcao2 == null ? false : check.Opcao2,
-                                opcao3=check.Opcao3 == null ? false : check.Opcao3,
-                                opcao4=check.Opcao4 == null ? false : check.Opcao4,
-                                opcao5=check.Opcao5 == null ? false : check.Opcao5,
-                                opcao6=check.Opcao6 == null ? false : check.Opcao6,
-                                opcao7=check.Opcao7 == null ? false : check.Opcao7,
-                                opcao8=check.Opcao8 == null ? false : check.Opcao8,
-                                opcao9=check.Opcao9 == null ? false : check.Opcao9,
-                                opcao10= check.Opcao10 == null ? false : check.Opcao10,
+                                QuestaoId=check.QuestaoId,
+                                Opcao1=check.Opcao1 == null?false:check.Opcao1,
+                                Opcao2=check.Opcao2 == null ? false : check.Opcao2,
+                                Opcao3=check.Opcao3 == null ? false : check.Opcao3,
+                                Opcao4=check.Opcao4 == null ? false : check.Opcao4,
+                                Opcao5=check.Opcao5 == null ? false : check.Opcao5,
+                                Opcao6=check.Opcao6 == null ? false : check.Opcao6,
+                                Opcao7=check.Opcao7 == null ? false : check.Opcao7,
+                                Opcao8=check.Opcao8 == null ? false : check.Opcao8,
+                                Opcao9=check.Opcao9 == null ? false : check.Opcao9,
+                                Opcao10= check.Opcao10 == null ? false : check.Opcao10,
                             }
                         ).ToListAsync())
-                        .GroupBy(X => X.questaoId)
+                        .GroupBy(X => X.QuestaoId)
                         .Select(t => new
                         {
                             questaoId = t.Key,
-                            opcao1 = t.Count(ta=>ta.opcao1.HasValue && ta.opcao1.Value),
-                            opcao2 = t.Count(ta=> ta.opcao2.HasValue && ta.opcao2.Value),
-                            opcao3 = t.Count(ta=>ta.opcao3.HasValue && ta.opcao3.Value),
-                            opcao4 = t.Count(ta=>ta.opcao4.HasValue && ta.opcao4.Value),
-                            opcao5 = t.Count(ta=>ta.opcao5.HasValue && ta.opcao5.Value),
-                            opcao6 = t.Count(ta=>ta.opcao6.HasValue && ta.opcao6.Value),
-                            opcao7 = t.Count(ta=>ta.opcao7.HasValue && ta.opcao7.Value),
-                            opcao8 = t.Count(ta=>ta.opcao8.HasValue && ta.opcao8.Value),
-                            opcao9 = t.Count(ta=>ta.opcao9.HasValue && ta.opcao9.Value),
-                            opcao10 = t.Count(ta=>ta.opcao10.HasValue && ta.opcao10.Value)
+                            opcao1 = t.Count(ta=>ta.Opcao1.HasValue && ta.Opcao1.Value),
+                            opcao2 = t.Count(ta=> ta.Opcao2.HasValue && ta.Opcao2.Value),
+                            opcao3 = t.Count(ta=>ta.Opcao3.HasValue && ta.Opcao3.Value),
+                            opcao4 = t.Count(ta=>ta.Opcao4.HasValue && ta.Opcao4.Value),
+                            opcao5 = t.Count(ta=>ta.Opcao5.HasValue && ta.Opcao5.Value),
+                            opcao6 = t.Count(ta=>ta.Opcao6.HasValue && ta.Opcao6.Value),
+                            opcao7 = t.Count(ta=>ta.Opcao7.HasValue && ta.Opcao7.Value),
+                            opcao8 = t.Count(ta=>ta.Opcao8.HasValue && ta.Opcao8.Value),
+                            opcao9 = t.Count(ta=>ta.Opcao9.HasValue && ta.Opcao9.Value),
+                            opcao10 = t.Count(ta=>ta.Opcao10.HasValue && ta.Opcao10.Value)
                         }).ToList();
 
                     var respostasRadio = (await
@@ -148,15 +148,15 @@ namespace backendcsharp.Controllers
                             where formularios.Id == form && questoesId.Contains((int)radio.QuestaoId)
                             select new RadioboxDTO
                             {
-                                questaoId = radio.QuestaoId,
-                                radio = radio.Radio == null ? 0 : radio.Radio
+                                QuestaoId = radio.QuestaoId,
+                                Radio = radio.Radio == null ? 0 : radio.Radio
                             }
                         ).ToListAsync())
-                        .GroupBy(X => new { X.questaoId, X.radio})
+                        .GroupBy(X => new { X.QuestaoId, X.Radio})
                         .Select(t => new
                         {
-                            t.Key.questaoId,
-                            t.Key.radio,
+                            t.Key.QuestaoId,
+                            t.Key.Radio,
                             quantidade = t.Count()
                         }).ToList();
 
@@ -183,12 +183,12 @@ namespace backendcsharp.Controllers
                         }
                         else
                         {
-                            var respostasQuestao = respostasRadio.FindAll(x => x.questaoId == item.questaoId);
+                            var respostasQuestao = respostasRadio.FindAll(x => x.QuestaoId == item.questaoId);
                             if (respostasQuestao is not null)
                             {
                                 for (int i = 1; i <= 10; i++)
                                 {
-                                    var qtd = respostasQuestao.Find(x => x.radio == i);
+                                    var qtd = respostasQuestao.Find(x => x.Radio == i);
                                     if (qtd is not null) Dado.Add(qtd.quantidade);
                                     else Dado.Add(0);
                                 }
@@ -230,7 +230,7 @@ namespace backendcsharp.Controllers
                     checks?.RemoveAll(s => string.IsNullOrWhiteSpace(s));
                     Checks = checks;
                     checksNum?.RemoveAll(s => s == 0);
-                    ChecksNum = checksNum;
+                    ChecksNum = checksNum ?? new();
                 }
             }
         }
@@ -308,47 +308,47 @@ namespace backendcsharp.Controllers
                         from r in radioGroup.DefaultIfEmpty()
                         join check in ProjetoDbContext.Checkboxes on questao.Id equals check.QuestaoId into checkGroup
                         from c in checkGroup.DefaultIfEmpty()
-                        where questoesId.Contains(questao.Id) && questao.FormId == FormId && (t.RespostaId == item.id || r.RespostaId == item.id || c.RespostaId == item.id)
+                        where questoesId.Contains(questao.Id) && questao.FormId == FormId && (t.RespostaId == item.Id || r.RespostaId == item.Id || c.RespostaId == item.Id)
                         select new Respostas(
                             questao,
                             t.Texto,
                             r.Radio??0,
                             r.Radio != null ? (
-                            r.Radio == 1 ? questao.Opcao1 :
-                            r.Radio == 2 ? questao.Opcao2 :
-                            r.Radio == 3 ? questao.Opcao3 :
-                            r.Radio == 4 ? questao.Opcao4 :
-                            r.Radio == 5 ? questao.Opcao5 :
-                            r.Radio == 6 ? questao.Opcao6 :
-                            r.Radio == 7 ? questao.Opcao7 :
-                            r.Radio == 8 ? questao.Opcao8 :
-                            r.Radio == 9 ? questao.Opcao9 :
+                            r.Radio == 1  ? questao.Opcao1 :
+                            r.Radio == 2  ? questao.Opcao2 :
+                            r.Radio == 3  ? questao.Opcao3 :
+                            r.Radio == 4  ? questao.Opcao4 :
+                            r.Radio == 5  ? questao.Opcao5 :
+                            r.Radio == 6  ? questao.Opcao6 :
+                            r.Radio == 7  ? questao.Opcao7 :
+                            r.Radio == 8  ? questao.Opcao8 :
+                            r.Radio == 9  ? questao.Opcao9 :
                             r.Radio == 10 ? questao.Opcao10 : "") : null,
                             new List<uint>()
                             {
-                                c.Opcao1 ?? false ? (uint) 1 : 0,
-                                c.Opcao2 ?? false ? (uint) 2 : 0,
-                                c.Opcao3 ?? false ? (uint) 3 : 0,
-                                c.Opcao4 ?? false ? (uint) 4 : 0,
-                                c.Opcao5 ?? false ? (uint) 5 : 0,
-                                c.Opcao6 ?? false ? (uint) 6 : 0,
-                                c.Opcao7 ?? false ? (uint) 7 : 0,
-                                c.Opcao8 ?? false ? (uint) 8 : 0,
-                                c.Opcao9 ?? false ? (uint) 9 : 0,
+                                c.Opcao1  ?? false ? (uint) 1  : 0,
+                                c.Opcao2  ?? false ? (uint) 2  : 0,
+                                c.Opcao3  ?? false ? (uint) 3  : 0,
+                                c.Opcao4  ?? false ? (uint) 4  : 0,
+                                c.Opcao5  ?? false ? (uint) 5  : 0,
+                                c.Opcao6  ?? false ? (uint) 6  : 0,
+                                c.Opcao7  ?? false ? (uint) 7  : 0,
+                                c.Opcao8  ?? false ? (uint) 8  : 0,
+                                c.Opcao9  ?? false ? (uint) 9  : 0,
                                 c.Opcao10 ?? false ? (uint) 10 : 0
                             },
                             new List<string>()
                             {
-                                c.Opcao1 ?? false ? questao.Opcao1 : "",
-                                c.Opcao2 ?? false ? questao.Opcao2 : "",
-                                c.Opcao3 ?? false ? questao.Opcao3 : "",
-                                c.Opcao4 ?? false ? questao.Opcao4 : "",
-                                c.Opcao5 ?? false ? questao.Opcao5 : "",
-                                c.Opcao6 ?? false ? questao.Opcao6 : "",
-                                c.Opcao7 ?? false ? questao.Opcao7 : "",
-                                c.Opcao8 ?? false ? questao.Opcao8 : "",
-                                c.Opcao9 ?? false ? questao.Opcao9 : "",
-                                c.Opcao10 ?? false ? questao.Opcao10 : ""
+                                (c.Opcao1  ?? false ? questao.Opcao1  : "") ?? "",
+                                (c.Opcao2  ?? false ? questao.Opcao2  : "") ?? "",
+                                (c.Opcao3  ?? false ? questao.Opcao3  : "") ?? "",
+                                (c.Opcao4  ?? false ? questao.Opcao4  : "") ?? "",
+                                (c.Opcao5  ?? false ? questao.Opcao5  : "") ?? "",
+                                (c.Opcao6  ?? false ? questao.Opcao6  : "") ?? "",
+                                (c.Opcao7  ?? false ? questao.Opcao7  : "") ?? "",
+                                (c.Opcao8  ?? false ? questao.Opcao8  : "") ?? "",
+                                (c.Opcao9  ?? false ? questao.Opcao9  : "") ?? "",
+                                (c.Opcao10 ?? false ? questao.Opcao10 : "") ?? ""
                             }
                     )).ToListAsync();
 
@@ -356,9 +356,9 @@ namespace backendcsharp.Controllers
                     foreach (var questaoF in questoesFiltro)
                     {
                         bool flag = respostas.Any(e => (
-                            e.id == questaoF.Questao && (
-                                (e.type==1||e.type==9) ?  questaoF.Opcoes.Count == 0 || questaoF.Opcoes.Contains(e.RadioNum): 
-                                e.type != 3            || questaoF.Opcoes.Count == 0 || questaoF.Opcoes.Intersect(e.ChecksNum).Any()
+                            e.Id == questaoF.Questao && (
+                                (e.Type==1||e.Type==9) ?  questaoF.Opcoes.Count == 0 || questaoF.Opcoes.Contains(e.RadioNum): 
+                                e.Type != 3            || questaoF.Opcoes.Count == 0 || questaoF.Opcoes.Intersect(e.ChecksNum).Any()
                             )
                         ));;
                         if (flag) count++;

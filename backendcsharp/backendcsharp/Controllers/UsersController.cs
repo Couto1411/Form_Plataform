@@ -35,27 +35,27 @@ namespace backendcsharp.Controllers
                 Handlers.IdNegative(Id, "Id do responsável inválido");
                 var Admin = await ProjetoDbContext.Users.Select(s => new UsersDTO
                 {
-                    id = s.Id,
-                    nome = s.Nome,
-                    email = s.Email,
-                    admin = s.Admin,
-                    appPassword = s.AppPassword,
-                    universidade = s.Universidade
-                }).FirstOrDefaultAsync(s => s.id == Id);
+                    Id = s.Id,
+                    Nome = s.Nome,
+                    Email = s.Email,
+                    Admin = s.Admin,
+                    AppPassword = s.AppPassword,
+                    Universidade = s.Universidade
+                }).FirstOrDefaultAsync(s => s.Id == Id);
                 if (Admin is null) return NotFound();
-                if (Admin.admin)
+                if (Admin.Admin)
                 {
                     var List = await ProjetoDbContext.Users.Select(
                         s => new UsersDTO
                         {
-                            id = s.Id,
-                            nome = s.Nome,
-                            email = s.Email,
-                            appPassword = s.AppPassword,
-                            admin = s.Admin,
-                            universidade = s.Universidade
+                            Id = s.Id,
+                            Nome = s.Nome,
+                            Email = s.Email,
+                            AppPassword = s.AppPassword,
+                            Admin = s.Admin,
+                            Universidade = s.Universidade
                         }
-                    ).Where(x=>x.id!=1).ToListAsync();
+                    ).Where(x=>x.Id!=1).ToListAsync();
                     if (List.Count < 0) return NotFound();
                     else return List;
                 }else return StatusCode(401);
@@ -77,13 +77,13 @@ namespace backendcsharp.Controllers
                 Handlers.IdNegative(Id, "Id do responsável inválido");
                 var User = await ProjetoDbContext.Users.Select(s => new UsersDTO
                 {
-                    id = s.Id,
-                    nome = s.Nome,
-                    email = s.Email,
-                    admin = s.Admin,
-                    appPassword = s.AppPassword,
-                    universidade = s.Universidade
-                }).FirstOrDefaultAsync(s => s.id == Id);
+                    Id = s.Id,
+                    Nome = s.Nome,
+                    Email = s.Email,
+                    Admin = s.Admin,
+                    AppPassword = s.AppPassword,
+                    Universidade = s.Universidade
+                }).FirstOrDefaultAsync(s => s.Id == Id);
                 if (User == null)
                 {
                     return NotFound();
@@ -110,33 +110,33 @@ namespace backendcsharp.Controllers
                 Handlers.IdNegative(Id, "Id do responsável inválido");
                 var Admin = await ProjetoDbContext.Users.Select(s => new UsersDTO
                 {
-                    id = s.Id,
-                    nome = s.Nome,
-                    email = s.Email,
-                    admin = s.Admin,
-                    appPassword = s.AppPassword,
-                    universidade = s.Universidade
-                }).FirstOrDefaultAsync(s => s.id == Id);
+                    Id = s.Id,
+                    Nome = s.Nome,
+                    Email = s.Email,
+                    Admin = s.Admin,
+                    AppPassword = s.AppPassword,
+                    Universidade = s.Universidade
+                }).FirstOrDefaultAsync(s => s.Id == Id);
                 if (Admin is null) return NotFound();
-                if (Admin.admin)
+                if (Admin.Admin)
                 {
-                    if (User.id is not null) throw new Exception("Usuário já existente");
+                    if (User.Id is not null) throw new Exception("Usuário já existente");
                     else
                     {
-                        Handlers.ExistsOrError(User.nome, "Nome não informado");
-                        if (!Handlers.IsValidGmail(User.email)) return StatusCode(501);
-                        Handlers.ExistsOrError(User.appPassword, "Senha não informado");
-                        Handlers.ExistsOrError(User.universidade, "Universidade não informada");
-                        Handlers.ExistsOrError(User.senha, "Senha não informada");
+                        Handlers.ExistsOrError(User.Nome, "Nome não informado");
+                        if (!Handlers.IsValidGmail(User.Email)) return StatusCode(501);
+                        Handlers.ExistsOrError(User.AppPassword, "Senha não informado");
+                        Handlers.ExistsOrError(User.Universidade, "Universidade não informada");
+                        Handlers.ExistsOrError(User.Senha, "Senha não informada");
                         // Salva usuário no banco MySQL
                         var entity = new Users()
                         {
-                            Nome = User.nome ?? "",
-                            Email = User.email ?? "",
-                            Universidade = User.universidade ?? "",
-                            AppPassword = User.appPassword ?? "",
-                            Senha = BCrypt.Net.BCrypt.HashPassword(User.senha),
-                            Admin = User.admin,
+                            Nome = User.Nome ?? "",
+                            Email = User.Email ?? "",
+                            Universidade = User.Universidade ?? "",
+                            AppPassword = User.AppPassword ?? "",
+                            Senha = BCrypt.Net.BCrypt.HashPassword(User.Senha),
+                            Admin = User.Admin,
                         };
                         ProjetoDbContext.Users.Add(entity);
                         await ProjetoDbContext.SaveChangesAsync();
@@ -163,27 +163,27 @@ namespace backendcsharp.Controllers
                 Handlers.IdNegative(Id, "Id do responsável inválido");
                 var Admin = await ProjetoDbContext.Users.Select(s => new UsersDTO
                 {
-                    id = s.Id,
-                    nome = s.Nome,
-                    email = s.Email,
-                    admin = s.Admin,
-                    appPassword = s.AppPassword,
-                    universidade = s.Universidade
-                }).FirstOrDefaultAsync(s => s.id == Id);
+                    Id = s.Id,
+                    Nome = s.Nome,
+                    Email = s.Email,
+                    Admin = s.Admin,
+                    AppPassword = s.AppPassword,
+                    Universidade = s.Universidade
+                }).FirstOrDefaultAsync(s => s.Id == Id);
                 if (Admin is null) return NotFound();
-                if (Admin.admin)
+                if (Admin.Admin)
                 {
-                    Handlers.ExistsOrError(User.id.ToString(), "Id do responsável não informado");
-                    Handlers.IdNegative(User.id is not null ? (int)User.id : throw new Exception("Usuário Encontrado, porém não id, entrar em contato"), "Id do usuário inválido");
-                    var entity = await ProjetoDbContext.Users.FirstOrDefaultAsync(s => s.Id == User.id);
+                    Handlers.ExistsOrError(User.Id.ToString(), "Id do responsável não informado");
+                    Handlers.IdNegative(User.Id is not null ? (int)User.Id : throw new Exception("Usuário Encontrado, porém não id, entrar em contato"), "Id do usuário inválido");
+                    var entity = await ProjetoDbContext.Users.FirstOrDefaultAsync(s => s.Id == User.Id);
                     if (entity != null)
                     {
-                        entity.Nome = User.nome ?? entity.Nome;
-                        entity.Universidade = User.universidade ?? entity.Universidade;
-                        entity.Email = User.email ?? entity.Email;
-                        entity.Admin = User.admin;
-                        if (User.senha is not null) entity.Senha = BCrypt.Net.BCrypt.HashPassword(User.senha);
-                        entity.AppPassword = User.appPassword ?? throw new Exception("Senha do gmail não informada não informada");
+                        entity.Nome = User.Nome ?? entity.Nome;
+                        entity.Universidade = User.Universidade ?? entity.Universidade;
+                        entity.Email = User.Email ?? entity.Email;
+                        entity.Admin = User.Admin;
+                        if (User.Senha is not null) entity.Senha = BCrypt.Net.BCrypt.HashPassword(User.Senha);
+                        entity.AppPassword = User.AppPassword ?? throw new Exception("Senha do gmail não informada não informada");
                         await ProjetoDbContext.SaveChangesAsync();
                         return StatusCode(204);
                     }
@@ -209,10 +209,10 @@ namespace backendcsharp.Controllers
                 var entity = await ProjetoDbContext.Users.FirstOrDefaultAsync(s => s.Id == Id);
                 if (entity != null)
                 {
-                    entity.Nome = User.nome ?? throw new Exception("Nome não informado");
-                    entity.Universidade = User.universidade ?? throw new Exception("Universidade não informada");
-                    if (User.senha is not null) entity.Senha = BCrypt.Net.BCrypt.HashPassword(User.senha);
-                    entity.AppPassword = User.appPassword ?? throw new Exception("Senha do gmail não informada não informada");
+                    entity.Nome = User.Nome ?? throw new Exception("Nome não informado");
+                    entity.Universidade = User.Universidade ?? throw new Exception("Universidade não informada");
+                    if (User.Senha is not null) entity.Senha = BCrypt.Net.BCrypt.HashPassword(User.Senha);
+                    entity.AppPassword = User.AppPassword ?? throw new Exception("Senha do gmail não informada não informada");
                     await ProjetoDbContext.SaveChangesAsync();
                     return StatusCode(204);
                 }
@@ -238,15 +238,15 @@ namespace backendcsharp.Controllers
                 Handlers.IdNegative(AdminId, "Id do responsável inválido");
                 var Admin = await ProjetoDbContext.Users.Select(s => new UsersDTO
                 {
-                    id = s.Id,
-                    nome = s.Nome,
-                    email = s.Email,
-                    admin = s.Admin,
-                    appPassword = s.AppPassword,
-                    universidade = s.Universidade
-                }).FirstOrDefaultAsync(s => s.id == AdminId);
+                    Id = s.Id,
+                    Nome = s.Nome,
+                    Email = s.Email,
+                    Admin = s.Admin,
+                    AppPassword = s.AppPassword,
+                    Universidade = s.Universidade
+                }).FirstOrDefaultAsync(s => s.Id == AdminId);
                 if (Admin is null) return NotFound();
-                if (Admin.admin)
+                if (Admin.Admin)
                 {
                     var FormsOrig = await ProjetoDbContext.Formularios.Where(s => s.ResponsavelId == Id && s.DerivadoDeId == null).ToListAsync();
                     foreach (var form in FormsOrig)
@@ -267,16 +267,16 @@ namespace backendcsharp.Controllers
                         var questoes = await ProjetoDbContext.Questoes
                             .Select(s => new QuestoesDTO
                             {
-                                id = s.Id,
-                                formId = s.FormId
+                                Id = s.Id,
+                                FormId = s.FormId
                             })
-                            .Where(s => s.formId == form.Id)
+                            .Where(s => s.FormId == form.Id)
                             .ToListAsync();
                         foreach (var item in questoes)
                         {
-                            ProjetoDbContext.Radioboxes.RemoveRange(ProjetoDbContext.Radioboxes.Where(s => s.QuestaoId == item.id));
-                            ProjetoDbContext.Texts.RemoveRange(ProjetoDbContext.Texts.Where(s => s.QuestaoId == item.id));
-                            ProjetoDbContext.Checkboxes.RemoveRange(ProjetoDbContext.Checkboxes.Where(s => s.QuestaoId == item.id));
+                            ProjetoDbContext.Radioboxes.RemoveRange(ProjetoDbContext.Radioboxes.Where(s => s.QuestaoId == item.Id));
+                            ProjetoDbContext.Texts.RemoveRange(ProjetoDbContext.Texts.Where(s => s.QuestaoId == item.Id));
+                            ProjetoDbContext.Checkboxes.RemoveRange(ProjetoDbContext.Checkboxes.Where(s => s.QuestaoId == item.Id));
                         }
                         ProjetoDbContext.Destinatarios.RemoveRange(ProjetoDbContext.Destinatarios.Where(s => s.FormId == form.Id));
                         ProjetoDbContext.Questoes.RemoveRange(ProjetoDbContext.Questoes.Where(s => s.FormId == form.Id));
@@ -317,18 +317,18 @@ namespace backendcsharp.Controllers
                 var Usuario = await ProjetoDbContext.Users.Select(
                     s => new UsersDTO
                     {
-                        id = s.Id,
-                        email = s.Email,
-                        senha = s.Senha,
-                        admin = s.Admin
+                        Id = s.Id,
+                        Email = s.Email,
+                        Senha = s.Senha,
+                        Admin = s.Admin
                     }
-                ).Where(s => s.email == usuario.email).FirstOrDefaultAsync();
+                ).Where(s => s.Email == usuario.email).FirstOrDefaultAsync();
                 if (Usuario is not null)
                 {
-                    usuario.id = Usuario.id is not null? (int)Usuario.id:throw new Exception("Usuário Encontrado, porém não id, entrar em contato");
-                    usuario.admin = Usuario.admin;
+                    usuario.id = Usuario.Id is not null? (int)Usuario.Id:throw new Exception("Usuário Encontrado, porém não id, entrar em contato");
+                    usuario.admin = Usuario.Admin;
                 }else return StatusCode(400);
-                if (BCrypt.Net.BCrypt.Verify(usuario.senha,Usuario.senha))
+                if (BCrypt.Net.BCrypt.Verify(usuario.senha,Usuario.Senha))
                 {
                     logger.LogInformation($"Sucesso na autenticação do usuário: {usuario.email}");
                     return accessManager.GenerateToken(usuario);

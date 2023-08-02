@@ -2,15 +2,15 @@
 
 public partial class RadioboxDTO
 {
-    public uint? id { get; set; } = null!;
+    public uint? Id { get; set; } = null!;
 
-    public uint? questaoId { get; set; } = null!;
+    public uint? QuestaoId { get; set; } = null!;
 
-    public uint? respostaId { get; set; } = null!;
+    public uint? RespostaId { get; set; } = null!;
 
-    public int? radio { get; set; } = null!;
+    public int? Radio { get; set; } = null!;
 
-    public virtual QuestoesDTO questao { get; set; } = null!;
+    public virtual QuestoesDTO Questao { get; set; } = null!;
 
-    public virtual DestinatarioDTO resposta { get; set; } = null!;
+    public virtual DestinatarioDTO Resposta { get; set; } = null!;
 }

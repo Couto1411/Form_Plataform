@@ -45,26 +45,26 @@ namespace backendcsharp.Controllers
             {
                 var User = await ProjetoDbContext.Users.Select(s => new UsersDTO
                 {
-                    id= s.Id,
-                    email = s.Email,
-                    nome = s.Nome,
-                    universidade = s.Universidade,
-                    appPassword = s.AppPassword,
+                    Id= s.Id,
+                    Email = s.Email,
+                    Nome = s.Nome,
+                    Universidade = s.Universidade,
+                    AppPassword = s.AppPassword,
 
-                }).FirstOrDefaultAsync(s => s.id == model.UserId);
+                }).FirstOrDefaultAsync(s => s.Id == model.UserId);
                 if (User == null) throw new Exception("Usuário não encontrado");
                 else {
-                    if (User.appPassword is null) return StatusCode(402);
+                    if (User.AppPassword is null) return StatusCode(402);
                     // Busca emails dos destinatários 
                     var Destinatarios = await ProjetoDbContext.Destinatarios
                         .Select(s => new DestinatarioDTO
                         {
-                            id = s.Id,
-                            email = s.Email,
-                            formId = s.FormId,
-                            respondido = s.Respondido
+                            Id = s.Id,
+                            Email = s.Email,
+                            FormId = s.FormId,
+                            Respondido = s.Respondido
                         })
-                        .Where(s => s.formId == model.FormId)
+                        .Where(s => s.FormId == model.FormId)
                         .ToListAsync();
 
                     if (Destinatarios == null) throw new Exception("Formulário não possui emails");
@@ -86,22 +86,22 @@ namespace backendcsharp.Controllers
                             // Começo da configuração do EMAIL
 
                             // Seta remetente
-                            if(User.email is not null) email.From = new MailAddress(User.email);
+                            if(User.Email is not null) email.From = new MailAddress(User.Email);
                             else throw new Exception("Sem email de remetente");
 
                             // Seta destinatários
                             foreach (var element in destinatario)
                             {
-                                if (element.respondido == 0) {
-                                    var contato = await ProjetoDbContext.Destinatarios.Select(e => new Destinatario()).FirstOrDefaultAsync(s => s.Id == element.id);
+                                if (element.Respondido == 0) {
+                                    var contato = await ProjetoDbContext.Destinatarios.Select(e => new Destinatario()).FirstOrDefaultAsync(s => s.Id == element.Id);
                                     if (contato is not null) contato.Respondido = 1;
-                                    if (Handlers.IsValidEmail(element.email)) email.Bcc.Add(element.email);
+                                    if (Handlers.IsValidEmail(element.Email)) email.Bcc.Add(element.Email);
                                 }
                             }
                             //email.To.Add("gabriel.couto14@hotmail.com");
 
                             // Faz cópia do email para o remetente
-                            email.CC.Add(User.email);
+                            email.CC.Add(User.Email);
 
                             // Seta o título do formulário como assunto
                             email.Subject = Form.Titulo;
@@ -114,7 +114,7 @@ namespace backendcsharp.Controllers
                             SmtpServer.Timeout = 5000;
                             SmtpServer.EnableSsl = true;
                             SmtpServer.UseDefaultCredentials = false;
-                            SmtpServer.Credentials = new NetworkCredential(User.email, User.appPassword);
+                            SmtpServer.Credentials = new NetworkCredential(User.Email, User.AppPassword);
                             await SmtpServer.SendMailAsync(email);
                         }
                         Form.DataEnviado = DateTime.Now;
@@ -139,27 +139,27 @@ namespace backendcsharp.Controllers
             {
                 var User = await ProjetoDbContext.Users.Select(s => new UsersDTO
                 {
-                    id = s.Id,
-                    email = s.Email,
-                    nome = s.Nome,
-                    universidade = s.Universidade,
-                    appPassword = s.AppPassword,
+                    Id = s.Id,
+                    Email = s.Email,
+                    Nome = s.Nome,
+                    Universidade = s.Universidade,
+                    AppPassword = s.AppPassword,
 
-                }).FirstOrDefaultAsync(s => s.id == model.UserId);
+                }).FirstOrDefaultAsync(s => s.Id == model.UserId);
                 if (User == null) throw new Exception("Usuário não encontrado");
                 else
                 {
-                    if (User.appPassword is null) return StatusCode(402);
+                    if (User.AppPassword is null) return StatusCode(402);
                     else
                     {
                         var Form = await ProjetoDbContext.Formularios
                             .Select(s => new FormularioDTO
                             {
-                                id = s.Id,
-                                msgEmail = s.MsgEmail,
-                                titulo = s.Titulo,
+                                Id = s.Id,
+                                MsgEmail = s.MsgEmail,
+                                Titulo = s.Titulo,
                             })
-                            .Where(s => s.id == model.FormId)
+                            .Where(s => s.Id == model.FormId)
                             .FirstOrDefaultAsync() ?? throw new Exception("Formulário não encontrado");
 
                         // Configura SMTP
@@ -172,7 +172,7 @@ namespace backendcsharp.Controllers
                         // Começo da configuração do EMAIL
 
                         // Seta remetente
-                        if (User.email is not null) email.From = new MailAddress(User.email);
+                        if (User.Email is not null) email.From = new MailAddress(User.Email);
                         else throw new Exception("Sem email de remetente");
 
                         // Seta destinatário
@@ -184,18 +184,18 @@ namespace backendcsharp.Controllers
                         //email.To.Add("gabriel.couto14@hotmail.com");
 
                         // Faz cópia do email para o remetente
-                        email.CC.Add(User.email);
+                        email.CC.Add(User.Email);
 
                         // Seta o título do formulário como assunto
-                        email.Subject = Form.titulo;
+                        email.Subject = Form.Titulo;
                         // Seta a mensagem do email
-                        email.Body = Form.msgEmail is not null?Form.msgEmail.Replace(@" {replaceStringHere} ", @"<br/><br/>https://formplataform-4ac81.web.app/" + Form.id + "<br/><br/>").Replace("\n",@"<br/>"):"";
+                        email.Body = Form.MsgEmail is not null?Form.MsgEmail.Replace(@" {replaceStringHere} ", @"<br/><br/>https://formplataform-4ac81.web.app/" + Form.Id + "<br/><br/>").Replace("\n",@"<br/>"):"";
                         //END
                         email.IsBodyHtml = true;
                         SmtpServer.Timeout = 5000;
                         SmtpServer.EnableSsl = true;
                         SmtpServer.UseDefaultCredentials = false;
-                        SmtpServer.Credentials = new NetworkCredential(User.email, User.appPassword);
+                        SmtpServer.Credentials = new NetworkCredential(User.Email, User.AppPassword);
                         await SmtpServer.SendMailAsync(email);
                         await ProjetoDbContext.SaveChangesAsync();
                         return StatusCode(204);

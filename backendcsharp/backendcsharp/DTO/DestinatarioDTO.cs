@@ -4,30 +4,30 @@ namespace backendcsharp.DTO;
 
 public partial class DestinatarioDTO
 {
-    public uint? id { get; set; } = null!;
+    public uint? Id { get; set; } = null!;
 
-    public uint? formId { get; set; } = null!;
+    public uint? FormId { get; set; } = null!;
 
-    public short respondido { get; set; } = 0;
+    public short Respondido { get; set; } = 0;
 
-    public string? nome { get; set; } = null!;
-    public string? email { get; set; } = null!;
-    public string? telefone1 { get; set; } = null!;
-    public string? telefone2 { get; set; } = null!;
-    public string? matricula { get; set; } = null!;
-    public string? cpf { get; set; } = null!;
-    public string? sexo { get; set; } = null!;
-    public string? curso { get; set; } = null!;
-    public string? modalidade { get; set; } = null!;
-    public DateTime? dataColacao { get; set; } = null!;
+    public string? Nome { get; set; } = null!;
+    public string? Email { get; set; } = null!;
+    public string? Telefone1 { get; set; } = null!;
+    public string? Telefone2 { get; set; } = null!;
+    public string? Matricula { get; set; } = null!;
+    public string? Cpf { get; set; } = null!;
+    public string? Sexo { get; set; } = null!;
+    public string? Curso { get; set; } = null!;
+    public string? Modalidade { get; set; } = null!;
+    public DateTime? DataColacao { get; set; } = null!;
 
-    public virtual ICollection<CheckboxDTO> checkboxes { get; } = new List<CheckboxDTO>();
+    public virtual ICollection<CheckboxDTO> Checkboxes { get; } = new List<CheckboxDTO>();
 
-    public virtual FormularioDTO? form { get; set; } = null!;
+    public virtual FormularioDTO? Form { get; set; } = null!;
 
-    public virtual ICollection<RadioboxDTO> radioboxes { get; } = new List<RadioboxDTO>();
+    public virtual ICollection<RadioboxDTO> Radioboxes { get; } = new List<RadioboxDTO>();
 
-    public virtual ICollection<TextDTO> texts { get; } = new List<TextDTO>();
+    public virtual ICollection<TextDTO> Texts { get; } = new List<TextDTO>();
 
     public DestinatarioDTO() { }
 
@@ -35,19 +35,19 @@ public partial class DestinatarioDTO
     {
         if (envio is not null)
         {
-            id = envio.Id;
-            nome = envio.Nome;
-            formId = envio.FormId;
-            respondido = envio.Respondido;
-            email = envio.Email;
-            telefone1 = envio.Telefone1;
-            telefone2 = envio.Telefone2;
-            matricula = envio.Matricula;
-            cpf = envio.Cpf;
-            sexo = envio.Sexo;
-            curso = envio.Curso;
-            modalidade = envio.Modalidade;
-            dataColacao = envio.DataColacao;
+            Id = envio.Id;
+            Nome = envio.Nome;
+            FormId = envio.FormId;
+            Respondido = envio.Respondido;
+            Email = envio.Email;
+            Telefone1 = envio.Telefone1;
+            Telefone2 = envio.Telefone2;
+            Matricula = envio.Matricula;
+            Cpf = envio.Cpf;
+            Sexo = envio.Sexo;
+            Curso = envio.Curso;
+            Modalidade = envio.Modalidade;
+            DataColacao = envio.DataColacao;
         }
     }
 }

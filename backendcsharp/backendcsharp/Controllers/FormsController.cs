@@ -25,18 +25,18 @@ namespace backendcsharp.Controllers
         {
             try
             {
-                Handlers.ExistsOrError(Form.titulo, "Nome não informado");
+                Handlers.ExistsOrError(Form.Titulo, "Nome não informado");
                 Handlers.ExistsOrError(Id.ToString(), "Responsável não informado");
                 Handlers.ExistsOrError(Id.ToString(), "Id do responsável não informado");
                 Handlers.IdNegative(Id, "Id do usuário inválido");
-                if (Form.id is null)
+                if (Form.Id is null)
                 {
                     var entity = new Formulario()
                     {
-                        Titulo = Form.titulo is null?"":Form.titulo,
+                        Titulo = Form.Titulo is null?"":Form.Titulo,
                         ResponsavelId = (uint) Id,
-                        MsgEmail = Form.msgEmail,
-                        DerivadoDeId= Form.derivadoDeId
+                        MsgEmail = Form.MsgEmail,
+                        DerivadoDeId= Form.DerivadoDeId
                     };
                     if (entity.MsgEmail is not null && !entity.MsgEmail.Contains(@" {replaceStringHere} ")) throw new Exception("Mensagem de Email não corresponde ao padrão");
                     ProjetoDbContext.Formularios.Add(entity);
@@ -80,23 +80,23 @@ namespace backendcsharp.Controllers
         {
             try
             {
-                Handlers.ExistsOrError(Form.titulo, "Nome não informado");
+                Handlers.ExistsOrError(Form.Titulo, "Nome não informado");
                 Handlers.ExistsOrError(Id.ToString(), "Id do responsável não informado");
                 Handlers.IdNegative(Id, "Id do usuário inválido");
                 Handlers.ExistsOrError(FormId.ToString(), "Id do formulário não informado");
                 Handlers.IdNegative(FormId, "Id do formulário inválido");
-                Form.id = ((uint)FormId);
-                Form.responsavelId = ((uint)Id);
-                if (Form.id is not null)
+                Form.Id = ((uint)FormId);
+                Form.ResponsavelId = ((uint)Id);
+                if (Form.Id is not null)
                 {
                     var entity = await ProjetoDbContext.Formularios.FirstOrDefaultAsync(s => s.Id == FormId);
                     if (entity != null)
                     {
                         if(entity.DerivadoDeId is null)
                         {
-                            entity.Titulo = Form.titulo is null ? "" : Form.titulo;
+                            entity.Titulo = Form.Titulo is null ? "" : Form.Titulo;
                         }
-                        entity.MsgEmail = Form.msgEmail;
+                        entity.MsgEmail = Form.MsgEmail;
                         if (entity.MsgEmail is not null && !entity.MsgEmail.Contains(@" {replaceStringHere} ")) throw new Exception("Mensagem de Email não corresponde ao padrão");
                         await ProjetoDbContext.SaveChangesAsync();
                         return StatusCode(204);
@@ -123,24 +123,24 @@ namespace backendcsharp.Controllers
                 Handlers.IdNegative(Id, "Id do responsável inválido");
                 var Admin = await ProjetoDbContext.Users.Select(s => new UsersDTO
                 {
-                    id = s.Id,
-                    nome = s.Nome,
-                    email = s.Email,
-                    admin = s.Admin,
-                    appPassword = s.AppPassword,
-                    universidade = s.Universidade
-                }).FirstOrDefaultAsync(s => s.id == Id);
+                    Id = s.Id,
+                    Nome = s.Nome,
+                    Email = s.Email,
+                    Admin = s.Admin,
+                    AppPassword = s.AppPassword,
+                    Universidade = s.Universidade
+                }).FirstOrDefaultAsync(s => s.Id == Id);
                 if (Admin is null) return NotFound();
-                if (Admin.admin)
+                if (Admin.Admin)
                 {
                     var List = await ProjetoDbContext.Formularios.Select(
                         s => new FormularioDTO
                         {
-                            id = s.Id,
-                            responsavelId = s.ResponsavelId,
-                            msgEmail = s.MsgEmail,
-                            dataEnviado = s.DataEnviado,
-                            titulo = s.Titulo,
+                            Id = s.Id,
+                            ResponsavelId = s.ResponsavelId,
+                            MsgEmail = s.MsgEmail,
+                            DataEnviado = s.DataEnviado,
+                            Titulo = s.Titulo,
                         }
                     ).ToListAsync();
 
@@ -167,30 +167,30 @@ namespace backendcsharp.Controllers
                 var Forms = await ProjetoDbContext.Formularios
                     .Select(s => new FormularioDTO
                     {
-                        id = s.Id,
-                        titulo = s.Titulo,
-                        derivadoDeId = s.DerivadoDeId,
-                        msgEmail = s.MsgEmail,
-                        dataEnviado = s.DataEnviado,
-                        responsavelId = s.ResponsavelId
+                        Id = s.Id,
+                        Titulo = s.Titulo,
+                        DerivadoDeId = s.DerivadoDeId,
+                        MsgEmail = s.MsgEmail,
+                        DataEnviado = s.DataEnviado,
+                        ResponsavelId = s.ResponsavelId
                     })
-                    .Where(s => s.responsavelId == Id && s.derivadoDeId == null)
+                    .Where(s => s.ResponsavelId == Id && s.DerivadoDeId == null)
                     .ToListAsync();
                 foreach (var item in Forms)
                 {
                     var FormsDerivados = await ProjetoDbContext.Formularios
                         .Select(s => new FormularioDTO
                         {
-                            id = s.Id,
-                            titulo = s.Titulo,
-                            derivadoDeId = s.DerivadoDeId,
-                            msgEmail = s.MsgEmail,
-                            dataEnviado = s.DataEnviado,
-                            responsavelId = s.ResponsavelId
+                            Id = s.Id,
+                            Titulo = s.Titulo,
+                            DerivadoDeId = s.DerivadoDeId,
+                            MsgEmail = s.MsgEmail,
+                            DataEnviado = s.DataEnviado,
+                            ResponsavelId = s.ResponsavelId
                         })
-                        .Where(s => s.derivadoDeId == item.id && s.derivadoDeId != null)
+                        .Where(s => s.DerivadoDeId == item.Id && s.DerivadoDeId != null)
                         .ToListAsync();
-                    item.derivados.AddRange(FormsDerivados);
+                    item.Derivados.AddRange(FormsDerivados);
                 }
                 if (Forms.Count < 0) return NotFound();
                 else return Forms;
@@ -226,16 +226,16 @@ namespace backendcsharp.Controllers
                 var questoes = await ProjetoDbContext.Questoes
                     .Select(s => new QuestoesDTO
                     {
-                        id = s.Id,
-                        formId = s.FormId
+                        Id = s.Id,
+                        FormId = s.FormId
                     })
-                    .Where(s => s.formId==FormId)
+                    .Where(s => s.FormId==FormId)
                     .ToListAsync();
                 foreach (var item in questoes)
                 {
-                    ProjetoDbContext.Radioboxes.RemoveRange(ProjetoDbContext.Radioboxes.Where(s => s.QuestaoId == item.id));
-                    ProjetoDbContext.Texts.RemoveRange(ProjetoDbContext.Texts.Where(s => s.QuestaoId == item.id));
-                    ProjetoDbContext.Checkboxes.RemoveRange(ProjetoDbContext.Checkboxes.Where(s => s.QuestaoId == item.id));
+                    ProjetoDbContext.Radioboxes.RemoveRange(ProjetoDbContext.Radioboxes.Where(s => s.QuestaoId == item.Id));
+                    ProjetoDbContext.Texts.RemoveRange(ProjetoDbContext.Texts.Where(s => s.QuestaoId == item.Id));
+                    ProjetoDbContext.Checkboxes.RemoveRange(ProjetoDbContext.Checkboxes.Where(s => s.QuestaoId == item.Id));
                 }
                 ProjetoDbContext.Destinatarios.RemoveRange(ProjetoDbContext.Destinatarios.Where(s => s.FormId == FormId));
                 ProjetoDbContext.Questoes.RemoveRange(ProjetoDbContext.Questoes.Where(s => s.FormId == FormId));

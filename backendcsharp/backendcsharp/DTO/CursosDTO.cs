@@ -2,9 +2,9 @@
 {
     public class CursosDTO
     {
-        public uint? id { get; set; }
-        public uint? responsavelId { get; set; } = null!;
-        public string? curso { get; set; } = null!;
-        public virtual UsersDTO? responsavel { get; set; } = null!;
+        public uint? Id { get; set; }
+        public uint? ResponsavelId { get; set; } = null!;
+        public string? Curso { get; set; } = null!;
+        public virtual UsersDTO? Responsavel { get; set; } = null!;
     }
 }

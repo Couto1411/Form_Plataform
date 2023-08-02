@@ -27,64 +27,64 @@ namespace backendcsharp.Controllers
             {
                 Handlers.ExistsOrError(FormId.ToString(), "Id do formulário não informado");
                 Handlers.IdNegative(FormId, "Id do formulário inválido");
-                Handlers.ExistsOrError(Destinatario.email, "Email não informado");
-                if (Destinatario.id is null)
+                Handlers.ExistsOrError(Destinatario.Email, "Email não informado");
+                if (Destinatario.Id is null)
                 {
                     HashSet<Tuple<string?, string?>> destinatariosDB = new(await ProjetoDbContext.Destinatarios.Where(s => s.FormId == FormId).Select(c => new Tuple<string?, string?>(c.Email, c.Matricula)).ToListAsync()) ;
-                    Destinatario.nome=String.IsNullOrEmpty(Destinatario.nome) ? null : Destinatario.nome;
-                    Destinatario.matricula = String.IsNullOrEmpty(Destinatario.matricula) ? null : Destinatario.matricula;
-                    Destinatario.telefone1 = String.IsNullOrEmpty(Destinatario.telefone1) ? null : Destinatario.telefone1;
-                    Destinatario.telefone2 = String.IsNullOrEmpty(Destinatario.telefone2) ? null : Destinatario.telefone2;
-                    Destinatario.curso = String.IsNullOrEmpty(Destinatario.curso) ? null : Destinatario.curso;
-                    Destinatario.modalidade = String.IsNullOrEmpty(Destinatario.modalidade) ? null : Destinatario.modalidade;
-                    Destinatario.cpf = String.IsNullOrEmpty(Destinatario.cpf) ? null : Destinatario.cpf;
+                    Destinatario.Nome=String.IsNullOrEmpty(Destinatario.Nome) ? null : Destinatario.Nome;
+                    Destinatario.Matricula = String.IsNullOrEmpty(Destinatario.Matricula) ? null : Destinatario.Matricula;
+                    Destinatario.Telefone1 = String.IsNullOrEmpty(Destinatario.Telefone1) ? null : Destinatario.Telefone1;
+                    Destinatario.Telefone2 = String.IsNullOrEmpty(Destinatario.Telefone2) ? null : Destinatario.Telefone2;
+                    Destinatario.Curso = String.IsNullOrEmpty(Destinatario.Curso) ? null : Destinatario.Curso;
+                    Destinatario.Modalidade = String.IsNullOrEmpty(Destinatario.Modalidade) ? null : Destinatario.Modalidade;
+                    Destinatario.Cpf = String.IsNullOrEmpty(Destinatario.Cpf) ? null : Destinatario.Cpf;
                     // Chega a partir de uma hash se o usuario e matricula estão presentes no banco
-                    if (!destinatariosDB.Contains(new Tuple<string?, string?>(Destinatario.email, Destinatario.matricula)))
+                    if (!destinatariosDB.Contains(new Tuple<string?, string?>(Destinatario.Email, Destinatario.Matricula)))
                     {
                         // Adiciona destinatario no form original
                         var entity = new Destinatario()
                         {
-                            Email = Destinatario.email,
-                            Matricula = Destinatario.matricula,
-                            Respondido = Destinatario.respondido,
+                            Email = Destinatario.Email,
+                            Matricula = Destinatario.Matricula,
+                            Respondido = Destinatario.Respondido,
                             FormId = ((uint)FormId),
-                            Nome = Destinatario.nome,
-                            Curso = Destinatario.curso,
-                            Modalidade = Destinatario.modalidade,
-                            DataColacao = Destinatario.dataColacao,
-                            Telefone1 = Destinatario.telefone1,
-                            Telefone2 = Destinatario.telefone2,
-                            Sexo = Destinatario.sexo,
-                            Cpf = Destinatario.cpf
+                            Nome = Destinatario.Nome,
+                            Curso = Destinatario.Curso,
+                            Modalidade = Destinatario.Modalidade,
+                            DataColacao = Destinatario.DataColacao,
+                            Telefone1 = Destinatario.Telefone1,
+                            Telefone2 = Destinatario.Telefone2,
+                            Sexo = Destinatario.Sexo,
+                            Cpf = Destinatario.Cpf
                         };
-                        destinatariosDB.Add(new Tuple<string?, string?>(Destinatario.email, Destinatario.matricula));
+                        destinatariosDB.Add(new Tuple<string?, string?>(Destinatario.Email, Destinatario.Matricula));
                         ProjetoDbContext.Destinatarios.Add(entity);
 
                         // Adiciona destinatario nos forms derivados
                         var FormsDerivados = await ProjetoDbContext.Formularios
                             .Select(s => new FormularioDTO
                             {
-                                id = s.Id,
-                                derivadoDeId = s.DerivadoDeId,
+                                Id = s.Id,
+                                DerivadoDeId = s.DerivadoDeId,
                             })
-                            .Where(s => s.derivadoDeId == FormId && s.derivadoDeId != null)
+                            .Where(s => s.DerivadoDeId == FormId && s.DerivadoDeId != null)
                             .ToListAsync();
                         foreach (var item in FormsDerivados)
                         {
                             var entityDerivado = new Destinatario()
                             {
-                                Respondido = Destinatario.respondido,
-                                FormId = item.id,
-                                Nome = Destinatario.nome,
-                                Email = Destinatario.email,
-                                Matricula = Destinatario.matricula,
-                                Curso = Destinatario.curso,
-                                Modalidade = Destinatario.modalidade,
-                                DataColacao = Destinatario.dataColacao,
-                                Telefone1 = Destinatario.telefone1,
-                                Telefone2 = Destinatario.telefone2,
-                                Sexo = Destinatario.sexo,
-                                Cpf = Destinatario.cpf
+                                Respondido = Destinatario.Respondido,
+                                FormId = item.Id,
+                                Nome = Destinatario.Nome,
+                                Email = Destinatario.Email,
+                                Matricula = Destinatario.Matricula,
+                                Curso = Destinatario.Curso,
+                                Modalidade = Destinatario.Modalidade,
+                                DataColacao = Destinatario.DataColacao,
+                                Telefone1 = Destinatario.Telefone1,
+                                Telefone2 = Destinatario.Telefone2,
+                                Sexo = Destinatario.Sexo,
+                                Cpf = Destinatario.Cpf
                             };
                             ProjetoDbContext.Destinatarios.Add(entityDerivado);
                         }
@@ -105,16 +105,16 @@ namespace backendcsharp.Controllers
 
         public class ModeloCefet
         {
-            public string? id_discente { get; set; } = null!;
-            public string? nome { get; set; } = null!;
-            public string? email { get; set; } = null!;
-            public string? telefone { get; set; } = null!;
-            public string? matricula { get; set; } = null!;
-            public string? cpf { get; set; } = null!;
-            public string? sexo { get; set; } = null!;
-            public string? curso { get; set; } = null!;
-            public string? modalidade { get; set; } = null!;
-            public string? data_colacao_grau { get; set; } = null!;
+            public string? Id_discente { get; set; } = null!;
+            public string? Nome { get; set; } = null!;
+            public string? Email { get; set; } = null!;
+            public string? Telefone { get; set; } = null!;
+            public string? Matricula { get; set; } = null!;
+            public string? Cpf { get; set; } = null!;
+            public string? Sexo { get; set; } = null!;
+            public string? Curso { get; set; } = null!;
+            public string? Modalidade { get; set; } = null!;
+            public string? Data_colacao_grau { get; set; } = null!;
         }
 
         // Adicionar Emails a partir de modelo Cefet
@@ -137,27 +137,27 @@ namespace backendcsharp.Controllers
                     HashSet<Tuple<string?, string?>> contatosDB = new(await ProjetoDbContext.Destinatarios.Where(s => s.FormId == FormId).Select(c => new Tuple<string?, string?>(c.Email, c.Matricula)).ToListAsync());
                     foreach (var item in Destinatarios)
                     {
-                        item.email = item.email == "NULL" || item.email == "null" ? null : item.email;
-                        item.telefone = item.telefone == "NULL" || item.telefone == "null" ? null : item.telefone;
-                        if (item.curso is not null) cursos.Add(item.curso);
-                        if (item.modalidade is not null) modalidades.Add(item.modalidade);
-                        if (!contatosDB.Contains(new Tuple<string?, string?>(item.email, item.matricula)))
+                        item.Email = item.Email == "NULL" || item.Email == "null" ? null : item.Email;
+                        item.Telefone = item.Telefone == "NULL" || item.Telefone == "null" ? null : item.Telefone;
+                        if (item.Curso is not null) cursos.Add(item.Curso);
+                        if (item.Modalidade is not null) modalidades.Add(item.Modalidade);
+                        if (!contatosDB.Contains(new Tuple<string?, string?>(item.Email, item.Matricula)))
                         {
                             var entity = new Destinatario()
                             {
-                                Email = item.email,
-                                Matricula = item.matricula,
+                                Email = item.Email,
+                                Matricula = item.Matricula,
                                 Respondido = 0,
                                 FormId = ((uint)FormId),
-                                Nome = item.nome,
-                                Curso = item.curso,
-                                DataColacao = item.data_colacao_grau is not null ? DateTime.Parse(item.data_colacao_grau) : null,
-                                Modalidade = item.modalidade,
-                                Telefone1 = item.telefone,
-                                Sexo = item.sexo,
-                                Cpf = item.cpf
+                                Nome = item.Nome,
+                                Curso = item.Curso,
+                                DataColacao = item.Data_colacao_grau is not null ? DateTime.Parse(item.Data_colacao_grau) : null,
+                                Modalidade = item.Modalidade,
+                                Telefone1 = item.Telefone,
+                                Sexo = item.Sexo,
+                                Cpf = item.Cpf
                             };
-                            contatosDB.Add(new Tuple<string?, string?>(item.email, item.matricula));
+                            contatosDB.Add(new Tuple<string?, string?>(item.Email, item.Matricula));
                             ProjetoDbContext.Destinatarios.Add(entity);
                         }
                     }
@@ -207,10 +207,10 @@ namespace backendcsharp.Controllers
                 Handlers.IdNegative(FormId, "Id do formulário inválido");
                 Handlers.ExistsOrError(DestinatarioId.ToString(), "Id do email não informado");
                 Handlers.IdNegative(DestinatarioId, "Id do email inválido");
-                Handlers.ExistsOrError(Destinatario.email, "Email não informado");
-                Destinatario.id = ((uint)DestinatarioId);
-                Destinatario.formId = ((uint)FormId);
-                if (Destinatario.id is not null)
+                Handlers.ExistsOrError(Destinatario.Email, "Email não informado");
+                Destinatario.Id = ((uint)DestinatarioId);
+                Destinatario.FormId = ((uint)FormId);
+                if (Destinatario.Id is not null)
                 {
                     HashSet<Tuple<string?, string?>> contatosDB = new(await ProjetoDbContext.Destinatarios.Where(s => s.FormId == FormId).Select(c => new Tuple<string?, string?>(c.Email, c.Matricula)).ToListAsync());
                     var Form = await ProjetoDbContext.Formularios.FirstOrDefaultAsync(s => s.Id == FormId);
@@ -219,7 +219,7 @@ namespace backendcsharp.Controllers
                         var Contato = await ProjetoDbContext.Destinatarios.FirstOrDefaultAsync(s => s.Id == DestinatarioId);
                         if (Contato != null)
                         {
-                            if (Contato.Email == Destinatario.email || !contatosDB.Contains(new Tuple<string?, string?>(Destinatario.email, Destinatario.matricula)))
+                            if (Contato.Email == Destinatario.Email || !contatosDB.Contains(new Tuple<string?, string?>(Destinatario.Email, Destinatario.Matricula)))
                             {
                                 // Modifica destinatario nos forms derivados
                                 var FormsDerivados = await ProjetoDbContext.Formularios.Where(s => s.DerivadoDeId == FormId && s.DerivadoDeId != null).ToListAsync();
@@ -230,16 +230,16 @@ namespace backendcsharp.Controllers
                                     {
                                         if (ContatoDerivado.Respondido==0|| ContatoDerivado.Respondido == 1)
                                         {
-                                            ContatoDerivado.Email = Destinatario.email;
-                                            ContatoDerivado.Nome = Destinatario.nome;
-                                            ContatoDerivado.Matricula = Destinatario.matricula;
-                                            ContatoDerivado.Curso = Destinatario.curso;
-                                            ContatoDerivado.Modalidade = Destinatario.modalidade;
-                                            ContatoDerivado.DataColacao = Destinatario.dataColacao;
-                                            ContatoDerivado.Telefone1 = Destinatario.telefone1;
-                                            ContatoDerivado.Telefone2 = Destinatario.telefone2;
-                                            ContatoDerivado.Sexo = Destinatario.sexo;
-                                            ContatoDerivado.Cpf = Destinatario.cpf;
+                                            ContatoDerivado.Email = Destinatario.Email;
+                                            ContatoDerivado.Nome = Destinatario.Nome;
+                                            ContatoDerivado.Matricula = Destinatario.Matricula;
+                                            ContatoDerivado.Curso = Destinatario.Curso;
+                                            ContatoDerivado.Modalidade = Destinatario.Modalidade;
+                                            ContatoDerivado.DataColacao = Destinatario.DataColacao;
+                                            ContatoDerivado.Telefone1 = Destinatario.Telefone1;
+                                            ContatoDerivado.Telefone2 = Destinatario.Telefone2;
+                                            ContatoDerivado.Sexo = Destinatario.Sexo;
+                                            ContatoDerivado.Cpf = Destinatario.Cpf;
                                         }
                                         else return StatusCode(402);
                                     }
@@ -249,16 +249,16 @@ namespace backendcsharp.Controllers
                                 // Modifica contato no form original
                                 if (Contato.Respondido == 0 || Contato.Respondido == 1)
                                 {
-                                    Contato.Email = Destinatario.email;
-                                    Contato.Nome = Destinatario.nome;
-                                    Contato.Matricula = Destinatario.matricula;
-                                    Contato.Curso = Destinatario.curso;
-                                    Contato.Modalidade = Destinatario.modalidade;
-                                    Contato.DataColacao = Destinatario.dataColacao;
-                                    Contato.Telefone1 = Destinatario.telefone1;
-                                    Contato.Telefone2 = Destinatario.telefone2;
-                                    Contato.Sexo = Destinatario.sexo;
-                                    Contato.Cpf = Destinatario.cpf;
+                                    Contato.Email = Destinatario.Email;
+                                    Contato.Nome = Destinatario.Nome;
+                                    Contato.Matricula = Destinatario.Matricula;
+                                    Contato.Curso = Destinatario.Curso;
+                                    Contato.Modalidade = Destinatario.Modalidade;
+                                    Contato.DataColacao = Destinatario.DataColacao;
+                                    Contato.Telefone1 = Destinatario.Telefone1;
+                                    Contato.Telefone2 = Destinatario.Telefone2;
+                                    Contato.Sexo = Destinatario.Sexo;
+                                    Contato.Cpf = Destinatario.Cpf;
                                 }
                                 else return StatusCode(402);
                                 await ProjetoDbContext.SaveChangesAsync();
@@ -290,21 +290,21 @@ namespace backendcsharp.Controllers
                 var Destinatarios = await ProjetoDbContext.Destinatarios
                     .Select(s => new DestinatarioDTO
                     {
-                        id = s.Id,
-                        email= s.Email,
-                        nome = s.Nome,
-                        respondido = s.Respondido,
-                        formId = s.FormId,
-                        matricula = s.Matricula,
-                        curso = s.Curso,
-                        modalidade = s.Modalidade,
-                        dataColacao = s.DataColacao,
-                        telefone1 = s.Telefone1,
-                        telefone2 = s.Telefone2,
-                        sexo = s.Sexo,
-                        cpf = s.Cpf
+                        Id = s.Id,
+                        Email= s.Email,
+                        Nome = s.Nome,
+                        Respondido = s.Respondido,
+                        FormId = s.FormId,
+                        Matricula = s.Matricula,
+                        Curso = s.Curso,
+                        Modalidade = s.Modalidade,
+                        DataColacao = s.DataColacao,
+                        Telefone1 = s.Telefone1,
+                        Telefone2 = s.Telefone2,
+                        Sexo = s.Sexo,
+                        Cpf = s.Cpf
                     })
-                    .Where(s => s.formId == FormId)
+                    .Where(s => s.FormId == FormId)
                     .ToListAsync();
                 if (Destinatarios.Count <= 0) return NotFound();
                 else return Destinatarios;
@@ -337,14 +337,14 @@ namespace backendcsharp.Controllers
                         var FormsDerivados = await ProjetoDbContext.Formularios
                             .Select(s => new FormularioDTO
                             {
-                                id = s.Id,
-                                derivadoDeId = s.DerivadoDeId,
+                                Id = s.Id,
+                                DerivadoDeId = s.DerivadoDeId,
                             })
-                            .Where(s => s.derivadoDeId == FormId && s.derivadoDeId != null)
+                            .Where(s => s.DerivadoDeId == FormId && s.DerivadoDeId != null)
                             .ToListAsync();
                         foreach (var item in FormsDerivados)
                         {
-                            var ContatoDerivado = await ProjetoDbContext.Destinatarios.FirstOrDefaultAsync(s => s.FormId == item.id && s.Email==Contato.Email);
+                            var ContatoDerivado = await ProjetoDbContext.Destinatarios.FirstOrDefaultAsync(s => s.FormId == item.Id && s.Email==Contato.Email);
                             if(ContatoDerivado is not null) ProjetoDbContext.Destinatarios.Remove(ContatoDerivado);
                         }
                         ProjetoDbContext.Destinatarios.Remove(Contato);
@@ -383,12 +383,12 @@ namespace backendcsharp.Controllers
                 var Destinatarios = await ProjetoDbContext.Destinatarios
                     .Select(s => new DestinatarioDTO
                     {
-                        id = s.Id,
-                        email = s.Email,
-                        respondido = s.Respondido,
-                        formId = s.FormId
+                        Id = s.Id,
+                        Email = s.Email,
+                        Respondido = s.Respondido,
+                        FormId = s.FormId
                     })
-                    .Where(s => (s.formId == FormId && s.email==Email && (s.respondido==0 || s.respondido==1)))
+                    .Where(s => (s.FormId == FormId && s.Email==Email && (s.Respondido==0 || s.Respondido==1)))
                     .FirstOrDefaultAsync();
                 if (Destinatarios is null) return NotFound();
                 else return Destinatarios;

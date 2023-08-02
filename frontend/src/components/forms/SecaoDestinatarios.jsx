@@ -206,11 +206,8 @@ export default function SecaoDestinatarios({navigate}){
                 setNewDestinatario(<></>)
             })
             .catch((error) => {
-                if (error.response.status===401) {
-                    navigate('/login')
-                    RemoveSessao()
-                    alert("Faça o login")
-                }else{ console.log(error)}
+                if (error.response.status===401) RemoveSessao(navigate)
+                else console.log(error)
             })
         }else{
             document.getElementById("novoDestinatarioEmail").classList.add("is-invalid")
@@ -245,14 +242,9 @@ export default function SecaoDestinatarios({navigate}){
             }
         })
         .catch((error) => {
-            if (error.response.status===401) {
-                navigate('/login')
-                RemoveSessao()
-                alert("Faça o login")
-            }else if(error.response.status===402){
-                setRespondidoDerivado(true)
-            }
-            else{ console.log(error)}
+            if (error.response.status===401) RemoveSessao(navigate)
+            else if(error.response.status===402) setRespondidoDerivado(true)
+            else console.log(error)
         })
     } 
 
@@ -268,11 +260,8 @@ export default function SecaoDestinatarios({navigate}){
             setDestinatarios(destinatarios.filter(a=> a.id !== id))
         })
         .catch((error) => {
-            if (error.response.status===401) {
-                navigate('/login')
-                RemoveSessao()
-                alert("Faça o login")
-            }else{ console.log(error)}
+            if (error.response.status===401) RemoveSessao(navigate)
+            else console.log(error)
         })
     }
 
@@ -290,100 +279,95 @@ export default function SecaoDestinatarios({navigate}){
             ])
         })
         .catch((error) => {
-            if (error.response.status===401) {
-                navigate('/login')
-                RemoveSessao()
-                alert("Faça o login")
-            }else{ console.log(error)}
+            if (error.response.status===401) RemoveSessao(navigate)
+            else console.log(error)
         })
     }
 
     function handleNewDestinatario(){
-        return(
-            setNewDestinatario(
-                <MDBListGroupItem noBorders className='rounded-3 mt-3 mb-3'>
-                    <MDBContainer fluid className='mt-2'>
-                    <div className='row'>
-                        <div className="col-12 pt-md-2 pt-sm-1">
-                            <MDBInputGroup>
-                                <MDBBtn color='secondary' className='numQuestao'>@</MDBBtn>
-                                <input onKeyDown={e=>{limit(e.target)}} onKeyUp={e=>{limit(e.target)}} className='form-control' type='text' id={'novoDestinatarioEmail'}/>
-                            </MDBInputGroup>
-                        </div> {/* Email */}
-                        <div className="col-md-6 pt-md-2 pt-sm-1">
-                            <MDBInputGroup>
-                                <MDBBtn color='secondary' className='novoDestinatarioForm px-2'>Nome</MDBBtn>
-                                <input onKeyDown={e=>{limit(e.target)}} onKeyUp={e=>{limit(e.target)}} className='form-control' type='text' id={'novoDestinatarioNome'}/>
-                            </MDBInputGroup>
-                        </div> {/* Nome */}
-                        <div className="col-md-6 pt-md-2 pt-sm-1">
-                            <MDBInputGroup>
-                                <MDBBtn color='secondary' className='novoDestinatarioForm px-2'>Matrícula</MDBBtn>
-                                <input onKeyDown={e=>{limit(e.target)}} onKeyUp={e=>{limit(e.target)}} className='form-control' type='text' id={'novoDestinatarioMatricula'}/>
-                            </MDBInputGroup>
-                        </div> {/* Matrícula */}
-                        <div className="col-md-6 pt-md-2 pt-sm-1">
-                            <MDBInputGroup>
-                                <MDBBtn color='secondary' className='novoDestinatarioForm px-2'>Telefone 1</MDBBtn>
-                                <InputMask mask='(99) 99999-9999' className='form-control' type='text' id={'novoDestinatarioTelefone1'}/>
-                            </MDBInputGroup>
-                        </div> {/* Tel1 */}
-                        <div className="col-md-6 pt-md-2 pt-sm-1">
-                            <MDBInputGroup>
-                                <MDBBtn color='secondary' className='novoDestinatarioForm px-2'>Telefone 2</MDBBtn>
-                                <InputMask mask='(99) 99999-9999' className='form-control' type='text' id={'novoDestinatarioTelefone2'}/>
-                            </MDBInputGroup>
-                        </div> {/* Tel2 */}
-                        <div className="col-md-6 pt-md-2 pt-sm-1">
-                            <MDBInputGroup>
-                                <MDBBtn color='secondary' className='novoDestinatarioForm px-2'>Curso</MDBBtn>
-                                <select id="novoDestinatarioCurso" className='selectCurso novoDestinatarioCurso'>
-                                    {cursos?.listaCursos?.map(item => {
-                                        return <option key={"newopcaocurso"+item.id} value={item.curso}>{item.curso}</option>
-                                    })}
-                                </select>
-                            </MDBInputGroup>
-                        </div> {/* Curso */}
-                        <div className="col-md-6 pt-md-2 pt-sm-1">
-                            <MDBInputGroup>
-                                <MDBBtn color='secondary' className='novoDestinatarioForm px-2'>Modalidade do Curso</MDBBtn>
-                                <select id="novoDestinatarioModalidade" className='selectCurso'>
-                                    {cursos?.listaModalidades?.map(item => {
-                                        return <option key={"newopcaotipo"+item.id} value={item.modalidade}>{item.modalidade}</option>
-                                    })}
-                                </select>
-                            </MDBInputGroup>
-                        </div> {/* Modalidade */}
-                        <div className="col-md-6 pt-md-2 pt-sm-1">
-                            <MDBInputGroup>
-                                <MDBBtn color='secondary' className='novoDestinatarioForm px-2'>CPF</MDBBtn>
-                                <InputMask mask='999.999.999-99'  className='form-control' type='text' id={'novoDestinatarioCpf'}/>
-                            </MDBInputGroup>
-                        </div> {/* CPF */}
-                        <div className="col-md-6 pt-md-2 pt-sm-1">
-                            <MDBInputGroup>
-                                <MDBBtn color='secondary' className='novoDestinatarioForm px-2'>Sexo</MDBBtn>
-                                <select id='novoDestinatarioSexo' className='selectCurso novoDestinatarioSexo'>
-                                    <option value="M">Masculino</option>
-                                    <option value="F">Feminino</option>
-                                    <option value="N">Não informar</option>
-                                </select>
-                            </MDBInputGroup>
-                        </div> {/* Sexo */}
-                        <div className="col-md-12 pt-md-2 pt-sm-1">
-                            <MDBInputGroup>
-                                <MDBBtn color='secondary' className='novoDestinatarioForm px-2'>Data de colação</MDBBtn>
-                                <input className='selectCurso' type="date" id='novoDestinatarioData'/>
-                            </MDBInputGroup>
-                        </div> {/* Data Colação */}
-                    </div>
-                    <div className='d-flex mt-2 mt-md-0'>
-                        <MDBBtn onClick={e=>{setNewDestinatario(<></>)}} color='danger' className='ms-auto me-2'>Excluir</MDBBtn>
-                        <MDBBtn onClick={e=>{addDestinatario()}}>Salvar</MDBBtn>
-                    </div>
-                    </MDBContainer>
-                </MDBListGroupItem>
-            )
+        setNewDestinatario(
+            <MDBListGroupItem noBorders className='rounded-3 mt-3 mb-3'>
+                <MDBContainer fluid className='mt-2'>
+                <div className='row'>
+                    <div className="col-12 pt-md-2 pt-sm-1">
+                        <MDBInputGroup>
+                            <MDBBtn color='secondary' className='numQuestao'>@</MDBBtn>
+                            <input onKeyDown={e=>{limit(e.target)}} onKeyUp={e=>{limit(e.target)}} className='form-control' type='text' id={'novoDestinatarioEmail'}/>
+                        </MDBInputGroup>
+                    </div> {/* Email */}
+                    <div className="col-md-6 pt-md-2 pt-sm-1">
+                        <MDBInputGroup>
+                            <MDBBtn color='secondary' className='novoDestinatarioForm px-2'>Nome</MDBBtn>
+                            <input onKeyDown={e=>{limit(e.target)}} onKeyUp={e=>{limit(e.target)}} className='form-control' type='text' id={'novoDestinatarioNome'}/>
+                        </MDBInputGroup>
+                    </div> {/* Nome */}
+                    <div className="col-md-6 pt-md-2 pt-sm-1">
+                        <MDBInputGroup>
+                            <MDBBtn color='secondary' className='novoDestinatarioForm px-2'>Matrícula</MDBBtn>
+                            <input onKeyDown={e=>{limit(e.target)}} onKeyUp={e=>{limit(e.target)}} className='form-control' type='text' id={'novoDestinatarioMatricula'}/>
+                        </MDBInputGroup>
+                    </div> {/* Matrícula */}
+                    <div className="col-md-6 pt-md-2 pt-sm-1">
+                        <MDBInputGroup>
+                            <MDBBtn color='secondary' className='novoDestinatarioForm px-2'>Telefone 1</MDBBtn>
+                            <InputMask mask='(99) 99999-9999' className='form-control' type='text' id={'novoDestinatarioTelefone1'}/>
+                        </MDBInputGroup>
+                    </div> {/* Tel1 */}
+                    <div className="col-md-6 pt-md-2 pt-sm-1">
+                        <MDBInputGroup>
+                            <MDBBtn color='secondary' className='novoDestinatarioForm px-2'>Telefone 2</MDBBtn>
+                            <InputMask mask='(99) 99999-9999' className='form-control' type='text' id={'novoDestinatarioTelefone2'}/>
+                        </MDBInputGroup>
+                    </div> {/* Tel2 */}
+                    <div className="col-md-6 pt-md-2 pt-sm-1">
+                        <MDBInputGroup>
+                            <MDBBtn color='secondary' className='novoDestinatarioForm px-2'>Curso</MDBBtn>
+                            <select id="novoDestinatarioCurso" className='selectCurso novoDestinatarioCurso'>
+                                {cursos?.listaCursos?.map(item => {
+                                    return <option key={"newopcaocurso"+item.id} value={item.curso}>{item.curso}</option>
+                                })}
+                            </select>
+                        </MDBInputGroup>
+                    </div> {/* Curso */}
+                    <div className="col-md-6 pt-md-2 pt-sm-1">
+                        <MDBInputGroup>
+                            <MDBBtn color='secondary' className='novoDestinatarioForm px-2'>Modalidade do Curso</MDBBtn>
+                            <select id="novoDestinatarioModalidade" className='selectCurso'>
+                                {cursos?.listaModalidades?.map(item => {
+                                    return <option key={"newopcaotipo"+item.id} value={item.modalidade}>{item.modalidade}</option>
+                                })}
+                            </select>
+                        </MDBInputGroup>
+                    </div> {/* Modalidade */}
+                    <div className="col-md-6 pt-md-2 pt-sm-1">
+                        <MDBInputGroup>
+                            <MDBBtn color='secondary' className='novoDestinatarioForm px-2'>CPF</MDBBtn>
+                            <InputMask mask='999.999.999-99'  className='form-control' type='text' id={'novoDestinatarioCpf'}/>
+                        </MDBInputGroup>
+                    </div> {/* CPF */}
+                    <div className="col-md-6 pt-md-2 pt-sm-1">
+                        <MDBInputGroup>
+                            <MDBBtn color='secondary' className='novoDestinatarioForm px-2'>Sexo</MDBBtn>
+                            <select id='novoDestinatarioSexo' className='selectCurso novoDestinatarioSexo'>
+                                <option value="M">Masculino</option>
+                                <option value="F">Feminino</option>
+                                <option value="N">Não informar</option>
+                            </select>
+                        </MDBInputGroup>
+                    </div> {/* Sexo */}
+                    <div className="col-md-12 pt-md-2 pt-sm-1">
+                        <MDBInputGroup>
+                            <MDBBtn color='secondary' className='novoDestinatarioForm px-2'>Data de colação</MDBBtn>
+                            <input className='selectCurso' type="date" id='novoDestinatarioData'/>
+                        </MDBInputGroup>
+                    </div> {/* Data Colação */}
+                </div>
+                <div className='d-flex mt-2 mt-md-0'>
+                    <MDBBtn onClick={e=>{setNewDestinatario(<></>)}} color='danger' className='ms-auto me-2'>Excluir</MDBBtn>
+                    <MDBBtn onClick={e=>{addDestinatario()}}>Salvar</MDBBtn>
+                </div>
+                </MDBContainer>
+            </MDBListGroupItem>
         )
     } 
 
@@ -437,12 +421,9 @@ export default function SecaoDestinatarios({navigate}){
         })
         .then(()=>{setCarregandoEnvio(false)})
         .catch((error) => {
-            if (error.response.status===401) {
-                navigate('/login')
-                RemoveSessao()
-                alert("Faça o login")
-            }else if(error.response.status===402){alert("Usuário não possui uma senha de aplicativo de gmail. Acesse a página do usuário para saber mais.")}
-            else{ console.log(error)}
+            if (error.response.status===401) RemoveSessao(navigate)
+            else if(error.response.status===402){alert("Usuário não possui uma senha de aplicativo de gmail. Acesse a página do usuário para saber mais.")}
+            else console.log(error)
         })
     }
 
@@ -456,12 +437,9 @@ export default function SecaoDestinatarios({navigate}){
         })
         .then(()=>{setCarregandoEnvio(false)})
         .catch((error) => {
-            if (error.response.status===401) {
-                navigate('/login')
-                RemoveSessao()
-                alert("Faça o login")
-            }else if(error.response.status===402){alert("Usuário não possui uma senha de aplicativo de gmail. Acesse a página do usuário para saber mais.")}
-            else{ console.log(error)}
+            if (error.response.status===401) RemoveSessao(navigate)
+            else if(error.response.status===402){alert("Usuário não possui uma senha de aplicativo de gmail. Acesse a página do usuário para saber mais.")}
+            else console.log(error)
         })
     }
 
@@ -471,7 +449,7 @@ export default function SecaoDestinatarios({navigate}){
             document.getElementById('cancelmodalimports').disabled=true
             var i,f;
             for (i = 0, f = selectedFiles[i]; i !== selectedFiles.length; ++i) {
-                if(f.name.substr(f.name.length-5,5).toLowerCase()==='.xlsx'){
+                if(['xlsx','xls','csv'].includes(f.name.slice(f.name.lastIndexOf('.') + 1).toLowerCase())){
                     let reader = new FileReader();
                     reader.readAsArrayBuffer(f);
                     reader.onload = (e) => {
@@ -494,11 +472,8 @@ export default function SecaoDestinatarios({navigate}){
                             setImportModal(false)
                         })
                         .catch((error) => {
-                            if (error.response.status===401) {
-                                navigate('/login')
-                                RemoveSessao()
-                                alert("Faça o login")
-                            }else{ console.log(error)}
+                            if (error.response.status===401) RemoveSessao(navigate)
+                            else console.log(error)
                         })
                     }
                 }else{
@@ -552,7 +527,7 @@ export default function SecaoDestinatarios({navigate}){
                 <MDBModalDialog centered>
                     <MDBModalContent>
                         <MDBModalHeader className='py-2'>
-                            Importar envios de arquivo (xslx)
+                            Importar envios de arquivo (xslx, csv, xls)
                         </MDBModalHeader>
                         <MDBModalBody>
                             <MDBFile label='Insira seu arquivo' size='lg' id='formFile' />

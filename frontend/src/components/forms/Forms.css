@@ -135,11 +135,3 @@
     .novoDestinatarioSexo{width: 85%;}
     .novoDestinatarioModalidade{width: 68%;}
 }
-
-.new-page {
-    page-break-before: always;
-}
-
-.testes{
-    font-size: 1em;
-}

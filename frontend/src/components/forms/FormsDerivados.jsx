@@ -2,7 +2,7 @@ import React, {useEffect,useState}from 'react'
 import './Forms.css'
 import axios from "axios";
 import baseUrl from "../../config/api";
-import { CarregaQuestoes, CarregaRespostas, CarregaDestinatarios, RemoveSessao, CarregaDestinatariosResposta } from '../../config/utils';
+import { CarregaQuestoes, CarregaRespostas, CarregaDestinatarios, RemoveSessao } from '../../config/utils';
 import Title from '../template/Title'
 import Navbar from '../template/Navbar'
 import Sidebar from '../template/Sidebar'
@@ -10,10 +10,11 @@ import UserSection from '../user/UserSection'
 import {
     MDBInputGroup, MDBTextArea, MDBRadio, MDBCheckbox,
     MDBListGroup, MDBListGroupItem,
-    MDBBtn, MDBProgress, MDBProgressBar, MDBContainer, MDBInput,
-    MDBModal,MDBModalDialog,MDBModalContent,MDBModalTitle,MDBModalBody,MDBModalHeader} from 'mdb-react-ui-kit';
+    MDBBtn, MDBContainer, MDBInput,
+    MDBModal,MDBModalDialog,MDBModalContent,MDBModalBody} from 'mdb-react-ui-kit';
 import { Link, useLocation } from 'react-router-dom';
 import SecaoRelatorios from './SecaoRelatórios';
+import SecaoRespostas from './SecaoResposta';
 
 export default function FormsDerivados({navigate}){
     const location = useLocation()
@@ -41,12 +42,6 @@ export default function FormsDerivados({navigate}){
 
     // Confirmação de envio de email
     const [enviou, setEnviou] = useState(false);
-    
-    // Usado para dizer qual a pergunta e o tipo de reposta do relatório
-    const [show, setShow] = useState(false);
-    
-    // Usado para dizer os valores do relatório de reposta
-    const [destinatariosResposta, setDestinatariosResposta] = useState([]);
 
     useEffect(() => {
         CarregaQuestoes(setQuestoes,navigate)
@@ -207,11 +202,8 @@ export default function FormsDerivados({navigate}){
             ])
         })
         .catch((error) => {
-            if (error.response.status===401) {
-                navigate('/login')
-                RemoveSessao()
-                alert("Faça o login")
-            }else{ console.log(error)}
+            if (error.response.status===401) RemoveSessao(navigate)
+            else console.log(error)
         })
     }
 
@@ -236,12 +228,9 @@ export default function FormsDerivados({navigate}){
         })
         .then(()=>{setEnviou(true)})
         .catch((error) => {
-            if (error.response.status===401) {
-                navigate('/login')
-                RemoveSessao()
-                alert("Faça o login")
-            }else if(error.response.status===402){alert("Usuário não possui uma senha de aplicativo de gmail. Acesse a página do usuário para saber mais.")}
-            else{ console.log(error)}
+            if (error.response.status===401) RemoveSessao(navigate)
+            else if(error.response.status===402){alert("Usuário não possui uma senha de aplicativo de gmail. Acesse a página do usuário para saber mais.")}
+            else console.log(error)
         })
     }
 
@@ -346,108 +335,13 @@ export default function FormsDerivados({navigate}){
     </main>
     // Destinatarios
 
-    // Secao Respostas
-    function renderizaRepostas(){
-        return respostas?.respostas?.map(element => {
-            return(
-                <div  key={element.id} className='col-md-6 col-xxl-4'>
-                <MDBListGroupItem className='shadow mt-3 rounded-3'>
-                    <div className='porcentagem'>
-                        {element.type===1?
-                        <MDBRadio disabled defaultChecked={true} className='mt-1' value='' inline/>:
-                        <MDBCheckbox disabled defaultChecked={true} className='mt-1' value='' inline/>}
-                        {element.numero}) {element.enunciado}
-                    </div>
-                    <hr className='mt-0 mb-2'></hr>
-                    <div id={"resposta"+element.id} className='mx-2'>
-                        {element.type===9?makeBar(element,true):makeBar(element,false)}
-                    </div>
-                </MDBListGroupItem>
-                {element.derivadas.length>0?renderizaRepostasDerivadas(element.derivadas,element):<></>}</div>
-            )
-        })
-    }
-
-    function renderizaRepostasDerivadas(derivadas, questaoOrig){
-        let opcoes = [1,2,3,4,5,6,7,8,9,10]
-        return opcoes.map(opcao=>{
-            return (
-                <MDBListGroup key={questaoOrig.id+'respostasopcao'+opcao} className='mt-1 rounded-3' >
-                    {derivadas?.filter(s=>s.derivadaDeOpcao===opcao)?.map(element=>{
-                        return (<MDBListGroupItem key={element.id} className={'mt-1 rounded-3 opcao'+opcao}>
-                                    <div className='d-flex porcentagem'>{element.numero}) {element.enunciado}<div className='ms-auto'>{element.type===1?<MDBRadio disabled defaultChecked={true} className='mt-1' value='' inline/>:<MDBCheckbox disabled defaultChecked={true} className='mt-1' value='' inline/>}</div></div>
-                                    <hr className='mt-0 mb-2'></hr>
-                                    <div id={"resposta"+element.id} className='mx-2'>
-                                        {makeBar(element,false)}
-                                    </div>
-                                </MDBListGroupItem>)})}
-                </MDBListGroup>)
-        })
-    }
-
-    function makeBar(element,tipo){
-        let numero=0
-        let sum = element.resposta.reduce((partialSum, a) => partialSum + a.quantidade, 0);
-        let count=0
-        return element.resposta?.map((item,index)=>{
-            numero+=1
-            count+=1
-            let parcial=Math.trunc((item.quantidade/sum)*100)
-            if(!parcial) parcial=0
-            return(
-                <div key={'Barra'+element.id+count} className='mb-2 porcentagem'> 
-                    <div className={tipo?'rounded-3 px-1 mt-1  opcao'+count:"px-1 mt-1"}>{numero}) 
-                        <div style={{cursor:'pointer',display:'inline'}} onClick={()=>{
-                            setShow(item);
-                            CarregaDestinatariosResposta(setDestinatariosResposta,navigate,derivado,element?.id,item);}}>{item.texto}
-                        </div>
-                    </div>
-                    <MDBProgress height='20' className='rounded-3'>
-                        <MDBProgressBar className='porcentagem' width={parcial} valuemin={0} valuemax={100}>{parcial}%</MDBProgressBar>
-                    </MDBProgress>
-                </div>
-            )
-        })
-    }
-
-    function renderizaRelatorio(){
-        return destinatariosResposta?.data?.map(destinatario => {
-            return <MDBInputGroup key={destinatario.email} className='mb-1'>
-                    <input className='form-control' type='text' defaultValue={destinatario.email} disabled/>
-                </MDBInputGroup>
-        })
-    }
-
-    const secaoRespostas = <main className='mt-3 principal'> 
-        {Title(sessionStorage.getItem('nomePesquisa'))}
-        <MDBListGroup small className='mt-3' >
-            <div className='row'>
-                {renderizaRepostas()}
-            </div>
-        </MDBListGroup>
-        <MDBModal show={show} tabIndex='-1' setShow={setShow}>
-            <MDBModalDialog size='md'>
-            <MDBModalContent>
-                <MDBModalHeader>
-                <MDBModalTitle>{destinatariosResposta?.enunciado}</MDBModalTitle>
-                <MDBBtn className='btn-close' color='none' onClick={e=>setShow(false)}></MDBBtn>
-                </MDBModalHeader>
-                <MDBContainer className='mt-2 mb-3 d-flex row justify-content-center'>
-                    {renderizaRelatorio()}
-                </MDBContainer>
-            </MDBModalContent>
-            </MDBModalDialog>
-        </MDBModal>
-    </main>
-    // Secao Respostas
-
     function makeSecao() {
         if(secao===1){
             return(secaoQuestoes)
         }else if(secao===2){
             return(secaoDestinatarios)
         }else if(secao===3){
-            return(secaoRespostas)
+            return(<SecaoRespostas navigate={navigate} respostas={respostas}/>)
         }else if(secao===4){
             return(<SecaoRelatorios navigate={navigate} derivado={derivado}/>)
         }else{

@@ -30,12 +30,7 @@ export default function QuestoesDerivadas({navigate,questao}){
             questao.derivadas.sort((a,b)=>a.numero-b.numero)
             setQuestoes(questao.derivadas)
         }
-        else{
-            alert("Faça o login")
-            navigate('/login')
-            RemoveSessao()
-        }
-
+        else RemoveSessao(navigate)
     }, [navigate,questao]);
 
     function renderizaQuestoes(opcao,cor){
@@ -175,11 +170,8 @@ export default function QuestoesDerivadas({navigate,questao}){
                 setNewQuestion(<></>)
             })
             .catch((error) => {
-                if (error.response.status===401) {
-                    navigate('/login')
-                    RemoveSessao()
-                    alert("Faça o login")
-                }else{ console.log(error)}
+                if (error.response.status===401) RemoveSessao(navigate)
+                else console.log(error)
             })
         }else{
             document.getElementById("novaQuestaoEnunciado").classList.add("is-invalid")
@@ -195,11 +187,8 @@ export default function QuestoesDerivadas({navigate,questao}){
         })
         .then(resposta=>{toggleShowExcluiSalva(id);document.getElementById("questao"+id).disabled=true})
         .catch((error) => {
-            if (error.response.status===401) {
-                navigate('/login')
-            RemoveSessao()
-                alert("Faça o login")
-            }else{ console.log(error)}
+            if (error.response.status===401) RemoveSessao(navigate)
+            else console.log(error)
         })
     }
 
@@ -216,11 +205,8 @@ export default function QuestoesDerivadas({navigate,questao}){
             setQuestoes(questoes.filter(a=> a.id !== element.id))
         })
         .catch((error) => {
-            if (error.response.status===401) {
-                navigate('/login')
-                RemoveSessao()
-                alert("Faça o login")
-            }else{ console.log(error)}
+            if (error.response.status===401) RemoveSessao(navigate)
+            else console.log(error)
         })
     }
 

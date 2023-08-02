@@ -202,11 +202,8 @@ export default function Forms({navigate}){
                 setNewQuestion(<></>)
             })
             .catch((error) => {
-                if (error.response.status===401) {
-                    navigate('/login')
-                    RemoveSessao()
-                    alert("Faça o login")
-                }else{ console.log(error)}
+                if (error.response.status===401) RemoveSessao(navigate)
+                else{ console.log(error)}
             })
         }else{
             document.getElementById("novaQuestaoEnunciado").classList.add("is-invalid")
@@ -224,11 +221,8 @@ export default function Forms({navigate}){
             toggleShowExcluiSalva(id)
             document.getElementById("questao"+id).disabled=true
         }).catch((error) => {
-            if (error.response.status===401) {
-                navigate('/login')
-                RemoveSessao()
-                alert("Faça o login")
-            }else{ console.log(error)}
+            if (error.response.status===401) RemoveSessao(navigate)
+            else{ console.log(error)}
         })
     }
 
@@ -245,11 +239,8 @@ export default function Forms({navigate}){
             setQuestoes(questoes.filter(a=> a.id !== element.id))
         })
         .catch((error) => {
-            if (error.response.status===401) {
-                navigate('/login')
-                RemoveSessao()
-                alert("Faça o login")
-            }else{ console.log(error)}
+            if (error.response.status===401) RemoveSessao(navigate)
+            else console.log(error)
         })
     }
 

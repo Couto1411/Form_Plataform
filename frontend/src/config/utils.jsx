@@ -1,10 +1,12 @@
 import baseUrl from "./api"
 import axios from "axios"
 
-export function RemoveSessao(){
+export function RemoveSessao(navigate){
     sessionStorage.removeItem('token')
     sessionStorage.removeItem('destinatarioId')
     sessionStorage.removeItem('formId')
+    navigate('/login')
+    alert("Faça o login")
 }
 
 export async function CarregaForms(setforms,navigate){
@@ -19,9 +21,7 @@ export async function CarregaForms(setforms,navigate){
     })
     .catch((error) => {
         if (error.response.status===401) {
-            navigate('/login')
-            RemoveSessao()
-            alert("Faça o login")
+            RemoveSessao(navigate)
         }else if (error.response.status!==404){ console.log(error)}
     })
 }
@@ -50,11 +50,8 @@ export async function CarregaQuestoesDashboard(setQuestoes,navigate){
         setQuestoes(response.data)
     })
     .catch((error) => { 
-        if (error.response.status === 401) {
-            navigate('/login')
-            RemoveSessao()
-            alert("Faça o login")
-        } else if (error.response.status!==404){ console.log(error)}
+        if (error.response.status === 401) RemoveSessao(navigate)
+        else if (error.response.status!==404){ console.log(error)}
     })
 }
 
@@ -69,11 +66,8 @@ export async function CarregaUsuario(setUser,navigate){
         setUser(response.data)
     })
     .catch((error) => {
-        if (error.response.status === 401) {
-            navigate('/login')
-            RemoveSessao()
-            alert("Faça o login")
-        } else if (error.response.status!==404){ console.log(error)}
+        if (error.response.status === 401) RemoveSessao(navigate)
+        else if (error.response.status!==404){ console.log(error)}
     })
 }
 
@@ -89,11 +83,8 @@ export async function CarregaCursos(setCursos,setModalidades,navigate){
         setModalidades(res.data.listaModalidades)
     })
     .catch((error) => {
-        if (error.response.status === 401) {
-            navigate('/login')
-            RemoveSessao()
-            alert("Faça o login")
-        } else if (error.response.status!==404){ console.log(error)}
+        if (error.response.status === 401) RemoveSessao(navigate)
+        else if (error.response.status!==404){ console.log(error)}
     })
 }
 
@@ -106,11 +97,8 @@ export async function CarregaCursosUser(setCursos,navigate){
     })
     .then(res=>{setCursos(res.data)})
     .catch((error) => {
-        if (error.response.status===401) {
-            navigate('/login')
-            RemoveSessao()
-            alert("Faça o login")
-        }else if (error.response.status!==404){ console.log(error)}
+        if (error.response.status===401) RemoveSessao(navigate)
+        else if (error.response.status!==404){ console.log(error)}
     })
 }
 
@@ -127,11 +115,8 @@ export async function CarregaDestinatarios(setDestinatarios,setDestinatariosDB,i
         setDestinatariosDB(response.data)
     })
     .catch((error) => {
-        if (error.response.status===401) {
-            navigate('/login')
-            RemoveSessao()
-            alert("Faça o login")
-        }else if (error.response.status===404){setDestinatarios([])}
+        if (error.response.status===401) RemoveSessao(navigate)
+        else if (error.response.status===404){setDestinatarios([])}
         else { console.log(error);setDestinatarios([])}
     }) 
 }
@@ -146,11 +131,8 @@ export async function CarregaRespostas(setRespostas,navigate,derivado){
     })
     .then((response)=>{setRespostas(response.data)})
     .catch((error) => {
-        if (error.response.status===401) {
-            navigate('/login')
-            RemoveSessao()
-            alert("Faça o login")
-        }else if (error.response.status===404){setRespostas(null)}
+        if (error.response.status===401) RemoveSessao(navigate)
+        else if (error.response.status===404){setRespostas(null)}
         else{ console.log(error);setRespostas(null)}
     })
 }
@@ -164,11 +146,8 @@ export async function CarregaDashboard(setDatasets,setLabels,navigate,id,forms,q
     })
     .then((response)=>{setDatasets(response.data.data);setLabels(response.data.labels)})
     .catch((error) => {
-        if (error.response.status===401) {
-            navigate('/login')
-            RemoveSessao()
-            alert("Faça o login")
-        }else if (error.response.status===404){setDatasets([])}
+        if (error.response.status===401) RemoveSessao(navigate)
+        else if (error.response.status===404){setDatasets([])}
         else{ console.log(error);setDatasets([])}
     })
 }
@@ -177,7 +156,8 @@ export async function CarregaRelatorio(setDados,navigate,queryObject,loadNewPage
     await axios.get(baseUrl+'/users/relatorio/'+JSON.stringify(queryObject.id)+'?avancado='+
         JSON.stringify(queryObject.avancado)+'&&questoes='+
         JSON.stringify(queryObject.questoesEscolhidas)+'&&cursos='+
-        JSON.stringify(queryObject.cursoFiltros)+'&&modalidades='+
+        JSON.stringify(queryObject.cursoFiltros)+'&&questoesfiltros='+
+        JSON.stringify(queryObject.questoesFiltros)+'&&modalidades='+
         JSON.stringify(queryObject.modalidadeFiltros)
         .concat(queryObject.dataAntes?('&&dataAntes='+queryObject.dataAntes):'')
         .concat(queryObject.dataDepois?('&&dataDepois='+queryObject.dataDepois):''),{
@@ -192,30 +172,9 @@ export async function CarregaRelatorio(setDados,navigate,queryObject,loadNewPage
         else setDados(response.data.relatorio)
     })
     .catch((error) => {
-        if (error.response.status===401) {
-            navigate('/login')
-            RemoveSessao()
-            alert("Faça o login")
-        }else if (error.response.status===404){}
+        if (error.response.status===401) RemoveSessao(navigate)
+        else if (error.response.status===404){}
         else{ console.log(error);}
-    })
-}
-
-export async function CarregaDestinatariosResposta(setDestinatariosResposta,navigate,formid,questid,item){
-    await axios.get(baseUrl+"/respostas/forms/"+formid+"/questao/"+questid+"/"+item?.opcao,{
-        headers: {
-            'Content-Type' : 'application/json',
-            'Authorization': 'bearer ' + sessionStorage.getItem("token")
-        }
-    })
-    .then((response)=>{setDestinatariosResposta({data: response.data,enunciado: item?.texto})})
-    .catch((error) => {
-        if (error.response.status===401) {
-            navigate('/login')
-            RemoveSessao()
-            alert("Faça o login")
-        }else if (error.response.status===404){setDestinatariosResposta([])}
-        else{ console.log(error);setDestinatariosResposta([])}
     })
 }
 

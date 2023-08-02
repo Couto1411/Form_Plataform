@@ -75,15 +75,7 @@ export default function PaginaUsuario({navigate}){
     };
 
     useEffect(() => {
-        if (sessionStorage.getItem("token")){
-            CarregaForms(setforms, navigate)
-        }
-        else{
-            alert("Faça o login")
-            navigate('/login')
-            RemoveSessao()
-        }
-
+        CarregaForms(setforms, navigate)
     }, [navigate]);
 
     async function editForm(){
@@ -106,11 +98,8 @@ export default function PaginaUsuario({navigate}){
                     ])
                 })
                 .catch((error) => {
-                    if (error.response.status===401) {
-                        navigate('/login')
-                        RemoveSessao()
-                        alert("Faça o login")
-                    }else{ console.log(error)}
+                    if (error.response.status===401) RemoveSessao(navigate)
+                    else console.log(error)
                 })
                 toggleShow({id: null, titulo:'', msgEmail: ''});
             }
@@ -138,11 +127,8 @@ export default function PaginaUsuario({navigate}){
                 especifico.msgEmail=changeMsg
             })
             .catch((error) => {
-                if (error.response.status===401) {
-                    navigate('/login')
-                    RemoveSessao()
-                    alert("Faça o login")
-                }else{ console.log(error)}
+                if (error.response.status===401) RemoveSessao(navigate)
+                else console.log(error)
             })
             toggleShow({id: null, titulo:'', msgEmail: ''});
         }
@@ -161,11 +147,8 @@ export default function PaginaUsuario({navigate}){
                 forms[indexOrig].derivados=forms[indexOrig].derivados.filter(a=> a.id!== idDerivateToDelete)
             })
             .catch((error) => {
-                if (error.response.status===401) {
-                    navigate('/login')
-                    RemoveSessao()
-                    alert("Faça o login")
-                }else{ console.log(error)}
+                if (error.response.status===401)RemoveSessao(navigate)
+                else console.log(error)
             })
         }else{
             // Form a ser deletado é original
@@ -178,11 +161,8 @@ export default function PaginaUsuario({navigate}){
                 setforms(forms.filter(a=> a.id !== idToDelete))
             })
             .catch((error) => {
-                if (error.response.status===401) {
-                    navigate('/login')
-                    RemoveSessao()
-                    alert("Faça o login")
-                }else{ console.log(error)}
+                if (error.response.status===401) RemoveSessao(navigate)
+                else console.log(error)
             })
         }
         setDeletaFormulario(false)
@@ -216,11 +196,8 @@ export default function PaginaUsuario({navigate}){
         })
         .then(response=>{CarregaForms(setforms)})
         .catch((error) => {
-            if (error.response.status===401) {
-                navigate('/login')
-                RemoveSessao()
-                alert("Faça o login")
-            }else{ console.log(error)}
+            if (error.response.status===401) RemoveSessao(navigate)
+            else console.log(error)
         })
     }
 

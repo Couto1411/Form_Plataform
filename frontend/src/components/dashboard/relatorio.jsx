@@ -25,7 +25,8 @@ export default function Relatorios(){
     const styles = StyleSheet.create({
         page: {
             color: "black",
-            padding: 10
+            paddingHorizontal: 10,
+            paddingVertical:5
         },
         viewer: {
             width: window.innerWidth, //the pdf viewer will take up all of the width and height
@@ -33,17 +34,18 @@ export default function Relatorios(){
         },
         nome: {
             padding: 5,
-            fontSize: 20
+            paddingBottom:0,
+            fontSize: 15
         },
         enunciado:{
             color: '#3d3d3d',
-            fontSize: 15,
+            fontSize: 13,
             fontFamily: 'Helvetica-Bold',
             marginTop:10
         },
         respostas: {
             color: '#3d3d3d',
-            fontSize: 14,
+            fontSize: 12,
             marginTop:5
         },
         logo:{
@@ -110,27 +112,20 @@ export default function Relatorios(){
                             <Text style={styles.nomePesquisa}>{pesquisa}</Text>
                             <Svg height="1"><Line x1="0" y1="1" x2="700" y2="1" strokeWidth={2} stroke="rgb(84,84,84)" /></Svg>
                         </View>
-                        <View style={styles.page}>
-                            <Text style={styles.nome}>{dados[0].destinatario.nome?dados[0].destinatario.nome:dados[0].destinatario.email}</Text>
-                            <Svg height="3">
-                                <Line x1="0" y1="3" x2="700" y2="3" strokeWidth={2} stroke="rgb(0,0,0)" />
-                            </Svg>
-                            {renderizaRespostas(dados[0])}
-                        </View>
-                    </Page>
                     {
-                        dados.splice(1).map(item=>{
+                        dados.map(item=>{
                             return(
-                                <Page size="A4" style={styles.page}>
-                                    <Text style={styles.nome}>{item.destinatario.nome?item.destinatario.nome:item.destinatario.email}</Text>
+                                <View  style={styles.page}>
                                     <Svg height="3">
                                         <Line x1="0" y1="3" x2="700" y2="3" strokeWidth={2} stroke="rgb(0,0,0)" />
                                     </Svg>
+                                    <Text style={styles.nome}>{item.destinatario.nome?item.destinatario.nome:item.destinatario.email}</Text>      
                                     {renderizaRespostas(item)}
-                                </Page>
+                                </View>
                             )
                         })
                     }
+                    </Page>
                 </Document>
             </PDFViewer>
         </main>

@@ -31,20 +31,23 @@ public partial class DestinatarioDTO
 
     public DestinatarioDTO() { }
 
-    public DestinatarioDTO(Destinatario envio) : this()
+    public DestinatarioDTO(Destinatario? envio) : this()
     {
-        id = envio.Id;
-        nome = envio.Nome;
-        formId = envio.FormId;
-        respondido = envio.Respondido;
-        email = envio.Email;
-        telefone1 = envio.Telefone1;
-        telefone2 = envio.Telefone2;
-        matricula = envio.Matricula;
-        cpf = envio.Cpf;
-        sexo = envio.Sexo;
-        curso = envio.Curso;
-        modalidade = envio.Modalidade;
-        dataColacao = envio.DataColacao;
+        if (envio is not null)
+        {
+            id = envio.Id;
+            nome = envio.Nome;
+            formId = envio.FormId;
+            respondido = envio.Respondido;
+            email = envio.Email;
+            telefone1 = envio.Telefone1;
+            telefone2 = envio.Telefone2;
+            matricula = envio.Matricula;
+            cpf = envio.Cpf;
+            sexo = envio.Sexo;
+            curso = envio.Curso;
+            modalidade = envio.Modalidade;
+            dataColacao = envio.DataColacao;
+        }
     }
 }

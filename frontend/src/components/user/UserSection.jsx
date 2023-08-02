@@ -17,8 +17,9 @@ export default function UserSection({navigate}) {
     const [modalAjuda, setModalAjuda] = useState(false)
 
     useEffect(() => {
-        CarregaUsuario(setUser,navigate)
-        CarregaCursos(setCursos,setModalidades,navigate)
+        CarregaUsuario(setUser,navigate).then(e => {
+            CarregaCursos(setCursos,setModalidades,navigate)
+        })
     }, [navigate]);
 
     async function handleSave() {
@@ -52,11 +53,8 @@ export default function UserSection({navigate}) {
                             confsenha.value = ''
                         })
                         .catch((error) => {
-                            if (error.response.status === 401) {
-                                navigate('/login')
-                                RemoveSessao()
-                                alert("Faça o login")
-                            } else { console.log(error) }
+                            if (error.response.status === 401) RemoveSessao(navigate)
+                            else console.log(error) 
                         })
                 } else appPassword.classList.add('is-invalid')
             } else univ.classList.add('is-invalid')
@@ -80,11 +78,8 @@ export default function UserSection({navigate}) {
                     }
                 })
                     .catch((error) => {
-                        if (error.response.status === 401) {
-                            navigate('/login')
-                            RemoveSessao()
-                            alert("Faça o login")
-                        } else console.log(error)
+                        if (error.response.status === 401) RemoveSessao(navigate)
+                        else console.log(error)
                     })
             }
         }
@@ -100,11 +95,8 @@ export default function UserSection({navigate}) {
                 }
             })
                 .catch((error) => {
-                    if (error.response.status === 401) {
-                        navigate('/login')
-                        RemoveSessao()
-                        alert("Faça o login")
-                    } else console.log(error)
+                    if (error.response.status === 401) RemoveSessao(navigate)
+                    else console.log(error)
                 })
         }
         else {
@@ -116,11 +108,8 @@ export default function UserSection({navigate}) {
                 }
             })
                 .catch((error) => {
-                    if (error.response.status === 401) {
-                        navigate('/login')
-                        RemoveSessao()
-                        alert("Faça o login")
-                    } else console.log(error)
+                    if (error.response.status === 401) RemoveSessao(navigate)
+                    else console.log(error)
                 })
         }
     }
@@ -136,11 +125,8 @@ export default function UserSection({navigate}) {
                     setCursos(cursos.filter(a => a.id !== item.id))
                 })
                 .catch((error) => {
-                    if (error.response.status === 401) {
-                        navigate('/login')
-                        RemoveSessao()
-                        alert("Faça o login")
-                    } else console.log(error)
+                    if (error.response.status === 401) RemoveSessao(navigate)
+                    else console.log(error)
                 })
         }
         else {
@@ -153,11 +139,8 @@ export default function UserSection({navigate}) {
                     setModalidades(modalidades.filter(a => a.id !== item.id))
                 })
                 .catch((error) => {
-                    if (error.response.status === 401) {
-                        navigate('/login')
-                        RemoveSessao()
-                        alert("Faça o login")
-                    } else console.log(error)
+                    if (error.response.status === 401) RemoveSessao(navigate)
+                    else console.log(error)
                 })
         }
     }
@@ -325,9 +308,7 @@ export default function UserSection({navigate}) {
                 {/* Botões de perfil administrador e logout */}
                 <div className="d-flex mt-2">
                     <div className="ms-auto">{admin()}</div>
-                    <MDBBtn color="danger" onClick={e => { 
-                        navigate('/login')
-                        RemoveSessao() }}>Logout</MDBBtn>
+                    <MDBBtn color="danger" onClick={e => RemoveSessao(navigate)}>Logout</MDBBtn>
                 </div>
 
             </main>

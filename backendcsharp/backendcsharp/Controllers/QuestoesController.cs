@@ -268,59 +268,7 @@ namespace backendcsharp.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-
-
-        // Selecionar questões derivadas de outras questões por ID do formulário
-        [HttpGet("questoes/{FormId}/derivada/{QuestaoId}")]
-        public async Task<ActionResult<List<QuestoesDTO>>> GetQuestaoDerivadaByFormId([FromRoute] int FormId, [FromRoute] int QuestaoId)
-        {
-            try
-            {
-                Handlers.ExistsOrError(FormId.ToString(), "Id do formulário não informado");
-                Handlers.IdNegative(FormId, "Id do formulário inválido");
-                Handlers.ExistsOrError(QuestaoId.ToString(), "Id da questão não informado");
-                Handlers.IdNegative(QuestaoId, "Id da questão inválido");
-                var Form = await ProjetoDbContext.Formularios
-                    .Select(s => new FormularioDTO
-                    {
-                        id = s.Id,
-                        derivadoDeId = s.DerivadoDeId,
-                    })
-                    .Where(s => s.id == FormId)
-                    .FirstOrDefaultAsync() ?? throw new Exception("Não encontrou formulário");
-                FormId = Form.derivadoDeId is not null ? (int)Form.derivadoDeId : FormId;
-                var Questoes = await ProjetoDbContext.Questoes
-                    .Select(s => new QuestoesDTO
-                    {
-                        id = s.Id,
-                        numero = s.Numero,
-                        type = s.Type,
-                        formId = s.FormId,
-                        enunciado = s.Enunciado,
-                        derivadaDeId = s.DerivadaDeId,
-                        derivadaDeOpcao = s.DerivadaDeOpcao,
-                        opcao1 = s.Opcao1,
-                        opcao2 = s.Opcao2,
-                        opcao3 = s.Opcao3,
-                        opcao4 = s.Opcao4,
-                        opcao5 = s.Opcao5,
-                        opcao6 = s.Opcao6,
-                        opcao7 = s.Opcao7,
-                        opcao8 = s.Opcao8,
-                        opcao9 = s.Opcao9,
-                        opcao10 = s.Opcao10
-                    })
-                    .Where(s => s.formId == FormId && s.derivadaDeId == QuestaoId)
-                    .ToListAsync();
-                if (Questoes.Count < 0) return NotFound();
-                else return Questoes;
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
-        }
-
+        
         // Deleta Questao (E todas as respostas)
         [HttpDelete("users/{Id}/forms/{FormId}/{QuestaoId}")]
         [Authorize("Bearer")]

@@ -20,26 +20,22 @@ export default function Resposta({navigate}){
     const [nome,setNome] = useState("")
 
     useEffect(() => {
-        if (sessionStorage.getItem("token")){
-            async function carregaResposta(){
-                await axios.get(baseUrl+"/users/"+sessionStorage.getItem("userId")+"/forms/"+sessionStorage.getItem("formId")+"/respostas/"+sessionStorage.getItem("destinatarioId"),{
-                    headers: {
-                        'Content-Type' : 'application/json',
-                        'Authorization': 'bearer ' + sessionStorage.getItem("token")
-                    }
-                }).then(response => {
-                    console.log(response)
-                    setRespostas(response.data.respostas)
-                    setNome(response.data.nome)
-                })
-            }
-            carregaResposta()
+        async function carregaResposta(){
+            await axios.get(baseUrl+"/users/"+sessionStorage.getItem("userId")+"/forms/"+sessionStorage.getItem("formId")+"/respostas/"+sessionStorage.getItem("destinatarioId"),{
+                headers: {
+                    'Content-Type' : 'application/json',
+                    'Authorization': 'bearer ' + sessionStorage.getItem("token")
+                }
+            }).then(response => {
+                console.log(response)
+                setRespostas(response.data.respostas)
+                setNome(response.data.nome)
+            }).catch(error=>{
+                if (error.response.status===401) RemoveSessao(navigate)
+                else console.log(error)
+            })
         }
-        else{
-            alert("Faça o login")
-            navigate('/login')
-            RemoveSessao()
-        }
+        carregaResposta()
 
     }, [navigate]);
 

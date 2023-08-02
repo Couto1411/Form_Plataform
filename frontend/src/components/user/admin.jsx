@@ -54,11 +54,8 @@ export default function Admin({navigate}){
                     setUsers(response.data)
                 })
                 .catch((error) => {
-                    if (error.response.status===401) {
-                        navigate('/login')
-                        RemoveSessao()
-                        alert("Faça o login")
-                    }if (error.response.status!==404) {console.log(error);}
+                    if (error.response.status===401) RemoveSessao(navigate)
+                    else if (error.response.status!==404) console.log(error)
                 })
             }
         
@@ -73,11 +70,8 @@ export default function Admin({navigate}){
                     setForms(response.data)
                 })
                 .catch((error) => {
-                    if (error.response.status===401) {
-                        navigate('/login')
-                        RemoveSessao()
-                        alert("Faça o login")
-                    }else{ console.log(error)}
+                    if (error.response.status===401) RemoveSessao(navigate)
+                    else console.log(error)
                 })
             }
             CarregaUsuarios()
@@ -85,8 +79,7 @@ export default function Admin({navigate}){
         }
         else{
             alert("Usuário não é administrador")
-            navigate('/login')
-            RemoveSessao()
+            RemoveSessao(navigate)
         }
 
     }, [navigate]);
@@ -183,14 +176,12 @@ export default function Admin({navigate}){
                             setNewUser(<></>)
                         })
                         .catch((error) => {
-                            if (error.response.status===401) {
-                                navigate('/login')
-                                RemoveSessao()
-                                alert("Faça o login")
-                            }else if(error.response.status===501){
+                            if (error.response.status===401) RemoveSessao(navigate)
+                            else if(error.response.status===501){
                                 document.getElementById("novoUsuarioEmail").classList.add("is-invalid")
                                 setWarning(true);
-                            }else{ console.log(error)}
+                            }
+                            else console.log(error)
                         })
                     }else document.getElementById("novoUsuarioSenha").classList.add("is-invalid")
                 }else document.getElementById("novoUsuarioNome").classList.add("is-invalid")
@@ -206,11 +197,8 @@ export default function Admin({navigate}){
             }
         })
         .catch((error) => {
-            if (error.response.status===401) {
-                navigate('/login')
-                RemoveSessao()
-                alert("Faça o login")
-            }else{ console.log(error)}
+            if (error.response.status===401) RemoveSessao(navigate)
+            else console.log(error)
         })
         document.getElementById("userName"+id).disabled=true
         document.getElementById("edit"+id).style.display='none'
@@ -229,11 +217,8 @@ export default function Admin({navigate}){
             setUsers(users.filter(a=> a.id !== userIdToDelete))
         })
         .catch((error) => {
-            if (error.response.status===401) {
-                navigate('/login')
-                RemoveSessao()
-                alert("Faça o login")
-            }else{ console.log(error)}
+            if (error.response.status===401) RemoveSessao(navigate)
+            else console.log(error)
         })
         setDeletaUsuario(false)
     }
@@ -361,11 +346,8 @@ export default function Admin({navigate}){
             setForms(forms.filter(a=> a.id !== formIdToDelete))
         })
         .catch((error) => {
-            if (error.response.status===401) {
-                navigate('/login')
-                RemoveSessao()
-                alert("Faça o login")
-            }else{ console.log(error)}
+            if (error.response.status===401) RemoveSessao(navigate)
+            else console.log(error)
         })
         setDeletaFormulario(false)
     }

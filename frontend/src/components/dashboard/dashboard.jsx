@@ -59,12 +59,7 @@ export default function Dashboard({navigate}){
             CarregaForms(setforms, navigate)
             CarregaQuestoesDashboard(setQuestoes,navigate)
         }
-        else{
-            alert("Faça o login")
-            navigate('/login')
-            RemoveSessao()
-        }
-
+        else RemoveSessao(navigate)
     }, [navigate]);
 
     function renderizaForms(){

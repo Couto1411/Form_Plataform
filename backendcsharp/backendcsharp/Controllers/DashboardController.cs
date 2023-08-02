@@ -207,20 +207,30 @@ namespace backendcsharp.Controllers
             }
         }
 
+        public class QuestaoFiltro
+        {
+            public uint Questao { get; set; } = new();
+            public List<uint> Opcoes { get; set; } = new();
+        }
         public class Respostas : QuestoesDTO
         {
             public string? Radio { get; set; } = "";
+            public uint RadioNum { get; set; } = new();
             public string? Texto { get; set; } = "";
+            public List<uint> ChecksNum { get; set; } = new();
             public List<string>? Checks { get; set; } = new();
-            public Respostas(Questoes questoes, string? texto, string? radio, List<string>? checks) : base(questoes)
+            public Respostas(Questoes questoes, string? texto, int radioNum, string? radio, List<uint> checksNum, List<string>? checks) : base(questoes)
             {
                 Radio = radio;
+                RadioNum = (uint)radioNum;
                 Texto = texto;
                 if (checks?.Count(x => x == "") == 10) Checks = null;
                 else
                 {
                     checks?.RemoveAll(s => string.IsNullOrWhiteSpace(s));
                     Checks = checks;
+                    checksNum?.RemoveAll(s => s == 0);
+                    ChecksNum = checksNum;
                 }
             }
         }
@@ -251,13 +261,15 @@ namespace backendcsharp.Controllers
         [HttpGet("users/relatorio/{FormId}")]
         [Authorize("Bearer")]
         public async Task<ActionResult<Retorno>> GeraRelatorio([FromRoute] int? FormId, [FromQuery] bool avancado, [FromQuery] DateTime? dataAntes, [FromQuery] DateTime? dataDepois, 
-            [FromQuery] string questoes, [FromQuery] string cursos, [FromQuery] string modalidades)
+            [FromQuery] string questoes, [FromQuery] string cursos, [FromQuery] string modalidades, [FromQuery] string questoesfiltros)
         {
             try
             {
                 if (FormId is null) throw new Exception("Id do Formulário não informado na query");
                 List<uint> questoesId = JsonConvert.DeserializeObject<List<uint>>(questoes) ?? new();
                 List<uint> cursosId = JsonConvert.DeserializeObject<List<uint>>(cursos) ?? new();
+                List<uint> modalidadesId = JsonConvert.DeserializeObject<List<uint>>(modalidades) ?? new();
+                List<QuestaoFiltro> questoesFiltro = JsonConvert.DeserializeObject<List<QuestaoFiltro>>(questoesfiltros) ?? new();
 
                 var nomePesquisa = await (from pesquisa in ProjetoDbContext.Formularios where pesquisa.Id == FormId select pesquisa.Titulo).FirstOrDefaultAsync();
 
@@ -267,8 +279,6 @@ namespace backendcsharp.Controllers
                     select curso.Curso
                 ).ToListAsync();
 
-                List<uint> modalidadesId = JsonConvert.DeserializeObject<List<uint>>(modalidades) ?? new();
-
                 var modalidadesNomes = await (
                     from modalidade in ProjetoDbContext.Modalidades
                     where modalidadesId.Contains(modalidade.Id)
@@ -277,61 +287,83 @@ namespace backendcsharp.Controllers
 
                 var destinatariosRespondidos = await (
                     from destinatario in ProjetoDbContext.Destinatarios
-                    where destinatario.Respondido == 2 && destinatario.FormId == FormId && 
+                    where destinatario.Respondido == 2 && destinatario.FormId == FormId &&
                     (!avancado || (avancado && 
                         (cursosNomes.Count == 0      || cursosNomes.Contains(destinatario.Curso)) && 
                         (modalidadesNomes.Count == 0 || modalidadesNomes.Contains(destinatario.Modalidade)) && 
                         (dataAntes == null           || destinatario.DataColacao <= dataAntes) &&
                         (dataDepois == null          || destinatario.DataColacao >= dataDepois)
                     ))
-                    select new DestinatarioDTO(destinatario)
+                    select new DestinatarioDTO(destinatario)                  
                 ).ToListAsync();
 
                 List<Relatorio> retorno = new();
                 foreach (var item in destinatariosRespondidos)
                 {
-                    Console.WriteLine(item.id);
-                    retorno.Add(new Relatorio(
-                        item,
-                        await (
-                            from questao in ProjetoDbContext.Questoes
-                            join text in ProjetoDbContext.Texts on questao.Id equals text.QuestaoId into textGroup
-                            from t in textGroup.DefaultIfEmpty()
-                            join radio in ProjetoDbContext.Radioboxes on questao.Id equals radio.QuestaoId into radioGroup
-                            from r in radioGroup.DefaultIfEmpty()
-                            join check in ProjetoDbContext.Checkboxes on questao.Id equals check.QuestaoId into checkGroup
-                            from c in checkGroup.DefaultIfEmpty()
-                            where questoesId.Contains(questao.Id) && questao.FormId == FormId && (t.RespostaId==item.id || r.RespostaId == item.id || c.RespostaId == item.id)
-                            select new Respostas(
-                                questao,
-                                t.Texto,  
-                                r.Radio != null ? (
-                                r.Radio == 1 ? questao.Opcao1 :
-                                r.Radio == 2 ? questao.Opcao2 :
-                                r.Radio == 3 ? questao.Opcao3 :
-                                r.Radio == 4 ? questao.Opcao4 :
-                                r.Radio == 5 ? questao.Opcao5 :
-                                r.Radio == 6 ? questao.Opcao6 :
-                                r.Radio == 7 ? questao.Opcao7 :
-                                r.Radio == 8 ? questao.Opcao8 :
-                                r.Radio == 9 ? questao.Opcao9 :
-                                r.Radio == 10 ? questao.Opcao10 : "") : null,
-                                new List<string>()
-                                {
-                                    c.Opcao1 ?? false ? questao.Opcao1 : "",
-                                    c.Opcao2 ?? false ? questao.Opcao2 : "",
-                                    c.Opcao3 ?? false ? questao.Opcao3 : "",
-                                    c.Opcao4 ?? false ? questao.Opcao4 : "",
-                                    c.Opcao5 ?? false ? questao.Opcao5 : "",
-                                    c.Opcao6 ?? false ? questao.Opcao6 : "",
-                                    c.Opcao7 ?? false ? questao.Opcao7 : "",
-                                    c.Opcao8 ?? false ? questao.Opcao8 : "",
-                                    c.Opcao9 ?? false ? questao.Opcao9 : "",
-                                    c.Opcao10 ?? false ? questao.Opcao10 : ""
-                                }
+                    var respostas = await (
+                        from questao in ProjetoDbContext.Questoes
+                        join text in ProjetoDbContext.Texts on questao.Id equals text.QuestaoId into textGroup
+                        from t in textGroup.DefaultIfEmpty()
+                        join radio in ProjetoDbContext.Radioboxes on questao.Id equals radio.QuestaoId into radioGroup
+                        from r in radioGroup.DefaultIfEmpty()
+                        join check in ProjetoDbContext.Checkboxes on questao.Id equals check.QuestaoId into checkGroup
+                        from c in checkGroup.DefaultIfEmpty()
+                        where questoesId.Contains(questao.Id) && questao.FormId == FormId && (t.RespostaId == item.id || r.RespostaId == item.id || c.RespostaId == item.id)
+                        select new Respostas(
+                            questao,
+                            t.Texto,
+                            r.Radio??0,
+                            r.Radio != null ? (
+                            r.Radio == 1 ? questao.Opcao1 :
+                            r.Radio == 2 ? questao.Opcao2 :
+                            r.Radio == 3 ? questao.Opcao3 :
+                            r.Radio == 4 ? questao.Opcao4 :
+                            r.Radio == 5 ? questao.Opcao5 :
+                            r.Radio == 6 ? questao.Opcao6 :
+                            r.Radio == 7 ? questao.Opcao7 :
+                            r.Radio == 8 ? questao.Opcao8 :
+                            r.Radio == 9 ? questao.Opcao9 :
+                            r.Radio == 10 ? questao.Opcao10 : "") : null,
+                            new List<uint>()
+                            {
+                                c.Opcao1 ?? false ? (uint) 1 : 0,
+                                c.Opcao2 ?? false ? (uint) 2 : 0,
+                                c.Opcao3 ?? false ? (uint) 3 : 0,
+                                c.Opcao4 ?? false ? (uint) 4 : 0,
+                                c.Opcao5 ?? false ? (uint) 5 : 0,
+                                c.Opcao6 ?? false ? (uint) 6 : 0,
+                                c.Opcao7 ?? false ? (uint) 7 : 0,
+                                c.Opcao8 ?? false ? (uint) 8 : 0,
+                                c.Opcao9 ?? false ? (uint) 9 : 0,
+                                c.Opcao10 ?? false ? (uint) 10 : 0
+                            },
+                            new List<string>()
+                            {
+                                c.Opcao1 ?? false ? questao.Opcao1 : "",
+                                c.Opcao2 ?? false ? questao.Opcao2 : "",
+                                c.Opcao3 ?? false ? questao.Opcao3 : "",
+                                c.Opcao4 ?? false ? questao.Opcao4 : "",
+                                c.Opcao5 ?? false ? questao.Opcao5 : "",
+                                c.Opcao6 ?? false ? questao.Opcao6 : "",
+                                c.Opcao7 ?? false ? questao.Opcao7 : "",
+                                c.Opcao8 ?? false ? questao.Opcao8 : "",
+                                c.Opcao9 ?? false ? questao.Opcao9 : "",
+                                c.Opcao10 ?? false ? questao.Opcao10 : ""
+                            }
+                    )).ToListAsync();
+
+                    int count = 0;
+                    foreach (var questaoF in questoesFiltro)
+                    {
+                        bool flag = respostas.Any(e => (
+                            e.id == questaoF.Questao && (
+                                (e.type==1||e.type==9) ?  questaoF.Opcoes.Count == 0 || questaoF.Opcoes.Contains(e.RadioNum): 
+                                e.type != 3            || questaoF.Opcoes.Count == 0 || questaoF.Opcoes.Intersect(e.ChecksNum).Any()
                             )
-                        ).ToListAsync())
-                    );
+                        ));;
+                        if (flag) count++;
+                    }
+                    if(count==questoesFiltro.Count) retorno.Add(new Relatorio(item, respostas));
                 }
 
                 return new Retorno(retorno, nomePesquisa ?? "");

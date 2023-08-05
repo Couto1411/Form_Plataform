@@ -11,8 +11,10 @@ import {
     MDBListGroup, MDBListGroupItem,
     MDBBtn, MDBInput, MDBFile,
     MDBModal, MDBModalDialog, MDBModalContent, MDBModalBody, MDBModalFooter, MDBModalHeader, MDBContainer, MDBSpinner} from 'mdb-react-ui-kit';
+import { useLocation } from 'react-router-dom';
 
 export default function SecaoDestinatarios({navigate}){
+    const location = useLocation().state;
 
     // Alert de destinário já respondeu em form derivado
     const [respondidoDerivado, setRespondidoDerivado] = useState(false);
@@ -74,7 +76,7 @@ export default function SecaoDestinatarios({navigate}){
                             <MDBInputGroup>
                                 <MDBBtn outline color='dark' onClick={e=>{handleClick(element)}} className='numQuestao'><i className="trashcan fas fa-trash-can"></i></MDBBtn>
                                 <input className='form-control' type='text' defaultValue={element.email} disabled/>
-                                <div role='button' onClick={e=>{sessionStorage.setItem('destinatarioId',element.id);navigate('/resposta')}} color='secondary' className='numQuestao borda-direita' id={'edit'+element.id}><i className='p-2 ms-auto fas fa-solid fa-eye'></i></div>
+                                <div role='button' onClick={e=>{sessionStorage.setItem('destinatarioId',element.id);navigate('/resposta',{state:{nomePesquisa:location?.nomePesquisa}})}} color='secondary' className='numQuestao borda-direita' id={'edit'+element.id}><i className='p-2 ms-auto fas fa-solid fa-eye'></i></div>
                             </MDBInputGroup>
                             <div className='d-flex'><div className='text-danger p-1' id={'warning'+element.id} style={{display: 'none'}}>Todas as respostas desse email serão apagadas, se tiver certeza clique novamente</div><a href='/#' role='button' onClick={e=>{handleClick(element,true)}} id={'cancel'+element.id} style={{display: 'none'}} className='p-1 ms-auto'>Cancelar</a></div>
                         </MDBListGroupItem>
@@ -104,14 +106,14 @@ export default function SecaoDestinatarios({navigate}){
                                     </div>
                                     <div className="col-md-6 pt-md-2 pt-1">
                                         <MDBInputGroup>
-                                            <MDBBtn color='secondary' onChange={e=>{destinatarios[destinatarios.map(object => object.id).indexOf(element.id)].telefone1=e.target.value}} className='novoDestinatarioForm px-2'>Telefone 1</MDBBtn>
-                                            <InputMask mask='(99) 99999-9999' className='form-control' type='text' id={'destinatarioTelefone1'+element.id}/>
+                                            <MDBBtn color='secondary' className='novoDestinatarioForm px-2'>Telefone 1</MDBBtn>
+                                            <InputMask defaultValue={element.telefone1||''} onChange={e=>{destinatarios[destinatarios.map(object => object.id).indexOf(element.id)].telefone1=e.target.value}} mask='(99) 99999-9999' className='form-control' type='text' id={'destinatarioTelefone1'+element.id}/>
                                         </MDBInputGroup>
                                     </div>
                                     <div className="col-md-6 pt-md-2 pt-1">
                                         <MDBInputGroup>
-                                            <MDBBtn color='secondary' onChange={e=>{destinatarios[destinatarios.map(object => object.id).indexOf(element.id)].telefone2=e.target.value}} className='novoDestinatarioForm px-2'>Telefone 2</MDBBtn>
-                                            <InputMask mask='(99) 99999-9999' className='form-control' type='text' id={'destinatarioTelefone2'+element.id}/>
+                                            <MDBBtn color='secondary' className='novoDestinatarioForm px-2'>Telefone 2</MDBBtn>
+                                            <InputMask  defaultValue={element.telefone2||''} onChange={e=>{destinatarios[destinatarios.map(object => object.id).indexOf(element.id)].telefone2=e.target.value}}  mask='(99) 99999-9999' className='form-control' type='text' id={'destinatarioTelefone2'+element.id}/>
                                         </MDBInputGroup>
                                     </div>
                                     <div className="col-md-6 pt-md-2 pt-1">
@@ -488,7 +490,7 @@ export default function SecaoDestinatarios({navigate}){
 
     return(
         <main className='mt-3 principal'> 
-            {Title(sessionStorage.getItem('nomePesquisa'),()=>{CarregaDestinatarios(setDestinatarios,setDestinatariosDB,sessionStorage.getItem('formId'),navigate)})}
+            {Title(location?location.nomePesquisa:'Nome',()=>{CarregaDestinatarios(setDestinatarios,setDestinatariosDB,sessionStorage.getItem('formId'),navigate)})}
 
             {/* Barra de busca */}
             <MDBContainer fluid className='shadow mt-3 p-3 rounded-3 bg-light'>

@@ -101,11 +101,11 @@ export default function Dashboard({navigate}){
                     <h5 className='fixed'>Quais questões quer comparar?</h5>
                     <hr className='mt-0 mb-3'></hr>
                     <MDBContainer id={"SelectFormularios"} className='formsselectbig mt-3 rounded-3 overflow-auto'>
-                        {questoes.filter(e=>e.formId===formSelected.id).map(item =>{
+                        {questoes?.filter(e=>e.formId===formSelected.id).map(item =>{
                             return(
                                 <div key={item.id} className='pb-1 align-items-center'>
                                     <MDBCheckbox name='Questoes' value={item.id} label={item.enunciado} labelStyle={{wordBreak: 'break-word'}} inline/>
-                                    {item.derivadas.sort((a,b)=>a.derivadaDeOpcao-b.derivadaDeOpcao).map(element=>{
+                                    {item?.derivadas?.sort((a,b)=>a.derivadaDeOpcao-b.derivadaDeOpcao).map(element=>{
                                         return (<div key={element.id} className={'questaoderivada rounded px-1 align-items-center opcao'+element.derivadaDeOpcao}>
                                             <MDBCheckbox name='Questoes' value={element.id} label={element.enunciado} inline/>
                                         </div>)

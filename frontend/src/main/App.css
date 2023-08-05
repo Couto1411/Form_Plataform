@@ -1,6 +1,6 @@
 body {
     font-family: Roboto, Helvetica, Arial, sans-serif;
-    background: #f0f2f5;
+    background: #ecf3fe;
     margin: 0;
     padding: 0;
     overflow-x: hidden;
@@ -40,7 +40,7 @@ main{
     display: none;
 }
 .zoom:hover{
-    font-size: 1.2em;
+    font-size: 1.03em;
 }
 
 ::-webkit-scrollbar {

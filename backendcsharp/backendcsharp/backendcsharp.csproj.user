@@ -11,7 +11,7 @@
     <WebStackScaffolding_DbContextTypeFullName>backendcsharp.Entities.ProjetoDbContext</WebStackScaffolding_DbContextTypeFullName>
     <WebStackScaffolding_IsAsyncSelected>False</WebStackScaffolding_IsAsyncSelected>
     <WebStackScaffolding_IsViewGenerationSelected>True</WebStackScaffolding_IsViewGenerationSelected>
-    <NameOfLastUsedPublishProfile>D:\Pessoal\CEFET\Form_Plataform\backendcsharp\backendcsharp\Properties\PublishProfiles\MyPCProfile.pubxml</NameOfLastUsedPublishProfile>
+    <NameOfLastUsedPublishProfile>D:\Pessoal\CEFET\Form_Plataform\backendcsharp\backendcsharp\Properties\PublishProfiles\EC2-Profile.pubxml</NameOfLastUsedPublishProfile>
     <ActiveDebugProfile>backendcsharp</ActiveDebugProfile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

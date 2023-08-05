@@ -1,12 +1,12 @@
 import baseUrl from "./api"
 import axios from "axios"
 
-export function RemoveSessao(navigate){
+export function RemoveSessao(navigate,logout){
     sessionStorage.removeItem('token')
     sessionStorage.removeItem('destinatarioId')
     sessionStorage.removeItem('formId')
-    navigate('/login')
-    alert("Faça o login")
+    navigate('/',{state:{redirect:true}})
+    if(!logout) alert("Faça o login")
 }
 
 export async function CarregaForms(setforms,navigate){

@@ -4,7 +4,7 @@ import Logo from "./Logo"
 import {MDBContainer} from 'mdb-react-ui-kit';
 
 
-export default function Navbar(props){
+export default function Navbar({navigate}){
     
     function ShowSidebar(){
         var v = document.getElementById('sidebarMenu');
@@ -14,16 +14,17 @@ export default function Navbar(props){
             v.classList.add("d-block")
         }
     } 
+    
     return(
         <nav id="main-navbar" className="navbar navbar-expand-lg navbar-light sticky-top">
             <MDBContainer fluid>
                 {/* Toggle button */}
-                {!props?<button className="navbar-toggler" onClick={e=>{ShowSidebar()}}>
+                <button className="navbar-toggler" onClick={e=>{ShowSidebar()}}>
                     <i className="fas fa-bars"></i>
-                </button>:<></>}
+                </button>
 
                 {/* Brand */}
-                <Logo/>
+                <Logo navigate={navigate}/>
             </MDBContainer>
         </nav>
     )

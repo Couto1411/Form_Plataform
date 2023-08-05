@@ -308,7 +308,7 @@ export default function UserSection({navigate}) {
                 {/* Botões de perfil administrador e logout */}
                 <div className="d-flex mt-2">
                     <div className="ms-auto">{admin()}</div>
-                    <MDBBtn color="danger" onClick={e => RemoveSessao(navigate)}>Logout</MDBBtn>
+                    <MDBBtn color="danger" onClick={e => RemoveSessao(navigate,true)}>Logout</MDBBtn>
                 </div>
 
             </main>

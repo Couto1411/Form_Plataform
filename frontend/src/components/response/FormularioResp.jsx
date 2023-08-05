@@ -4,13 +4,13 @@ import './FormularioResp.css'
 import baseUrl from "../../config/api";
 import {useParams} from 'react-router-dom';
 import Title from '../template/Title'
-import Navbar from '../template/Navbar'
 import {
     MDBInput, MDBInputGroup, MDBTextArea, MDBRadio, MDBCheckbox,
     MDBListGroup, MDBListGroupItem,
-    MDBBtn, MDBModal, MDBModalDialog, MDBModalContent, MDBModalBody, MDBModalFooter, MDBModalHeader, MDBSpinner} from 'mdb-react-ui-kit';
+    MDBBtn, MDBModal, MDBModalDialog, MDBModalContent, MDBModalBody, MDBModalFooter, MDBModalHeader, MDBSpinner, MDBContainer} from 'mdb-react-ui-kit';
+import Logo from '../template/Logo';
 
-export default function FormularioResposta(props){    
+export default function FormularioResposta(){    
     const [questoes, setQuestoes] = useState(null);
     const [emailChecker, setEmailChecker] = useState(true);
     const [concluded, setConcluded] = useState(false);
@@ -170,8 +170,6 @@ export default function FormularioResposta(props){
     }
 
     async function sendResposta(){
-        setLoading(true)
-        setConcluded(true)
         let respostas=[]
         let enviar=true
         let temp = questoes
@@ -293,6 +291,8 @@ export default function FormularioResposta(props){
         }
         if(enviar){
             document.getElementById("desabilita").disabled=true
+            setLoading(true)
+            setConcluded(true)
             await axios.post(baseUrl+"/enviados/"+formId,
             {
                 email:user,
@@ -309,7 +309,12 @@ export default function FormularioResposta(props){
 
     return(
         <section>
-            {Navbar(1,true)}
+            <nav id="main-navbar" className="navbar navbar-expand-lg navbar-light sticky-top">
+            <MDBContainer fluid>
+                {/* Brand */}
+                <Logo/>
+            </MDBContainer>
+        </nav>
             <main className='mt-3 centralize'>
                 {Title("Questões")}
 

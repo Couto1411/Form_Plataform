@@ -93,12 +93,11 @@ namespace backendcsharp.Controllers
                             foreach (var element in destinatario)
                             {
                                 if (element.Respondido == 0) {
-                                    var contato = await ProjetoDbContext.Destinatarios.Select(e => new Destinatario()).FirstOrDefaultAsync(s => s.Id == element.Id);
+                                    var contato = await ProjetoDbContext.Destinatarios.Where(s => s.Id == element.Id).FirstOrDefaultAsync();
                                     if (contato is not null) contato.Respondido = 1;
                                     if (Handlers.IsValidEmail(element.Email)) email.Bcc.Add(element.Email);
                                 }
                             }
-                            //email.To.Add("gabriel.couto14@hotmail.com");
 
                             // Faz cópia do email para o remetente
                             email.CC.Add(User.Email);
@@ -190,6 +189,7 @@ namespace backendcsharp.Controllers
                         email.Subject = Form.Titulo;
                         // Seta a mensagem do email
                         email.Body = Form.MsgEmail is not null?Form.MsgEmail.Replace(@" {replaceStringHere} ", @"<br/><br/>https://formplataform-4ac81.web.app/" + Form.Id + "<br/><br/>").Replace("\n",@"<br/>"):"";
+                        email.Body += "<br/><br/> Caso link não funcione, cole-o no browser de sua escolha.";
                         //END
                         email.IsBodyHtml = true;
                         SmtpServer.Timeout = 5000;

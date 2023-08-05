@@ -297,6 +297,8 @@ namespace backendcsharp.Controllers
                     select new DestinatarioDTO(destinatario)                  
                 ).ToListAsync();
 
+                FormId = await (from formulario in ProjetoDbContext.Formularios where formulario.Id == FormId select (int)(formulario.DerivadoDeId ?? formulario.Id)).FirstOrDefaultAsync();
+
                 List<Relatorio> retorno = new();
                 foreach (var item in destinatariosRespondidos)
                 {

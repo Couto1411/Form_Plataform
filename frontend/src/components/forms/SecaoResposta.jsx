@@ -7,8 +7,10 @@ import {
     MDBListGroup, MDBListGroupItem,
     MDBBtn, MDBProgressBar,
     MDBModal, MDBModalDialog, MDBModalContent, MDBModalHeader, MDBModalTitle, MDBContainer, MDBProgress} from 'mdb-react-ui-kit';
+import { useLocation } from 'react-router-dom';
 
 export default function SecaoRespostas({respostas,navigate}){
+    const location = useLocation().state;
     // Usado para dizer qual a pergunta e o tipo de reposta do relatório
     const [show, setShow] = useState(false);
     
@@ -24,7 +26,7 @@ export default function SecaoRespostas({respostas,navigate}){
                 <MDBListGroupItem className='shadow mt-3 rounded-3'>
                     <div className='porcentagem'>
                         {element.type===1?
-                        <MDBRadio disabled defaultChecked={true} className='mt-1' value='' inline/>:
+                        <MDBRadio disabled defaultChecked={true}  value='' inline/>:
                         <MDBCheckbox disabled defaultChecked={true} className='mt-1' value='' inline/>}
                         {element.numero}) {element.enunciado}
                     </div>
@@ -44,7 +46,7 @@ export default function SecaoRespostas({respostas,navigate}){
             return (
                 <MDBListGroup key={questaoOrig.id+'respostasopcao'+opcao} className='mt-1 rounded-3' >
                     {derivadas?.filter(s=>s.derivadaDeOpcao===opcao)?.map(element=>{
-                        return (<MDBListGroupItem key={element.id} className={'mt-1 rounded-3 opcao'+opcao}>
+                        return (<MDBListGroupItem key={element.id} className={'shadow mt-1 rounded-3 opcao'+opcao}>
                                     <div className='d-flex porcentagem'>{element.numero}) {element.enunciado}<div className='ms-auto'>{element.type===1?<MDBRadio disabled defaultChecked={true} className='mt-1' value='' inline/>:<MDBCheckbox disabled defaultChecked={true} className='mt-1' value='' inline/>}</div></div>
                                     <hr className='mt-0 mb-2'></hr>
                                     <div id={"resposta"+element.id} className='mx-2'>
@@ -64,20 +66,24 @@ export default function SecaoRespostas({respostas,navigate}){
             count+=1
             let parcial=Math.trunc((item.quantidade/sum)*100)
             if(!parcial) parcial=0
-            return(
-                <div key={'Barra'+element.id+count} className='mb-2 porcentagem'> 
-                    <div className={tipo?'rounded-3 px-1 mt-1 opcao'+count:"px-1 mt-1"}>{numero}) 
-                        <div style={{cursor:'pointer',display:'inline'}} onClick={()=>{
-                            setShow(item);
-                            setOpcaoText(item?.texto)
-                            setDestinatariosResposta(item.destinatarios)}}>{" "+item.texto}
+            if(item?.texto)
+                return(
+                    <div key={'Barra'+element.id+count} className='mb-2 porcentagem'> 
+                        <div className={"px-1 mt-1 bordaCorHr rounded-top border-bottom-0  "+(tipo ? 'opcao'+count:'')}>{numero}) 
+                            <div style={{cursor:'pointer',display:'inline'}} onClick={()=>{
+                                setShow(item);
+                                setOpcaoText(item?.texto)
+                                setDestinatariosResposta(item.destinatarios)}}>{" "+item.texto}
+                            </div>
+                        </div>
+                        <div className={'bordaCorHr border-top-0 rounded-bottom'}>
+                            <MDBProgress height='20' className='rounded-bottom'>
+                                <MDBProgressBar className='porcentagem' width={parcial} valuemin={0} valuemax={100}>{parcial}%</MDBProgressBar>
+                            </MDBProgress>
                         </div>
                     </div>
-                    <MDBProgress height='20' className='rounded-3'>
-                        <MDBProgressBar className='porcentagem' width={parcial} valuemin={0} valuemax={100}>{parcial}%</MDBProgressBar>
-                    </MDBProgress>
-                </div>
-            )
+                )
+            else return null
         })
     }
 
@@ -89,29 +95,34 @@ export default function SecaoRespostas({respostas,navigate}){
         })
     }
 
+    function geraObjectPlanilha(questao,index){
+        return {
+            ['1. ' +questao.resposta[0].texto]: questao.resposta[0].destinatarios.length>index ? (questao.resposta[0].destinatarios[index].nome || questao.resposta[0].destinatarios[index].email) : '',
+            ['2. ' +questao.resposta[1].texto]: questao.resposta[1].destinatarios.length>index ? (questao.resposta[1].destinatarios[index].nome || questao.resposta[1].destinatarios[index].email) : '',
+            ['3. ' +questao.resposta[2].texto]: questao.resposta[2].destinatarios.length>index ? (questao.resposta[2].destinatarios[index].nome || questao.resposta[2].destinatarios[index].email) : '',
+            ['4. ' +questao.resposta[3].texto]: questao.resposta[3].destinatarios.length>index ? (questao.resposta[3].destinatarios[index].nome || questao.resposta[3].destinatarios[index].email) : '',
+            ['5. ' +questao.resposta[4].texto]: questao.resposta[4].destinatarios.length>index ? (questao.resposta[4].destinatarios[index].nome || questao.resposta[4].destinatarios[index].email) : '',
+            ['6. ' +questao.resposta[5].texto]: questao.resposta[5].destinatarios.length>index ? (questao.resposta[5].destinatarios[index].nome || questao.resposta[5].destinatarios[index].email) : '',
+            ['7. ' +questao.resposta[6].texto]: questao.resposta[6].destinatarios.length>index ? (questao.resposta[6].destinatarios[index].nome || questao.resposta[6].destinatarios[index].email) : '',
+            ['8. ' +questao.resposta[7].texto]: questao.resposta[7].destinatarios.length>index ? (questao.resposta[7].destinatarios[index].nome || questao.resposta[7].destinatarios[index].email) : '',
+            ['9. ' +questao.resposta[8].texto]: questao.resposta[8].destinatarios.length>index ? (questao.resposta[8].destinatarios[index].nome || questao.resposta[8].destinatarios[index].email) : '',
+            ['10. '+questao.resposta[9].texto]: questao.resposta[9].destinatarios.length>index ? (questao.resposta[9].destinatarios[index].nome || questao.resposta[9].destinatarios[index].email) : '',
+        }
+    }
+
     function GeraPlanilha(){
         // A workbook is the name given to an Excel file
         var wb = XLSX.utils.book_new() // Make Workbook of Excel
 
         respostas?.respostas?.forEach(questao => {
-            // Adiciona coluna com o enunciado
+            // Adiciona os primeiros destinatários com o enunciado
             let dataSheetInit = [{'Enunciado':questao.enunciado}]
+            Object.assign(dataSheetInit[0],geraObjectPlanilha(questao,0))
             // Pega o máximo de destinatários que uma opcão teve
             let maxDestinatarios = Math.max(...questao.resposta?.map(opcao=>opcao.destinatarios.length));
             // Adiciona os destinatários de cada resposta na coluna das mesmas
-            for (let index = 0; index < maxDestinatarios; index++) {
-                let dataSheet = dataSheetInit.concat({
-                    [questao.resposta[0].texto]: questao.resposta[0].destinatarios.length>index ? (questao.resposta[0].destinatarios[index].nome || questao.resposta[0].destinatarios[index].email) : '',
-                    [questao.resposta[1].texto]: questao.resposta[1].destinatarios.length>index ? (questao.resposta[1].destinatarios[index].nome || questao.resposta[1].destinatarios[index].email) : '',
-                    [questao.resposta[2].texto]: questao.resposta[2].destinatarios.length>index ? (questao.resposta[2].destinatarios[index].nome || questao.resposta[2].destinatarios[index].email) : '',
-                    [questao.resposta[3].texto]: questao.resposta[3].destinatarios.length>index ? (questao.resposta[3].destinatarios[index].nome || questao.resposta[3].destinatarios[index].email) : '',
-                    [questao.resposta[4].texto]: questao.resposta[4].destinatarios.length>index ? (questao.resposta[4].destinatarios[index].nome || questao.resposta[4].destinatarios[index].email) : '',
-                    [questao.resposta[5].texto]: questao.resposta[5].destinatarios.length>index ? (questao.resposta[5].destinatarios[index].nome || questao.resposta[5].destinatarios[index].email) : '',
-                    [questao.resposta[6].texto]: questao.resposta[6].destinatarios.length>index ? (questao.resposta[6].destinatarios[index].nome || questao.resposta[6].destinatarios[index].email) : '',
-                    [questao.resposta[7].texto]: questao.resposta[7].destinatarios.length>index ? (questao.resposta[7].destinatarios[index].nome || questao.resposta[7].destinatarios[index].email) : '',
-                    [questao.resposta[8].texto]: questao.resposta[8].destinatarios.length>index ? (questao.resposta[8].destinatarios[index].nome || questao.resposta[8].destinatarios[index].email) : '',
-                    [questao.resposta[9].texto]: questao.resposta[9].destinatarios.length>index ? (questao.resposta[9].destinatarios[index].nome || questao.resposta[9].destinatarios[index].email) : '',
-                })
+            for (let index = 1; index < maxDestinatarios; index++) {
+                let dataSheet = dataSheetInit.concat(geraObjectPlanilha(questao,index))
                 dataSheetInit=dataSheet
             }
             var sheet = XLSX.utils.json_to_sheet(dataSheetInit)                   // Create Sheet from JSON 
@@ -120,20 +131,10 @@ export default function SecaoRespostas({respostas,navigate}){
             // Adiciona questões derivadas
             questao?.derivadas?.sort((a,b)=>a?.derivadaDeOpcao-b?.derivadaDeOpcao)?.forEach(questaoDerivada => {
                 let dataDerivadaSheetInit =  [{'Enunciado':questaoDerivada.enunciado}] 
+                Object.assign(dataDerivadaSheetInit[0],geraObjectPlanilha(questaoDerivada,0))
                 let maxDerivadaDestinatarios = Math.max(...questaoDerivada.resposta?.map(opcao=>opcao.destinatarios.length));
-                for (let index = 0; index < maxDerivadaDestinatarios; index++) {
-                    let dataSheet = dataDerivadaSheetInit.concat({
-                        [questaoDerivada.resposta[0].texto]: questaoDerivada.resposta[0].destinatarios.length>index ? (questaoDerivada.resposta[0].destinatarios[index].nome || questaoDerivada.resposta[0].destinatarios[index].email) : '',
-                        [questaoDerivada.resposta[1].texto]: questaoDerivada.resposta[1].destinatarios.length>index ? (questaoDerivada.resposta[1].destinatarios[index].nome || questaoDerivada.resposta[1].destinatarios[index].email) : '',
-                        [questaoDerivada.resposta[2].texto]: questaoDerivada.resposta[2].destinatarios.length>index ? (questaoDerivada.resposta[2].destinatarios[index].nome || questaoDerivada.resposta[2].destinatarios[index].email) : '',
-                        [questaoDerivada.resposta[3].texto]: questaoDerivada.resposta[3].destinatarios.length>index ? (questaoDerivada.resposta[3].destinatarios[index].nome || questaoDerivada.resposta[3].destinatarios[index].email) : '',
-                        [questaoDerivada.resposta[4].texto]: questaoDerivada.resposta[4].destinatarios.length>index ? (questaoDerivada.resposta[4].destinatarios[index].nome || questaoDerivada.resposta[4].destinatarios[index].email) : '',
-                        [questaoDerivada.resposta[5].texto]: questaoDerivada.resposta[5].destinatarios.length>index ? (questaoDerivada.resposta[5].destinatarios[index].nome || questaoDerivada.resposta[5].destinatarios[index].email) : '',
-                        [questaoDerivada.resposta[6].texto]: questaoDerivada.resposta[6].destinatarios.length>index ? (questaoDerivada.resposta[6].destinatarios[index].nome || questaoDerivada.resposta[6].destinatarios[index].email) : '',
-                        [questaoDerivada.resposta[7].texto]: questaoDerivada.resposta[7].destinatarios.length>index ? (questaoDerivada.resposta[7].destinatarios[index].nome || questaoDerivada.resposta[7].destinatarios[index].email) : '',
-                        [questaoDerivada.resposta[8].texto]: questaoDerivada.resposta[8].destinatarios.length>index ? (questaoDerivada.resposta[8].destinatarios[index].nome || questaoDerivada.resposta[8].destinatarios[index].email) : '',
-                        [questaoDerivada.resposta[9].texto]: questaoDerivada.resposta[9].destinatarios.length>index ? (questaoDerivada.resposta[9].destinatarios[index].nome || questaoDerivada.resposta[9].destinatarios[index].email) : '',
-                    })
+                for (let index = 1; index < maxDerivadaDestinatarios; index++) {
+                    let dataSheet = dataDerivadaSheetInit.concat(geraObjectPlanilha(questaoDerivada,index))
                     dataDerivadaSheetInit=dataSheet
                 }
                 var sheetDerivada = XLSX.utils.json_to_sheet(dataDerivadaSheetInit)                                                                        // Create Sheet Derivada from JSON 
@@ -142,13 +143,13 @@ export default function SecaoRespostas({respostas,navigate}){
         });
   
         // Export Excel file
-        XLSX.writeFile(wb, `${sessionStorage.getItem('nomePesquisa')}.xlsx`) // name of the file is 'book.xlsx'
+        XLSX.writeFile(wb, `${location?location.nomePesquisa:'Nome'}.xlsx`) // name of the file is 'book.xlsx'
       
     }
 
     return(
         <main className='mt-3 principal'> 
-            {Title(sessionStorage.getItem('nomePesquisa'))}
+            {Title(location?location.nomePesquisa:'Nome')}
 
             <MDBBtn color='light' className='mt-3 shadow' onClick={()=>GeraPlanilha()}>Gerar Planilha</MDBBtn>
 
@@ -211,6 +212,6 @@ export default function SecaoRespostas({respostas,navigate}){
 //     });
 
 //     // Export Excel file
-//     XLSX.writeFile(wb, `${sessionStorage.getItem('nomePesquisa')}.xlsx`) // name of the file is 'book.xlsx'
+//     XLSX.writeFile(wb, `${location?location.nomePesquisa:'Nome'}.xlsx`) // name of the file is 'book.xlsx'
   
 // }

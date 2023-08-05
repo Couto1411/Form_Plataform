@@ -9,10 +9,15 @@ a:hover{color: rgb(21, 21, 21)}
 
 .formsDuplicates{
     color: rgb(26, 26, 26);
-    background-color: #ffffe6;
+    background-color: #cdcdcd;
 }
 
 .addFormButton:hover{
     background-color: #ffff00;
     border: #ffa564 solid 1px;
+}
+
+.listitem::before{
+    margin-right: 4px;
+    color: #969696;
 }

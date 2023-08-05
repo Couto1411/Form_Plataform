@@ -202,17 +202,12 @@ export default function PaginaUsuario({navigate}){
     }
 
     function renderizaForms(){
-        let numero = 0
-        return forms?.map(element => {
-            numero+=1
+        return forms?.map((element,index) => {
             let tempDate= new Date( Date.parse(element.dataEnviado))
-            return(
-                <div key={element.id} className={forms.length>numero?'border-bottom':''}>
-                    <MDBListGroupItem noBorders className='d-flex rounded-2 align-items-center'>
-                        {numero}. <Link className='zoom' style={{color:'black'}} to="/forms" onClick={e=>{
-                            sessionStorage.setItem("formId",element.id);
-                            sessionStorage.setItem("nomePesquisa",element.titulo);
-                        }}>{element.titulo} </Link>
+            return[
+                    <MDBListGroupItem key={element.id} className={'listitem d-flex align-items-center '+ (index===0?'rounded-top':index===forms.length-1?'rounded-bottom':'')}>
+                        <Link className='zoom' style={{color:'black'}} to="/forms" onClick={e=>{sessionStorage.setItem("formId",element.id);}}
+                        state={{nomePesquisa:element.titulo}}>{element.titulo} </Link>
                         {element.dataEnviado?<i className='mx-1'>({tempDate.toLocaleDateString('en-GB')})</i>:<></>}
                         {element.derivados?.length?<i id={'icone'+element.id} aberto='F' onClick={e=>{toggleDerivados(element.id)}} className=" mx-1 fas fa-regular fa-angle-down"></i>:null}
                         
@@ -223,42 +218,35 @@ export default function PaginaUsuario({navigate}){
                             setIdDerivateToDelete(null)
                             setDeletaFormulario(true)
                             }}></i>
-                    </MDBListGroupItem>
-                    {element.derivados?.length?
-                        <div  id={'form'+element.id+'derivados'} style={{display:'none'}}>
-                            <hr className='mt-0 mb-1'></hr>
-                            <MDBListGroup numbered className='mx-3 mb-1 border-top'>
-                                {element.derivados.map(item =>{
-                                    let tempDate2= new Date( Date.parse(item.dataEnviado))
-                                    return (
-                                        <MDBListGroupItem key={'formderivado'+item.id} className='pb-0 formsDuplicates d-flex'>
-                                            <Link className='formsDuplicates zoom' to={"/forms/"+item.id} state={{derivado:item.id}} onClick={e=>{
-                                                sessionStorage.setItem("formId",element.id);
-                                                sessionStorage.setItem("nomePesquisa",element.titulo);
-                                            }}>{item.titulo}</Link>
-                                            {item.dataEnviado?<i className='mx-1'>({tempDate2.toLocaleDateString('en-GB')})</i>:<></>}
-                                            <i title='Editar Formulário' className="ms-auto edit mx-2 pt-1 fas fa-pen-to-square" onClick={()=>onClickEditForm(item)}></i>
-                                            <i className="trashcan pt-1 fas fa-trash-can" onClick={e=>{
-                                            setIdToDelete(element.id)
-                                            setIdDerivateToDelete(item.id)
-                                            setDeletaFormulario(true)
-                                            }}></i>
-                                            <hr></hr>
-                                        </MDBListGroupItem>
-                                    )
-                                })}
-                            </MDBListGroup>
-                        </div>
-                    :null}
-                </div>
-            )
+                    </MDBListGroupItem>,
+                    element.derivados?.length?
+                        <MDBListGroup numbered className='mx-3 my-1' key={'derivados'+element.id} id={'form'+element.id+'derivados'} style={{display:'none'}} >
+                            {element.derivados.map(item =>{
+                                let tempDate2= new Date( Date.parse(item.dataEnviado))
+                                return (
+                                    <MDBListGroupItem key={'formderivado'+item.id} className='listitem pb-0 formsDuplicates d-flex'>
+                                        <Link className='formsDuplicates zoom' to={"/forms/"+item.id} state={{derivado:item.id,nomePesquisa:element.titulo}} onClick={e=>{sessionStorage.setItem("formId",element.id);}}>{item.titulo}</Link>
+                                        {item.dataEnviado?<i className='mx-1'>({tempDate2.toLocaleDateString('en-GB')})</i>:<></>}
+                                        <i title='Editar Formulário' className="ms-auto edit mx-2 pt-1 fas fa-pen-to-square" onClick={()=>onClickEditForm(item)}></i>
+                                        <i className="trashcan pt-1 fas fa-trash-can" onClick={e=>{
+                                        setIdToDelete(element.id)
+                                        setIdDerivateToDelete(item.id)
+                                        setDeletaFormulario(true)
+                                        }}></i>
+                                        <hr></hr>
+                                    </MDBListGroupItem>
+                                )
+                            })}
+                        </MDBListGroup>
+                    :null
+            ]
         });
     }
 
     const secaoForms=<main className='mt-3 principal'>
         {Title("Formulários")}
         
-        <MDBListGroup small className='shadow mt-3 rounded-3 bg-light' >
+        <MDBListGroup numbered small className='shadow mt-3 rounded-3' >
             {renderizaForms()}
         </MDBListGroup>
         
@@ -319,7 +307,7 @@ export default function PaginaUsuario({navigate}){
     return(
         <section>
             {Sidebar({area:'forms',setSecao:setSecao})}
-            {Navbar()}
+            {Navbar({navigate:navigate})}
 
             {makeSecao()}
         </section>

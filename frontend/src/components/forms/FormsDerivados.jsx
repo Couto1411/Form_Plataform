@@ -17,8 +17,8 @@ import SecaoRelatorios from './SecaoRelatórios';
 import SecaoRespostas from './SecaoResposta';
 
 export default function FormsDerivados({navigate}){
-    const location = useLocation()
-    const { derivado } = location.state
+    const location = useLocation().state
+    const { derivado } = location
     // Conta cliques para excluir o destinatário
     const [click, setClick] = useState([{id:''}]);
 
@@ -71,16 +71,16 @@ export default function FormsDerivados({navigate}){
 
 
     // Questões
-    function renderizaQuestoes(listaQuestoes,opcao){
+    function renderizaQuestoes(listaQuestoes,opcao,numeroOrig){
         if(!(listaQuestoes?.length))listaQuestoes=questoes
         let opcoes=[1,2,3,4,5,6,7,8,9,10]
         return listaQuestoes?.map(element => {
             switch (element.type) {
                 case 1:
                     return(
-                        <MDBListGroupItem noBorders key={element.id} className={opcao?'rounded-3 mb-3 opcao'+opcao:'rounded-3 mb-3'}>
-                            <MDBInputGroup className='mb-2 mt-1'>
-                                <MDBBtn color='secondary' className='numQuestao'>{element.numero}</MDBBtn>
+                        <MDBListGroupItem noBorders key={element.id} className={'shadow rounded-3 mb-2 '+(opcao&&'opcao'+opcao)}>
+                            <MDBInputGroup className='mb-1 mt-1'>
+                                <MDBBtn color='secondary' className='numQuestao'>{numeroOrig?numeroOrig+'.'+element.numero:element.numero}</MDBBtn>
                                 <textarea className='form-control' id={'questao'+element.id} 
                                     defaultValue={element.enunciado} disabled 
                                     style={{borderTopLeftRadius:'0px',borderBottomLeftRadius:'0px'}}/>
@@ -101,21 +101,21 @@ export default function FormsDerivados({navigate}){
                     )
                 case 2:
                     return(
-                        <MDBListGroupItem noBorders key={element.id} className={opcao?'rounded-3 mb-3 opcao'+opcao:'rounded-3 mb-3'}>
-                            <MDBInputGroup className='mb-2 mt-1'>
-                                <MDBBtn color='secondary' className='numQuestao'>{element.numero}</MDBBtn>
+                        <MDBListGroupItem noBorders key={element.id} className={'shadow rounded-3 mb-2 '+(opcao&&'opcao'+opcao)}>
+                            <MDBInputGroup className='mb-1 mt-1'>
+                                <MDBBtn color='secondary' className='numQuestao'>{numeroOrig?numeroOrig+'.'+element.numero:element.numero}</MDBBtn>
                                 <textarea className='form-control' id={'questao'+element.id} 
                                     defaultValue={element.enunciado} disabled 
                                     style={{borderTopLeftRadius:'0px',borderBottomLeftRadius:'0px'}}/>
                             </MDBInputGroup>
-                            <MDBTextArea rows={4} label='Resposta' readOnly className='mb-2'/>
+                            <MDBTextArea rows={2} label='Resposta' readOnly className='mb-2'/>
                         </MDBListGroupItem>
                     )
                 case 3:
                     return(
-                        <MDBListGroupItem noBorders key={element.id} className={opcao?'rounded-3 mb-3 opcao'+opcao:'rounded-3 mb-3'}>
-                            <MDBInputGroup className='mb-2 mt-1'>
-                                <MDBBtn color='secondary' className='numQuestao'>{element.numero}</MDBBtn>
+                        <MDBListGroupItem noBorders key={element.id} className={'shadow rounded-3 mb-2 '+(opcao&&'opcao'+opcao)}>
+                            <MDBInputGroup className='mb-1 mt-1'>
+                                <MDBBtn color='secondary' className='numQuestao'>{numeroOrig?numeroOrig+'.'+element.numero:element.numero}</MDBBtn>
                                 <textarea className='form-control' id={'questao'+element.id} 
                                     defaultValue={element.enunciado} disabled 
                                     style={{borderTopLeftRadius:'0px',borderBottomLeftRadius:'0px'}}/>                              
@@ -136,15 +136,15 @@ export default function FormsDerivados({navigate}){
                     )
                 case 4:
                     return(
-                        <MDBListGroupItem noBorders key={element.id} className={opcao?'rounded-3 mb-3 opcao'+opcao:'rounded-3 mb-3'}>
+                        <MDBListGroupItem noBorders key={element.id} className={'shadow rounded-3 mb-2 '+(opcao&&'opcao'+opcao)}>
                             <MDBTextArea disabled id={'questao'+element.id}
-                                         defaultValue={element.enunciado} rows={4} label='Descrição' className='mb-2'/>
+                                         defaultValue={element.enunciado} rows={3} label='Descrição' className='mb-2'/>
                         </MDBListGroupItem>
                     )
                 case 9:
                     return(<div  key={element.id} >
-                        <MDBListGroupItem className='rounded-2 mb-3'>
-                            <MDBInputGroup className='mb-2 mt-1'>
+                        <MDBListGroupItem className='rounded-2 mb-2 shadow'>
+                            <MDBInputGroup className='mb-1 mt-1'>
                                 <MDBBtn color='secondary' className='numQuestao'>{element.numero}</MDBBtn>
                                 <textarea className='form-control' id={'questao'+element.id} 
                                     defaultValue={element.enunciado} disabled 
@@ -164,10 +164,7 @@ export default function FormsDerivados({navigate}){
                             </div>
                         </MDBListGroupItem>
                         {element?.derivadas?.length?opcoes.map(numero=>{
-                            return (
-                                <MDBListGroup key={element.id+'respostasopcao'+numero} className='mt-1 rounded-3' >
-                                    {element.derivadas?.filter(s=>s.derivadaDeOpcao===numero).length?renderizaQuestoes(element.derivadas?.filter(s=>s.derivadaDeOpcao===numero),numero):null}
-                                </MDBListGroup>)
+                            return element.derivadas?.filter(s=>s.derivadaDeOpcao===numero).length?renderizaQuestoes(element.derivadas?.filter(s=>s.derivadaDeOpcao===numero),numero,element.numero):null
                         }):null}
                     </div>)
                 default:
@@ -179,7 +176,7 @@ export default function FormsDerivados({navigate}){
     }
 
     const secaoQuestoes = <main className='mt-3 principal'>
-        {Title(sessionStorage.getItem('nomePesquisa'))}
+        {Title(location?location.nomePesquisa:'Nome')}
 
         <MDBListGroup small className='mt-3' >
             {renderizaQuestoes()}
@@ -235,7 +232,7 @@ export default function FormsDerivados({navigate}){
     }
 
     const secaoDestinatarios = <main className='mt-3 principal'> 
-        {Title(sessionStorage.getItem('nomePesquisa'),()=>CarregaDestinatarios(setDestinatarios,setDestinatariosDB,derivado,navigate))}
+        {Title(location?location.nomePesquisa:'Nome',()=>CarregaDestinatarios(setDestinatarios,setDestinatariosDB,derivado,navigate))}
 
         {/* Busca */}
         <MDBContainer fluid className='mt-3 p-3 rounded-3 bg-light'>
@@ -257,7 +254,7 @@ export default function FormsDerivados({navigate}){
                             <MDBInputGroup>
                                 <MDBBtn onClick={e=>{handleClick(element)}} color='secondary' className='numQuestao'><i className="trashcan fas fa-trash-can"></i></MDBBtn>
                                 <input className='form-control' type='text' defaultValue={element.email} disabled/>
-                                <Link role='button' state={{derivado:derivado}} onClick={e=>{sessionStorage.setItem('destinatarioId',element.id)}} to='/resposta' color='secondary' className='numQuestao borda-direita' id={'edit'+element.id}>
+                                <Link role='button' state={{derivado:derivado,nomePesquisa:location?.nomePesquisa}} onClick={e=>{sessionStorage.setItem('destinatarioId',element.id)}} to='/resposta' color='secondary' className='numQuestao borda-direita' id={'edit'+element.id}>
                                     <i className='p-2 ms-auto fas fa-solid fa-eye'></i>
                                 </Link>
                             </MDBInputGroup>
@@ -352,7 +349,7 @@ export default function FormsDerivados({navigate}){
     return(
         <section>
             {Sidebar({area:'questoes',setSecao:setsecao,qtdRespostas:respostas?.quantidadeRespostas})}
-            {Navbar()}
+            {Navbar({navigate:navigate})}
 
             {makeSecao()}
         </section>

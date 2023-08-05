@@ -3,9 +3,10 @@ import './Forms.css'
 import Title from '../template/Title'
 import { MDBBtn, MDBCheckbox, MDBContainer, MDBRadio, MDBTabs, MDBTabsContent, MDBTabsItem, MDBTabsLink, MDBTabsPane } from 'mdb-react-ui-kit'
 import { CarregaCursos, CarregaQuestoes, CarregaRelatorio } from '../../config/utils'
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 export default function SecaoRelatorios({navigate,derivado}){
+    const location = useLocation().state;
     // Seta se o relatório vai ser avançado ou não
     const [avancado,setAvancado] = useState(false)
     const [filtro,setFiltro] = useState(1)
@@ -88,16 +89,16 @@ export default function SecaoRelatorios({navigate,derivado}){
                     document.getElementById('respostas'+questao.id).style.display='inline-block':
                     document.getElementById('respostas'+questao.id).style.display='none'}}/>,
             <div key={'respostas'+questao.id} id={'respostas'+questao.id} style={{display:'none'}}> 
-                {questao?.opcao1  && <MDBCheckbox className={'mx-2 opcao'+(questao.derivadas.length>0?'1' :'')} name={'respostaFiltro'+questao.id} value={1}  label={questao?.opcao1 } labelStyle={{wordBreak:'break-all'}}/>}
-                {questao?.opcao2  && <MDBCheckbox className={'mx-2 opcao'+(questao.derivadas.length>0?'2' :'')} name={'respostaFiltro'+questao.id} value={2}  label={questao?.opcao2 } labelStyle={{wordBreak:'break-all'}}/>}
-                {questao?.opcao3  && <MDBCheckbox className={'mx-2 opcao'+(questao.derivadas.length>0?'3' :'')} name={'respostaFiltro'+questao.id} value={3}  label={questao?.opcao3 } labelStyle={{wordBreak:'break-all'}}/>}
-                {questao?.opcao4  && <MDBCheckbox className={'mx-2 opcao'+(questao.derivadas.length>0?'4' :'')} name={'respostaFiltro'+questao.id} value={4}  label={questao?.opcao4 } labelStyle={{wordBreak:'break-all'}}/>}
-                {questao?.opcao5  && <MDBCheckbox className={'mx-2 opcao'+(questao.derivadas.length>0?'5' :'')} name={'respostaFiltro'+questao.id} value={5}  label={questao?.opcao5 } labelStyle={{wordBreak:'break-all'}}/>}
-                {questao?.opcao6  && <MDBCheckbox className={'mx-2 opcao'+(questao.derivadas.length>0?'6' :'')} name={'respostaFiltro'+questao.id} value={6}  label={questao?.opcao6 } labelStyle={{wordBreak:'break-all'}}/>}
-                {questao?.opcao7  && <MDBCheckbox className={'mx-2 opcao'+(questao.derivadas.length>0?'7' :'')} name={'respostaFiltro'+questao.id} value={7}  label={questao?.opcao7 } labelStyle={{wordBreak:'break-all'}}/>}
-                {questao?.opcao8  && <MDBCheckbox className={'mx-2 opcao'+(questao.derivadas.length>0?'8' :'')} name={'respostaFiltro'+questao.id} value={8}  label={questao?.opcao8 } labelStyle={{wordBreak:'break-all'}}/>}
-                {questao?.opcao9  && <MDBCheckbox className={'mx-2 opcao'+(questao.derivadas.length>0?'9' :'')} name={'respostaFiltro'+questao.id} value={9}  label={questao?.opcao9 } labelStyle={{wordBreak:'break-all'}}/>}
-                {questao?.opcao10 && <MDBCheckbox className={'mx-2 opcao'+(questao.derivadas.length>0?'10':'')} name={'respostaFiltro'+questao.id} value={10} label={questao?.opcao10} labelStyle={{wordBreak:'break-all'}}/>}
+                {questao?.opcao1  && <MDBCheckbox className={'mx-2 opcao'+(questao.derivadas.length>0 && '1' )} name={'respostaFiltro'+questao.id} value={1}  label={questao?.opcao1 } labelStyle={{wordBreak:'break-all'}}/>}
+                {questao?.opcao2  && <MDBCheckbox className={'mx-2 opcao'+(questao.derivadas.length>0 && '2' )} name={'respostaFiltro'+questao.id} value={2}  label={questao?.opcao2 } labelStyle={{wordBreak:'break-all'}}/>}
+                {questao?.opcao3  && <MDBCheckbox className={'mx-2 opcao'+(questao.derivadas.length>0 && '3' )} name={'respostaFiltro'+questao.id} value={3}  label={questao?.opcao3 } labelStyle={{wordBreak:'break-all'}}/>}
+                {questao?.opcao4  && <MDBCheckbox className={'mx-2 opcao'+(questao.derivadas.length>0 && '4' )} name={'respostaFiltro'+questao.id} value={4}  label={questao?.opcao4 } labelStyle={{wordBreak:'break-all'}}/>}
+                {questao?.opcao5  && <MDBCheckbox className={'mx-2 opcao'+(questao.derivadas.length>0 && '5' )} name={'respostaFiltro'+questao.id} value={5}  label={questao?.opcao5 } labelStyle={{wordBreak:'break-all'}}/>}
+                {questao?.opcao6  && <MDBCheckbox className={'mx-2 opcao'+(questao.derivadas.length>0 && '6' )} name={'respostaFiltro'+questao.id} value={6}  label={questao?.opcao6 } labelStyle={{wordBreak:'break-all'}}/>}
+                {questao?.opcao7  && <MDBCheckbox className={'mx-2 opcao'+(questao.derivadas.length>0 && '7' )} name={'respostaFiltro'+questao.id} value={7}  label={questao?.opcao7 } labelStyle={{wordBreak:'break-all'}}/>}
+                {questao?.opcao8  && <MDBCheckbox className={'mx-2 opcao'+(questao.derivadas.length>0 && '8' )} name={'respostaFiltro'+questao.id} value={8}  label={questao?.opcao8 } labelStyle={{wordBreak:'break-all'}}/>}
+                {questao?.opcao9  && <MDBCheckbox className={'mx-2 opcao'+(questao.derivadas.length>0 && '9' )} name={'respostaFiltro'+questao.id} value={9}  label={questao?.opcao9 } labelStyle={{wordBreak:'break-all'}}/>}
+                {questao?.opcao10 && <MDBCheckbox className={'mx-2 opcao'+(questao.derivadas.length>0 && '10')} name={'respostaFiltro'+questao.id} value={10} label={questao?.opcao10} labelStyle={{wordBreak:'break-all'}}/>}
             </div>
         ]
     }
@@ -187,7 +188,7 @@ export default function SecaoRelatorios({navigate,derivado}){
 
     return(
         <main className='mt-3 principal'> 
-            {Title(sessionStorage.getItem('nomePesquisa'))}
+            {Title(location?location.nomePesquisa:'Nome')}
 
             {dados.length>0 && <MDBTabs justify className='my-3'>
                 <MDBTabsItem>

@@ -7,7 +7,7 @@ import {
 } from 'mdb-react-ui-kit';
 
 
-export default function Sidebar({area, setSecao,qtdRespostas,derivado}) {
+export default function Sidebar({area, setSecao,qtdRespostas,derivado,nomePesquisa}) {
     const navigate = useNavigate();
 
     function updateSelected(id) {
@@ -43,7 +43,7 @@ export default function Sidebar({area, setSecao,qtdRespostas,derivado}) {
         } else if (area === 'resposta') {
             return (
                 <MDBListGroup className="rounded-0" id='sidebar'>
-                    <Link to={derivado? '/forms/' + derivado : '/forms'} state={{derivado:derivado}}><MDBListGroupItem id='VoltarResp' className='px-3 sidebarItem'>Voltar</MDBListGroupItem></Link>
+                    <Link to={derivado? '/forms/' + derivado : '/forms'} state={{derivado:derivado,nomePesquisa:nomePesquisa}}><MDBListGroupItem id='VoltarResp' className='px-3 sidebarItem'>Voltar</MDBListGroupItem></Link>
                 </MDBListGroup>
             )
         } else if (area === 'respostaDerivados') {

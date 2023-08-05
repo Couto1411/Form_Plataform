@@ -11,7 +11,7 @@ import { RemoveSessao } from '../../config/utils';
 import { useLocation } from 'react-router-dom';
 
 export default function Resposta({navigate}){
-    const location = useLocation()
+    const location = useLocation().state
 
     // Troca entre informações da página e do usúario
     const [main, setMain] = useState(1)
@@ -115,8 +115,8 @@ export default function Resposta({navigate}){
 
     return(
         <section>
-            {Sidebar({area:'resposta',setSecao:setMain,derivado:location?.state?.derivado})}
-            {Navbar()}
+            {Sidebar({area:'resposta',setSecao:setMain,derivado:location?.derivado,nomePesquisa:location?.nomePesquisa})}
+            {Navbar({navigate:navigate})}
 
             {makeSecao()}
         </section>

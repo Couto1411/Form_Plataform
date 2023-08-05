@@ -389,7 +389,7 @@ export default function Admin({navigate}){
     return(
         <section>
             {Sidebar({area:'admin',setSecao:setsecao})}
-            {Navbar()}
+            {Navbar({navigate:navigate})}
 
             {makeSecao()}
         </section>

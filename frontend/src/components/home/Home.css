@@ -1,0 +1,49 @@
+.login-icon-before{
+    margin-right: 0.5em;
+}
+.login-icon-after{
+    display: none;
+}
+
+.title{
+    font-family: 'Quicksand', sans-serif;
+    font-weight: bold;
+    color: #006699;
+    text-shadow: #006699 0px 0px 4px;
+}
+.title_shadowless{
+    font-family: 'Quicksand', sans-serif;
+    font-weight: bold;
+    color: #006699;
+}
+
+.linkRef{
+    color: black;
+    word-break: break-all;
+}
+.linkRef:hover{
+    text-decoration: underline;
+}
+
+.subtitle{
+    font-family: 'Quicksand', sans-serif;
+    font-weight: bold;
+    color: #909090;
+}
+
+.teste{
+    color: #cee7ff;
+}
+
+.cinzafundo{
+    background-color: #fbfbfb;
+}
+
+@media screen and (min-width:992px) {
+    .login-icon-before{
+        display: none;
+    }
+    .login-icon-after{
+        display: inline;
+    }
+}

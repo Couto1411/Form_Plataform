@@ -39,8 +39,9 @@ namespace backendcsharp.Controllers
                     {
                         Numero = Quest.Numero,
                         Type = Quest.Type,
-                        FormId = Quest.FormId,
-                        Enunciado = Quest.Enunciado is null?"":Quest.Enunciado,
+                        FormId = Quest.FormId ?? throw new Exception("Responsavel id não existe"),
+                        Enunciado = Quest.Enunciado ?? "",
+                        Obrigatoria = Quest.Obrigatoria ?? 1,
                         DerivadaDeId = Quest.DerivadaDeId,
                         DerivadaDeOpcao = Quest.DerivadaDeOpcao,
                         Opcao1 = Quest.Opcao1,
@@ -92,8 +93,9 @@ namespace backendcsharp.Controllers
                     {
                         entity.Numero = Quest.Numero;
                         entity.Type = Quest.Type;
-                        entity.FormId = Quest.FormId;
-                        entity.Enunciado = Quest.Enunciado is null?"":Quest.Enunciado;
+                        entity.FormId = Quest.FormId ?? throw new Exception("Form id não existe");
+                        entity.Enunciado = Quest.Enunciado ?? "";
+                        entity.Obrigatoria = Quest.Obrigatoria ?? 1;
                         entity.Opcao1 = Quest.Opcao1;
                         entity.Opcao2 = Quest.Opcao2;
                         entity.Opcao3 = Quest.Opcao3;
@@ -152,6 +154,7 @@ namespace backendcsharp.Controllers
                         Type = s.Type,
                         FormId = s.FormId,
                         Enunciado = s.Enunciado,
+                        Obrigatoria = s.Obrigatoria,
                         DerivadaDeId = s.DerivadaDeId,
                         Opcao1 = s.Opcao1,
                         Opcao2 = s.Opcao2,
@@ -176,6 +179,7 @@ namespace backendcsharp.Controllers
                         Type = s.Type,
                         FormId = s.FormId,
                         Enunciado = s.Enunciado,
+                        Obrigatoria = s.Obrigatoria,
                         DerivadaDeId = s.DerivadaDeId,
                         DerivadaDeOpcao = s.DerivadaDeOpcao,
                         Opcao1 = s.Opcao1,
@@ -222,6 +226,7 @@ namespace backendcsharp.Controllers
                         Type = questao.Type,
                         FormId = questao.FormId,
                         Enunciado = questao.Enunciado,
+                        Obrigatoria = questao.Obrigatoria,
                         DerivadaDeOpcao = questao.DerivadaDeOpcao,
                         Opcao1 = questao.Opcao1,
                         Opcao2 = questao.Opcao2,
@@ -244,6 +249,7 @@ namespace backendcsharp.Controllers
                         Type = s.Type,
                         FormId = s.FormId,
                         Enunciado = s.Enunciado,
+                        Obrigatoria = s.Obrigatoria,
                         DerivadaDeId = s.DerivadaDeId,
                         DerivadaDeOpcao = s.DerivadaDeOpcao,
                         Opcao1 = s.Opcao1,
@@ -272,15 +278,18 @@ namespace backendcsharp.Controllers
         // Deleta Questao (E todas as respostas)
         [HttpDelete("users/{Id}/forms/{FormId}/{QuestaoId}")]
         [Authorize("Bearer")]
-        public async Task<ActionResult> DeleteQuest([FromBody] QuestoesDTO Questao,[FromRoute] int QuestaoId)
+        public async Task<ActionResult> DeleteQuest([FromBody] QuestoesDTO Questao,[FromRoute] int FormId, [FromRoute] int QuestaoId)
         {
             try
             {
                 Handlers.ExistsOrError(QuestaoId.ToString(), "Id da questão não informado");
                 Handlers.IdNegative(QuestaoId, "Id da questão inválido");
+                Handlers.ExistsOrError(FormId.ToString(), "Id do formulário não informado");
+                Handlers.IdNegative(FormId, "Id do formulário inválido");
+                var entity = ProjetoDbContext.Questoes.FirstOrDefault(s => s.FormId == FormId && s.Id == QuestaoId) ?? throw new Exception("Id da questão e do formulário não batem");
+                // Deleta respostas
                 switch (Questao.Type)
                 {
-                    case 9:
                     case 1:
                         ProjetoDbContext.Radioboxes.RemoveRange(ProjetoDbContext.Radioboxes.Where(s => s.QuestaoId == QuestaoId));
                         break;
@@ -292,14 +301,39 @@ namespace backendcsharp.Controllers
                         break;
                     case 4:
                         break;
+                    case 9:
+                        foreach (var item in Questao.Derivadas)
+                        {
+                            if (item.Type == 1)
+                            {
+                                ProjetoDbContext.Radioboxes.RemoveRange(ProjetoDbContext.Radioboxes.Where(s => s.QuestaoId == item.Id));
+                            }
+                            else if (item.Type == 2)
+                            {
+                                ProjetoDbContext.Texts.RemoveRange(ProjetoDbContext.Texts.Where(s => s.QuestaoId == item.Id));
+                            }
+                            else if (item.Type == 3)
+                            {
+                                ProjetoDbContext.Checkboxes.RemoveRange(ProjetoDbContext.Checkboxes.Where(s => s.QuestaoId == item.Id));
+                            }
+                        }
+                        ProjetoDbContext.Radioboxes.RemoveRange(ProjetoDbContext.Radioboxes.Where(s => s.QuestaoId == QuestaoId));
+                        break;
                     default:
                         throw new Exception("Tipo da questão inválido");
                 }
-                var entity = new Questoes()
-                {
-                    Id = ((uint)QuestaoId)
-                };
+                // Deleta derivadas e a questão
+                if (Questao.Type == 9)
+                    ProjetoDbContext.Questoes.RemoveRange(ProjetoDbContext.Questoes.Where(s => s.DerivadaDeId == QuestaoId));
                 ProjetoDbContext.Questoes.Remove(entity);
+                // Atualiza Números
+                if (Questao.Type != 4)
+                {
+                    foreach (var item in ProjetoDbContext.Questoes.Where(s => s.FormId == FormId && s.DerivadaDeId == Questao.DerivadaDeId && s.DerivadaDeOpcao == Questao.DerivadaDeOpcao && s.Numero >= Questao.Numero))
+                    {
+                        item.Numero -= 1;
+                    }
+                }
                 await ProjetoDbContext.SaveChangesAsync();
                 return StatusCode(204);
             }
@@ -308,6 +342,5 @@ namespace backendcsharp.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-
     }
 }

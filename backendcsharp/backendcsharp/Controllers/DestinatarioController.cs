@@ -74,7 +74,7 @@ namespace backendcsharp.Controllers
                             var entityDerivado = new Destinatario()
                             {
                                 Respondido = Destinatario.Respondido,
-                                FormId = item.Id,
+                                FormId = item.Id ?? throw new Exception("Form id não existe"),
                                 Nome = Destinatario.Nome,
                                 Email = Destinatario.Email,
                                 Matricula = Destinatario.Matricula,
@@ -287,6 +287,9 @@ namespace backendcsharp.Controllers
             {
                 Handlers.ExistsOrError(FormId.ToString(), "Id do formulário não informado");
                 Handlers.IdNegative(FormId, "Id do formulário inválido");
+                var form = await ProjetoDbContext.Formularios.FirstOrDefaultAsync(s => s.Id == FormId) ?? throw new Exception("Formulário não encontrado");
+                form.Notificacao = 0;
+                await ProjetoDbContext.SaveChangesAsync();
                 var Destinatarios = await ProjetoDbContext.Destinatarios
                     .Select(s => new DestinatarioDTO
                     {

@@ -8,11 +8,10 @@ import Sidebar from '../template/Sidebar'
 import UserSection from './UserSection'
 import axios from "axios"
 import baseUrl from "../../config/api"
-import {Link} from 'react-router-dom'
 import {
     MDBInput, MDBTextArea,
     MDBListGroup, MDBListGroupItem,
-    MDBBtn, MDBModal, MDBModalDialog, MDBModalContent, MDBModalHeader, MDBModalBody, MDBModalFooter} from 'mdb-react-ui-kit'
+    MDBBtn, MDBModal, MDBModalDialog, MDBModalContent, MDBModalHeader, MDBModalBody, MDBModalFooter, MDBDropdown, MDBDropdownMenu, MDBDropdownItem, MDBDropdownToggle} from 'mdb-react-ui-kit'
 
 export default function PaginaUsuario({navigate}){
 
@@ -201,44 +200,94 @@ export default function PaginaUsuario({navigate}){
         })
     }
 
+    async function cloneFormulario(id){
+        await axios.post(baseUrl+"/users/"+sessionStorage.getItem("userId")+"/forms/"+id+"/clone",{id:id},{
+            headers: {
+                'Authorization': 'bearer ' + sessionStorage.getItem("token")
+            }
+        })
+        .then(response=>{CarregaForms(setforms)})
+        .catch((error) => {
+            if (error.response.status===401) RemoveSessao(navigate)
+            else console.log(error)
+        })
+    }
+
+    function renderizaDerivados(element){
+        return element?.derivados.map(item =>{
+            let tempDate2= new Date( Date.parse(item.dataEnviado))
+            return (
+                <MDBListGroupItem key={'formderivado'+item.id} className='listitem py-2 d-flex'>
+                    {/* Link para form */}
+                    <span className='zoom' onClick={()=>{
+                        sessionStorage.setItem("formId",element.id)
+                        navigate("/forms/"+item.id,{state:{derivado:item.id,nomePesquisa:element.titulo,notificacao:item?.notificacao}})}}>
+                        {item.titulo}
+                    </span>
+                    {item.dataEnviado       && <i className='mx-1'>({tempDate2.toLocaleDateString('en-GB')})</i>}
+                    {/* Opções */}
+                    <MDBDropdown className='ms-auto shadow-0'>
+                        <MDBDropdownToggle color='light' className='p-1 shadow-0'><i className="fas fa-solid fa-gear fa-xl"/></MDBDropdownToggle>
+                        <MDBDropdownMenu className='dropdown-menu-end' dark>
+                            <MDBDropdownItem link childTag='button' onClick={()=>onClickEditForm(item)}>
+                                <i title='Editar Formulário' className="configitem fas fa-pen-to-square"/> Editar Formulário
+                            </MDBDropdownItem>
+                            <MDBDropdownItem link childTag='button' onClick={e=>{
+                                    setIdToDelete(element.id)
+                                    setIdDerivateToDelete(item.id)
+                                    setDeletaFormulario(true)}}>
+                                <i title='Excluir Formulário' className="configitem trashcan fas fa-trash-can"/> Excluir Formulário
+                            </MDBDropdownItem>
+                        </MDBDropdownMenu>
+                    </MDBDropdown>
+                </MDBListGroupItem>
+            )
+        })
+    }
+
     function renderizaForms(){
         return forms?.map((element,index) => {
             let tempDate= new Date( Date.parse(element.dataEnviado))
             return[
-                    <MDBListGroupItem key={element.id} className={'listitem d-flex align-items-center '+ (index===0?'rounded-top':index===forms.length-1?'rounded-bottom':'')}>
-                        <Link className='zoom' style={{color:'black'}} to="/forms" onClick={e=>{sessionStorage.setItem("formId",element.id);}}
-                        state={{nomePesquisa:element.titulo}}>{element.titulo} </Link>
-                        {element.dataEnviado?<i className='mx-1'>({tempDate.toLocaleDateString('en-GB')})</i>:<></>}
-                        {element.derivados?.length?<i id={'icone'+element.id} aberto='F' onClick={e=>{toggleDerivados(element.id)}} className=" mx-1 fas fa-regular fa-angle-down"></i>:null}
-                        
-                        <i title='Adicionar novo envio de formulário' className="edit pt-1 ms-auto fas fa-light fa-plus" onClick={e=>{addDerivado(element)}}></i>
-                        <i title='Editar Formulário' className="edit mx-2 pt-1 fas fa-pen-to-square" onClick={()=>onClickEditForm(element)}></i>
-                        <i title='Excluir Formulário' className="trashcan pt-1 fas fa-trash-can" onClick={e=>{
-                            setIdToDelete(element.id)
-                            setIdDerivateToDelete(null)
-                            setDeletaFormulario(true)
-                            }}></i>
-                    </MDBListGroupItem>,
-                    element.derivados?.length?
-                        <MDBListGroup numbered className='mx-3 my-1' key={'derivados'+element.id} id={'form'+element.id+'derivados'} style={{display:'none'}} >
-                            {element.derivados.map(item =>{
-                                let tempDate2= new Date( Date.parse(item.dataEnviado))
-                                return (
-                                    <MDBListGroupItem key={'formderivado'+item.id} className='listitem pb-0 formsDuplicates d-flex'>
-                                        <Link className='formsDuplicates zoom' to={"/forms/"+item.id} state={{derivado:item.id,nomePesquisa:element.titulo}} onClick={e=>{sessionStorage.setItem("formId",element.id);}}>{item.titulo}</Link>
-                                        {item.dataEnviado?<i className='mx-1'>({tempDate2.toLocaleDateString('en-GB')})</i>:<></>}
-                                        <i title='Editar Formulário' className="ms-auto edit mx-2 pt-1 fas fa-pen-to-square" onClick={()=>onClickEditForm(item)}></i>
-                                        <i className="trashcan pt-1 fas fa-trash-can" onClick={e=>{
-                                        setIdToDelete(element.id)
-                                        setIdDerivateToDelete(item.id)
-                                        setDeletaFormulario(true)
-                                        }}></i>
-                                        <hr></hr>
-                                    </MDBListGroupItem>
-                                )
-                            })}
+                <MDBListGroupItem key={element.id} className='listitem d-flex'>
+                    {/* Link para form */}
+                    <span className='zoom' onClick={()=>{
+                        sessionStorage.setItem("formId",element.id)
+                        navigate('/forms',{state:{nomePesquisa:element.titulo,notificacao:element?.notificacao}})}}>
+                        {element.titulo}
+                    </span>
+                    {element.dataEnviado       && <i className='mx-1'>({tempDate.toLocaleDateString('en-GB')})</i>}
+                    {element.derivados?.length ?  <i id={'icone'+element.id} aberto='F' onClick={e=>{toggleDerivados(element.id)}} className="pt-1 mx-1 fas fa-regular fa-angle-down"/>:null}
+                    {/* Opções */}
+                    <MDBDropdown className='ms-auto shadow-0'>
+                        <MDBDropdownToggle color='light' className='p-1'><i className="fas fa-solid fa-gear fa-xl"/></MDBDropdownToggle>
+                        <MDBDropdownMenu className='dropdown-menu-end' dark>
+                            <MDBDropdownItem link childTag='button' onClick={e=>{addDerivado(element)}}>
+                                <i title='Adicionar novo envio de formulário' className="configitem fas fa-light fa-plus"/> Novo envio de formulário
+                            </MDBDropdownItem>
+                            <MDBDropdownItem link childTag='button' onClick={()=>onClickEditForm(element)}>
+                                <i title='Editar Formulário' className="configitem fas fa-pen-to-square"/> Editar Formulário
+                            </MDBDropdownItem>
+                            <MDBDropdownItem link childTag='button' onClick={()=>cloneFormulario(element.id)}>
+                                <i title='Clonar Formulário' className="configitem fas fa-clone"/> Duplicar formulário
+                            </MDBDropdownItem>
+                            <MDBDropdownItem link childTag='button' onClick={e=>{
+                                    setIdToDelete(element.id)
+                                    setIdDerivateToDelete(null)
+                                    setDeletaFormulario(true)}}>
+                                <i title='Excluir Formulário' className="configitem trashcan fas fa-trash-can"/> Excluir Formulário
+                            </MDBDropdownItem>
+                        </MDBDropdownMenu>
+                    </MDBDropdown>
+                </MDBListGroupItem>,
+                // Renderiza derivados
+                <div className='border' key={'derivados'+element.id} id={'form'+element.id+'derivados'} style={{display:'none',borderTop:0,borderBottom:0}}>
+                    {element.derivados?.length ?
+                        <MDBListGroup numbered className='mx-3' light>
+                            {renderizaDerivados(element)}
                         </MDBListGroup>
-                    :null
+                    :null}
+                </div>
             ]
         });
     }
@@ -246,7 +295,7 @@ export default function PaginaUsuario({navigate}){
     const secaoForms=<main className='mt-3 principal'>
         {Title("Formulários")}
         
-        <MDBListGroup numbered small className='shadow mt-3 rounded-3' >
+        <MDBListGroup numbered small className='shadow mt-3 rounded-3 bg-white' >
             {renderizaForms()}
         </MDBListGroup>
         

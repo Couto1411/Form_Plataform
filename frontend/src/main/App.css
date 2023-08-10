@@ -21,12 +21,14 @@ main{
 
 .zoom{
     transition:font-size .2s;
-    display: block;
-    max-width: 70em;
-    overflow:auto;
-    -ms-overflow-style: none;
-    scrollbar-width: none;
+    color: black;
+    word-break: break-all;
 }
+.zoom:hover{
+    cursor: pointer;
+    font-size: 1.03em;
+}
+
 .overflowSemBarra{
     overflow:auto;
     -ms-overflow-style: none;
@@ -34,13 +36,6 @@ main{
 }
 .overflowSemBarra::-webkit-scrollbar {
     display: none;
-}
-
-.zoom::-webkit-scrollbar {
-    display: none;
-}
-.zoom:hover{
-    font-size: 1.03em;
 }
 
 ::-webkit-scrollbar {

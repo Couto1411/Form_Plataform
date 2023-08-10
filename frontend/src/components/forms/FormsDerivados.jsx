@@ -97,6 +97,7 @@ export default function FormsDerivados({navigate}){
                                 {element.opcao9? <MDBRadio label={element.opcao9}  labelStyle={{wordBreak: 'break-word'}}/>:<></>}
                                 {element.opcao10?<MDBRadio label={element.opcao10} labelStyle={{wordBreak: 'break-word'}}/>:<></>}
                             </div>
+                            {element.obrigatoria>0&&<div className='d-flex'><div className='ms-auto'>Obrigatória</div></div>}
                         </MDBListGroupItem>
                     )
                 case 2:
@@ -109,6 +110,7 @@ export default function FormsDerivados({navigate}){
                                     style={{borderTopLeftRadius:'0px',borderBottomLeftRadius:'0px'}}/>
                             </MDBInputGroup>
                             <MDBTextArea rows={2} label='Resposta' readOnly className='mb-2'/>
+                            {element.obrigatoria>0&&<div className='d-flex'><div className='ms-auto'>Obrigatória</div></div>}
                         </MDBListGroupItem>
                     )
                 case 3:
@@ -132,6 +134,7 @@ export default function FormsDerivados({navigate}){
                                 {element.opcao9? <MDBCheckbox label={element.opcao9}  labelStyle={{wordBreak: 'break-word'}}/>:<></>}
                                 {element.opcao10?<MDBCheckbox label={element.opcao10} labelStyle={{wordBreak: 'break-word'}}/>:<></>}
                             </div>
+                            {element.obrigatoria>0&&<div className='d-flex'><div className='ms-auto'>Obrigatória</div></div>}
                         </MDBListGroupItem>
                     )
                 case 4:

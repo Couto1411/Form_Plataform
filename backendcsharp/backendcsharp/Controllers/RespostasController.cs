@@ -41,43 +41,19 @@ namespace backendcsharp.Controllers
                 Handlers.ExistsOrError(Resp.Email, "Email da resposta não informado");
                 Handlers.ExistsOrError(FormId.ToString(), "Id do formulário não informado");
                 Handlers.IdNegative(FormId, "Id do formulário inválido");
-                var Form = await ProjetoDbContext.Formularios
-                    .Select(s => new FormularioDTO
-                    {
-                        Id = s.Id,
-                        DerivadoDeId = s.DerivadoDeId,
-                    })
-                    .Where(s => s.Id == FormId)
-                    .FirstOrDefaultAsync();
-                var destinatario = await ProjetoDbContext.Destinatarios
-                    .Select(s => new DestinatarioDTO
-                    {
-                        Id = s.Id,
-                        FormId = s.FormId,
-                        Email = s.Email,
-                        Respondido = s.Respondido
-                    })
-                    .Where(s => (s.FormId == FormId && s.Email == Resp.Email && (s.Respondido == 0 || s.Respondido == 1)))
-                    .FirstOrDefaultAsync();
+                var Form = await ProjetoDbContext.Formularios.FirstOrDefaultAsync(s => s.Id == FormId);
+                var destinatario = await ProjetoDbContext.Destinatarios.FirstOrDefaultAsync(s => (s.FormId == FormId && s.Email == Resp.Email && (s.Respondido == 0 || s.Respondido == 1)));
                 if (Form is not null && destinatario is not null) {
                     FormId = Form.DerivadoDeId is not null? (int)Form.DerivadoDeId:FormId;
                     foreach (var item in Resp.Respostas)
                     {
-                        var questao = await ProjetoDbContext.Questoes
-                            .Select(s => new QuestoesDTO
-                            {
-                                Id = s.Id,
-                                FormId = s.FormId,
-                                Numero = s.Numero
-                            })
-                            .Where(s => (s.FormId == FormId && s.Id==item.Id))
-                            .FirstOrDefaultAsync() ?? throw new Exception("Questao não encontrada");
+                        var questao = await ProjetoDbContext.Questoes.FirstOrDefaultAsync(s => (s.FormId == FormId && s.Id == item.Id)) ?? throw new Exception("Questao não encontrada");
                         if (item.Radio is not null)
                         {
                             var entity = new Radiobox()
                             {
-                                QuestaoId = questao.Id != null ? (uint)questao.Id : throw new Exception("Questao id nulo"),
-                                RespostaId = destinatario.Id != null ? (uint)destinatario.Id : throw new Exception("Resposta id nulo"),
+                                QuestaoId = questao.Id,
+                                RespostaId = destinatario.Id,
                                 Radio = item.Radio
                             };
                             ProjetoDbContext.Radioboxes.Add(entity);
@@ -86,8 +62,8 @@ namespace backendcsharp.Controllers
                         {
                             var entity = new Checkbox()
                             {
-                                QuestaoId = questao.Id != null ? (uint)questao.Id : throw new Exception("Questao id nulo"),
-                                RespostaId = destinatario.Id != null ? (uint)destinatario.Id : throw new Exception("Resposta id nulo"),
+                                QuestaoId = questao.Id,
+                                RespostaId = destinatario.Id,
                                 Opcao1 = item.Opcoes.IndexOf(1) != -1 ? true : null,
                                 Opcao2 = item.Opcoes.IndexOf(2) != -1 ? true : null,
                                 Opcao3 = item.Opcoes.IndexOf(3) != -1 ? true : null,
@@ -105,18 +81,20 @@ namespace backendcsharp.Controllers
                         {
                             var entity = new Text()
                             {
-                                QuestaoId = questao.Id != null ? (uint)questao.Id : throw new Exception("Questao id nulo"),
-                                RespostaId = destinatario.Id != null ? (uint)destinatario.Id : throw new Exception("Resposta id nulo"),
-                                Texto = string.IsNullOrEmpty(item.Texto)? throw new Exception("Texto vazio") : item.Texto
+                                QuestaoId = questao.Id,
+                                RespostaId = destinatario.Id,
+                                Texto = string.IsNullOrEmpty(item.Texto) ? throw new Exception("Texto vazio") : item.Texto
                             };
                             ProjetoDbContext.Texts.Add(entity);
                         }
+                        else if (questao.Obrigatoria == 0) break;
                         else throw new Exception("Entrada errada");
                     }
                     var destinatarioUpdate = await ProjetoDbContext.Destinatarios.FirstOrDefaultAsync(s => s.Id == destinatario.Id);
                     if (destinatarioUpdate != null)
                     {
                         destinatarioUpdate.Respondido = 2;
+                        Form.Notificacao = 1;
                         await ProjetoDbContext.SaveChangesAsync();
                         return StatusCode(204);
                     }

@@ -58,7 +58,7 @@ export default function Login ({navigate}) {
                                     <h2 className="fw-bold mb-2 text-uppercase">Entrar</h2>
                                     <p className="text-white-50 mb-5">Insira seu email e senha de acesso</p>
 
-                                    <div className="mb-4 px-4">
+                                    <div className="mb-4 px-2 px-md-4">
                                         <MDBInput 
                                             type="email" 
                                             size="lg"
@@ -71,7 +71,7 @@ export default function Login ({navigate}) {
                                             }}
                                             label="Email"/>
                                     </div>
-                                    <MDBInputGroup className='GrupoSenha mb-4 row px-4' size='lg'> 
+                                    <MDBInputGroup className='GrupoSenha mb-4 row px-2 px-md-4' size='lg'> 
                                         <div className="form-outline form-white col-9 p-0">
                                             <input type={aparecendo?"text":"password"} className="form-control form-control-lg" id="Senha" required
                                             onChange={e => {

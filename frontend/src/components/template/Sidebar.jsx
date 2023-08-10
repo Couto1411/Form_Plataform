@@ -3,11 +3,12 @@ import './Sidebar.css'
 import { Link, useNavigate } from 'react-router-dom';
 import {
     MDBListGroup, MDBListGroupItem,
-    MDBContainer
+    MDBContainer,
+    MDBBadge
 } from 'mdb-react-ui-kit';
 
 
-export default function Sidebar({area, setSecao,qtdRespostas,derivado,nomePesquisa}) {
+export default function Sidebar({area,setSecao,qtdRespostas,derivado,nomePesquisa,notificacao}) {
     const navigate = useNavigate();
 
     function updateSelected(id) {
@@ -34,8 +35,8 @@ export default function Sidebar({area, setSecao,qtdRespostas,derivado,nomePesqui
             return (
                 <MDBListGroup id='sidebar' className="rounded-0">
                     <MDBListGroupItem tag='a' action id='Questoes'      className='px-3 sidebarItem' onClick={e => { updateSelected(e.target.id); setSecao(1) }}>Questões</MDBListGroupItem>
-                    <MDBListGroupItem tag='a' action id='Destinatarios' className='px-3 sidebarItem' onClick={e => { updateSelected(e.target.id); setSecao(2) }}>Destinatários</MDBListGroupItem>
-                    <MDBListGroupItem tag='a' action id='Respostas'     className='px-3 sidebarItem' onClick={e => { updateSelected(e.target.id); setSecao(3) }}>Respostas {qtdRespostas??""}</MDBListGroupItem>
+                    <MDBListGroupItem tag='a' action id='Destinatarios' className='px-3 sidebarItem' onClick={e => { updateSelected(e.target.id); setSecao(2) }}>Destinatários {notificacao===1 ? <MDBBadge className="ms-1 mt-1" dot color="success"/> : null} </MDBListGroupItem>
+                    <MDBListGroupItem tag='a' action id='Respostas'     className='px-3 sidebarItem' onClick={e => { updateSelected(e.target.id); setSecao(3) }}><div className="d-flex align-items-center">Respostas {qtdRespostas??""}</div></MDBListGroupItem>
                     <MDBListGroupItem tag='a' action id='Relatorios'    className='px-3 sidebarItem' onClick={e => { updateSelected(e.target.id); setSecao(4) }}>Relatórios</MDBListGroupItem>
                     <MDBListGroupItem tag='a' action id='VoltarForm'    className='px-3 sidebarItem' onClick={e => { navigate('/user') }}>Voltar</MDBListGroupItem>
                 </MDBListGroup>

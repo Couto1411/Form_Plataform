@@ -9,10 +9,11 @@ public partial class Formulario
 
     public string Titulo { get; set; } = null!;
 
-    public uint? ResponsavelId { get; set; }
+    public uint ResponsavelId { get; set; }
     public uint? DerivadoDeId { get; set; } = null!;
     public DateTime? DataEnviado { get; set; } = null!;
     public string? MsgEmail { get; set; } = null!;
+    public short Notificacao { get; set; } = 0;
 
     public virtual ICollection<Formulario> Derivados { get; } = new List<Formulario>();
 

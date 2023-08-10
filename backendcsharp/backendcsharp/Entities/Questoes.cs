@@ -5,15 +5,17 @@ namespace backendcsharp.Entities;
 
 public partial class Questoes
 {
-    public uint Id { get; set; }
+    public uint    Id { get; set; }
 
-    public uint Numero { get; set; }
+    public uint    Numero { get; set; }
 
-    public int Type { get; set; }
+    public int     Type { get; set; }
 
-    public uint? FormId { get; set; }
+    public uint    FormId { get; set; }
 
-    public string Enunciado { get; set; } = null!;
+    public string  Enunciado { get; set; } = null!;
+
+    public short   Obrigatoria { get; set; } = 1;
 
     public string? Opcao1 { get; set; }
 
@@ -34,8 +36,8 @@ public partial class Questoes
     public string? Opcao9 { get; set; }
 
     public string? Opcao10 { get; set; }
-    public uint? DerivadaDeId { get; set; } = null!;
-    public uint? DerivadaDeOpcao { get; set; } = null!;
+    public uint?   DerivadaDeId { get; set; } = null!;
+    public uint?   DerivadaDeOpcao { get; set; } = null!;
     public virtual ICollection<Questoes> Derivadas { get; } = new List<Questoes>();
 
     public virtual ICollection<Checkbox> Checkboxes { get; } = new List<Checkbox>();

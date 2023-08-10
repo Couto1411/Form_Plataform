@@ -10,6 +10,7 @@ public partial class FormularioDTO
     public uint? DerivadoDeId { get; set; } = null!;
     public DateTime? DataEnviado { get; set; } = null!;
     public string? MsgEmail { get; set; } = null!;
+    public short? Notificacao { get; set; } = null!;
 
     public virtual ICollection<FormularioDTO> Derivados { get; set; } = new List<FormularioDTO>();
 

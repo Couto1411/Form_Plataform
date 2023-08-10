@@ -31,6 +31,19 @@
     color: #909090;
 }
 
+.darktolight{
+    background: -webkit-linear-gradient(to top, #00284ee6, #001e39);
+    background: linear-gradient(to top, #00284ee6, #001e39)
+}
+.middle{
+    background: -webkit-linear-gradient(0deg, #00284ee6, #00427e,#00284ee6);
+    background: linear-gradient(0deg, #00284ee6, #00427e,#00284ee6)
+}
+.lighttodark{
+    background: -webkit-linear-gradient(to bottom, #00284ee6, #001e39);
+    background: linear-gradient(to bottom, #00284ee6, #001e39)
+}
+
 .teste{
     color: #cee7ff;
 }

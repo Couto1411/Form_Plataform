@@ -66,14 +66,14 @@ export default function SecaoRespostas({respostas,navigate}){
             count+=1
             let parcial=Math.trunc((item.quantidade/sum)*100)
             if(!parcial) parcial=0
-            if(item?.texto)
+            if(item?.texto || parcial>0)
                 return(
                     <div key={'Barra'+element.id+count} className='mb-2 porcentagem'> 
                         <div className={"px-1 mt-1 bordaCorHr rounded-top border-bottom-0  "+(tipo ? 'opcao'+count:'')}>{numero}) 
                             <div style={{cursor:'pointer',display:'inline'}} onClick={()=>{
                                 setShow(item);
                                 setOpcaoText(item?.texto)
-                                setDestinatariosResposta(item.destinatarios)}}>{" "+item.texto}
+                                setDestinatariosResposta(item.destinatarios)}}>{" "+(item.texto || "---")}
                             </div>
                         </div>
                         <div className={'bordaCorHr border-top-0 rounded-bottom'}>

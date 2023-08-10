@@ -49,7 +49,7 @@ export default function FormularioResposta(){
                                 </MDBInputGroup>
                             </div>
                             <div id={"opcoes"+element.id} className='mx-2'>
-                                {element.opcao1? <MDBRadio name={'radioNoLabel'+element.id} value={1}  label={element.opcao1}  labelStyle={{wordBreak: 'break-word'}}/>:questoes[questoes.map(object => object.id).indexOf(element.id)].semQuestao=true}
+                                {element.opcao1? <MDBRadio name={'radioNoLabel'+element.id} value={1}  label={element.opcao1}  labelStyle={{wordBreak: 'break-word'}}/>:null}
                                 {element.opcao2? <MDBRadio name={'radioNoLabel'+element.id} value={2}  label={element.opcao2}  labelStyle={{wordBreak: 'break-word'}}/>:<div className='mb-1 erro'></div>}
                                 {element.opcao3? <MDBRadio name={'radioNoLabel'+element.id} value={3}  label={element.opcao3}  labelStyle={{wordBreak: 'break-word'}}/>:<div className='mb-1 erro'></div>}
                                 {element.opcao4? <MDBRadio name={'radioNoLabel'+element.id} value={4}  label={element.opcao4}  labelStyle={{wordBreak: 'break-word'}}/>:<div className='mb-1 erro'></div>}
@@ -88,7 +88,7 @@ export default function FormularioResposta(){
                                 </MDBInputGroup>
                             </div>
                             <div id={"opcoes"+element.id} className='mx-2'>
-                                {element.opcao1? <MDBCheckbox name={'checkNoLabel'+element.id} value={1}  label={element.opcao1}  labelStyle={{wordBreak: 'break-word'}}/>:questoes[questoes.map(object => object.id).indexOf(element.id)].semQuestao=true}
+                                {element.opcao1? <MDBCheckbox name={'checkNoLabel'+element.id} value={1}  label={element.opcao1}  labelStyle={{wordBreak: 'break-word'}}/>:null}
                                 {element.opcao2? <MDBCheckbox name={'checkNoLabel'+element.id} value={2}  label={element.opcao2}  labelStyle={{wordBreak: 'break-word'}}/>:<div className='mb-1 erro'></div>}
                                 {element.opcao3? <MDBCheckbox name={'checkNoLabel'+element.id} value={3}  label={element.opcao3}  labelStyle={{wordBreak: 'break-word'}}/>:<div className='mb-1 erro'></div>}
                                 {element.opcao4? <MDBCheckbox name={'checkNoLabel'+element.id} value={4}  label={element.opcao4}  labelStyle={{wordBreak: 'break-word'}}/>:<div className='mb-1 erro'></div>}
@@ -120,7 +120,7 @@ export default function FormularioResposta(){
                                 </MDBInputGroup>
                             </div>
                             <div id={"opcoes"+element.id} className='mx-2'>
-                                {element.opcao1? <MDBRadio onClick={e=>{showDerivada(element.id,1)}}  name={'radioNoLabel'+element.id} value={1}  label={element.opcao1}  labelStyle={{wordBreak: 'break-word'}}/>:questoes[questoes.map(object => object.id).indexOf(element.id)].semQuestao=true}
+                                {element.opcao1? <MDBRadio onClick={e=>{showDerivada(element.id,1)}}  name={'radioNoLabel'+element.id} value={1}  label={element.opcao1}  labelStyle={{wordBreak: 'break-word'}}/>:null}
                                 {element.opcao2? <MDBRadio onClick={e=>{showDerivada(element.id,2)}}  name={'radioNoLabel'+element.id} value={2}  label={element.opcao2}  labelStyle={{wordBreak: 'break-word'}}/>:<div className='mb-1 erro'></div>}
                                 {element.opcao3? <MDBRadio onClick={e=>{showDerivada(element.id,3)}}  name={'radioNoLabel'+element.id} value={3}  label={element.opcao3}  labelStyle={{wordBreak: 'break-word'}}/>:<div className='mb-1 erro'></div>}
                                 {element.opcao4? <MDBRadio onClick={e=>{showDerivada(element.id,4)}}  name={'radioNoLabel'+element.id} value={4}  label={element.opcao4}  labelStyle={{wordBreak: 'break-word'}}/>:<div className='mb-1 erro'></div>}
@@ -175,118 +175,116 @@ export default function FormularioResposta(){
         let temp = questoes
         for (let index = 0; index < temp.length; index++) {
             const element = temp[index];
-            if(!element.semQuestao){
-                switch (element.type) {
-                    case 1:
-                        let radio= document.querySelector(`input[name="radioNoLabel${element.id}"]:checked`)
-                        if (radio) {
-                            document.getElementById(element.id).style.border='none'
-                            respostas.push({
-                                id: element.id,
-                                radio: +radio.value
-                            })
-                        }else{
-                            document.getElementById(element.id).style.border='1px solid rgb(255, 43, 43)'
-                            enviar=false
-                        }
-                        break
-                    case 2:
-                        let text= document.getElementById(`open${element.id}`).value
-                        if (text) {
-                            document.getElementById(element.id).style.border='none'
-                            respostas.push({
-                                id: element.id,
-                                texto: text
-                            })
-                        }else{
-                            document.getElementById(element.id).style.border='1px solid rgb(255, 43, 43)'
-                            enviar=false
-                        }
-                        break
-                    case 3:
-                        let check=[]
-                        let markCheck = document.getElementsByName('checkNoLabel'+element.id);  
-                        for (let checkbox of markCheck) {  
-                            if (checkbox.checked) check.push(+checkbox.value);  
-                        } 
-                        if (check.length!==0) {
-                            document.getElementById(element.id).style.border='none'
-                            respostas.push({
-                                id: element.id,
-                                opcoes: check
-                            })
-                        }else{
-                            document.getElementById(element.id).style.border='1px solid rgb(255, 43, 43)'
-                            enviar=false
-                        }
-                        break
-                    case 9:
-                        let questao= document.querySelector(`input[name="radioNoLabel${element.id}"]:checked`)
-                        if (questao) {
-                            document.getElementById(element.id).style.border='none'
-                            respostas.push({
-                                id: element.id,
-                                radio: +questao.value
-                            })
-                            let array = element.derivadas?.filter(e=>e.derivadaDeOpcao===parseInt(questao.value))
-                            for (let indice = 0; indice < array.length; indice++) {
-                                const item = array[indice];
-                                switch (item.type) {
-                                    case 1:
-                                        let radio= document.querySelector(`input[name="radioNoLabel${item.id}"]:checked`)
-                                        if (radio) {
-                                            document.getElementById(item.id).style.border='none'
-                                            respostas.push({
-                                                id: item.id,
-                                                radio: +radio.value
-                                            })
-                                        }else{
-                                            document.getElementById(item.id).style.border='1px solid rgb(255, 43, 43)'
-                                            enviar=false
-                                        }
-                                        break
-                                    case 2:
-                                        let text= document.getElementById(`open${item.id}`).value
-                                        if (text) {
-                                            document.getElementById(item.id).style.border='none'
-                                            respostas.push({
-                                                id: item.id,
-                                                texto: text
-                                            })
-                                        }else{
-                                            document.getElementById(item.id).style.border='1px solid rgb(255, 43, 43)'
-                                            enviar=false
-                                        }
-                                        break
-                                    case 3:
-                                        let check=[]
-                                        let markCheck = document.getElementsByName('checkNoLabel'+item.id);  
-                                        for (let checkboxDer of markCheck) {  
-                                            if (checkboxDer.checked) check.push(+checkboxDer.value);  
-                                        } 
-                                        if (check.length!==0) {
-                                            document.getElementById(item.id).style.border='none'
-                                            respostas.push({
-                                                id: item.id,
-                                                opcoes: check
-                                            })
-                                        }else{
-                                            document.getElementById(item.id).style.border='1px solid rgb(255, 43, 43)'
-                                            enviar=false
-                                        }
-                                        break
-                                    default:
-                                        break
+            switch (element.type) {
+                case 1:
+                    let radio= document.querySelector(`input[name="radioNoLabel${element.id}"]:checked`)
+                    if (element.opcao1 && radio) {
+                        document.getElementById(element.id).style.border='none'
+                        respostas.push({
+                            id: element.id,
+                            radio: +radio.value
+                        })
+                    }else if(element.opcao1 && element.obrigatoria>0){
+                        document.getElementById(element.id).style.border='1px solid rgb(255, 43, 43)'
+                        enviar=false
+                    }
+                    break
+                case 2:
+                    let text= document.getElementById(`open${element.id}`).value
+                    if (text) {
+                        document.getElementById(element.id).style.border='none'
+                        respostas.push({
+                            id: element.id,
+                            texto: text
+                        })
+                    }else if(element.obrigatoria>0){
+                        document.getElementById(element.id).style.border='1px solid rgb(255, 43, 43)'
+                        enviar=false
+                    }
+                    break
+                case 3:
+                    let check=[]
+                    let markCheck = document.getElementsByName('checkNoLabel'+element.id);  
+                    for (let checkbox of markCheck) {  
+                        if (checkbox.checked) check.push(+checkbox.value);  
+                    } 
+                    if (element.opcao1 && check.length!==0) {
+                        document.getElementById(element.id).style.border='none'
+                        respostas.push({
+                            id: element.id,
+                            opcoes: check
+                        })
+                    }else if(element.opcao1 && element.obrigatoria>0){
+                        document.getElementById(element.id).style.border='1px solid rgb(255, 43, 43)'
+                        enviar=false
+                    }
+                    break
+                case 9:
+                    let questao= document.querySelector(`input[name="radioNoLabel${element.id}"]:checked`)
+                    if (element.opcao1 && questao) {
+                        document.getElementById(element.id).style.border='none'
+                        respostas.push({
+                            id: element.id,
+                            radio: +questao.value
+                        })
+                        let array = element.derivadas?.filter(e=>e.derivadaDeOpcao===parseInt(questao.value))
+                        for (let indice = 0; indice < array.length; indice++) {
+                            const item = array[indice];
+                            switch (item.type) {
+                                case 1:
+                                    let radio= document.querySelector(`input[name="radioNoLabel${item.id}"]:checked`)
+                                    if (item.opcao1 && radio) {
+                                        document.getElementById(item.id).style.border='none'
+                                        respostas.push({
+                                            id: item.id,
+                                            radio: +radio.value
+                                        })
+                                    }else if(item.opcao1 && item.obrigatoria>0){
+                                        document.getElementById(item.id).style.border='1px solid rgb(255, 43, 43)'
+                                        enviar=false
                                     }
-                            }
-                        }else{
-                            document.getElementById(element.id).style.border='1px solid rgb(255, 43, 43)'
-                            enviar=false
+                                    break
+                                case 2:
+                                    let text= document.getElementById(`open${item.id}`).value
+                                    if (text) {
+                                        document.getElementById(item.id).style.border='none'
+                                        respostas.push({
+                                            id: item.id,
+                                            texto: text
+                                        })
+                                    }else if(item.obrigatoria>0){
+                                        document.getElementById(item.id).style.border='1px solid rgb(255, 43, 43)'
+                                        enviar=false
+                                    }
+                                    break
+                                case 3:
+                                    let check=[]
+                                    let markCheck = document.getElementsByName('checkNoLabel'+item.id);  
+                                    for (let checkboxDer of markCheck) {  
+                                        if (checkboxDer.checked) check.push(+checkboxDer.value);  
+                                    } 
+                                    if (item.opcao1 && check.length!==0) {
+                                        document.getElementById(item.id).style.border='none'
+                                        respostas.push({
+                                            id: item.id,
+                                            opcoes: check
+                                        })
+                                    }else if(item.opcao1 && item.obrigatoria>0){
+                                        document.getElementById(item.id).style.border='1px solid rgb(255, 43, 43)'
+                                        enviar=false
+                                    }
+                                    break
+                                default:
+                                    break
+                                }
                         }
-                        break;
-                    default:
-                        break;
-                }
+                    }else if(element.opcao1 && element.obrigatoria>0){
+                        document.getElementById(element.id).style.border='1px solid rgb(255, 43, 43)'
+                        enviar=false
+                    }
+                    break;
+                default:
+                    break;
             }
         }
         if(enviar){

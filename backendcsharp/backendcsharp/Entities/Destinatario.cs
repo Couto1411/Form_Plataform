@@ -7,7 +7,7 @@ public partial class Destinatario
 {
     public uint Id { get; set; }
 
-    public uint? FormId { get; set; }
+    public uint FormId { get; set; }
 
     public short Respondido { get; set; }
     public string? Nome { get; set; } = null!;

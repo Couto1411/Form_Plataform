@@ -3,8 +3,13 @@ import React, { useEffect, useState } from 'react'
 import Logo from '../template/Logo';
 import './Home.css'
 import Login from './Login';
-import { useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Parallax,ParallaxLayer } from "@react-spring/parallax";
+import ManualGeral from './../manuais/Manuais.pdf'
+import ManualAdm from './../manuais/Manual_Adm.pdf'
+import ManualDestinatario from './../manuais/Manual_Dest.pdf'
+import ManualInstituicao from './../manuais/Manual_Inst.pdf'
+import ManualUsuario from './../manuais/Manual_Usu.pdf'
 
 
 export default function Home({navigate}){
@@ -57,6 +62,52 @@ export default function Home({navigate}){
 
     const Manuais=<main>
         {Title}
+        <MDBContainer className='rounded bg-white shadow p-3 mt-3 mt-lg-5'>
+        <h5>Manuais</h5>
+        <hr className='mt-1 mb-2'></hr>
+        <MDBListGroup className='mx-3' small light>
+            <MDBListGroupItem>
+                <Link
+                    to={ManualGeral}
+                    download="Manuais RAEG"
+                    target="_blank"
+                    rel="noreferrer"
+                ><i className="me-2 fa-regular fa-file-pdf"/> Todos os manuais</Link>
+            </MDBListGroupItem>
+            <MDBListGroupItem>
+                <Link
+                    to={ManualAdm}
+                    download="Manual do Administrador RAEG"
+                    target="_blank"
+                    rel="noreferrer"
+                ><i className="me-2 fa-regular fa-file-pdf"/> Manual do Administrador</Link>
+            </MDBListGroupItem>
+            <MDBListGroupItem>
+                <Link
+                    to={ManualUsuario}
+                    download="Manual do Usuário RAEG"
+                    target="_blank"
+                    rel="noreferrer"
+                ><i className="me-2 fa-regular fa-file-pdf"/> Manual do Usuário</Link>
+            </MDBListGroupItem>
+            <MDBListGroupItem>
+                <Link
+                    to={ManualDestinatario}
+                    download="Manual do Destinatário RAEG"
+                    target="_blank"
+                    rel="noreferrer"
+                ><i className="me-2 fa-regular fa-file-pdf"/> Manual do destinatário</Link>
+            </MDBListGroupItem>
+            <MDBListGroupItem>
+                <Link
+                    to={ManualInstituicao}
+                    download="Manual da Instituição RAEG"
+                    target="_blank"
+                    rel="noreferrer"
+                ><i className="me-2 fa-regular fa-file-pdf"/> Manual da Instituição</Link>
+            </MDBListGroupItem>
+        </MDBListGroup>
+        </MDBContainer>
     </main>
 
     const Sobre = <main>
@@ -99,14 +150,14 @@ export default function Home({navigate}){
             {HomeNav()}
         </ParallaxLayer>
         <main>
-            <ParallaxLayer speed={0.8} offset={0}>
-                <div style={{height:'35em',backgroundColor:'#00284ee6'}}></div>
-                <div style={{height:'25em',backgroundColor:'#003e79e6'}}></div>
-                <div style={{height:'35em',backgroundColor:'#00284ee6'}}></div>
-                <div style={{height:'25em',backgroundColor:'#003e79e6'}}></div>
-                <div style={{height:'35em',backgroundColor:'#00284ee6'}}></div>
+            <ParallaxLayer speed={0.6} offset={0}>
+                <div style={{height:'35em'}} className='darktolight'></div>
+                <div style={{height:'25em'}} className='middle'></div>
+                <div style={{height:'35em'}} className='lighttodark'></div>
+                <div style={{height:'25em'}} className='darktolight'></div>
+                <div style={{height:'35em'}} className='middle'></div>
             </ParallaxLayer>
-            <ParallaxLayer speed={1} offset={0.1}>
+            <ParallaxLayer speed={1.2} offset={0.1}>
                 {Title}
                 <MDBContainer className='rounded bg-light shadow p-3 mt-3 mt-lg-5'>
                     <h5>Crie pesquisas personalizadas</h5>

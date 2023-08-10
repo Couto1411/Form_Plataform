@@ -26,7 +26,6 @@ namespace backendcsharp.Controllers
             try
             {
                 Handlers.ExistsOrError(Form.Titulo, "Nome não informado");
-                Handlers.ExistsOrError(Id.ToString(), "Responsável não informado");
                 Handlers.ExistsOrError(Id.ToString(), "Id do responsável não informado");
                 Handlers.IdNegative(Id, "Id do usuário inválido");
                 if (Form.Id is null)
@@ -66,6 +65,85 @@ namespace backendcsharp.Controllers
                     await ProjetoDbContext.SaveChangesAsync();
                     return entity.Id;
                 } else throw new Exception("Id do formulário já existe");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        // Adicionar Form
+        [HttpPost("users/{Id}/forms/{FormId}/clone")]
+        [Authorize("Bearer")]
+        public async Task<ActionResult> CloneForm([FromRoute] int FormId, [FromRoute] int Id)
+        {
+            try
+            {
+                Handlers.ExistsOrError(Id.ToString(), "Id do responsável não informado");
+                Handlers.IdNegative(Id, "Id do usuário inválido");
+                Handlers.ExistsOrError(FormId.ToString(), "Id do formulário não informado");
+                Handlers.IdNegative(FormId, "Id do formulário inválido");
+                var formOrig = await ProjetoDbContext.Formularios.FirstOrDefaultAsync(e => e.Id == FormId) ?? throw new Exception("Formulário não existe");
+                var newForm = new Formulario()
+                {
+                    Titulo = formOrig.Titulo + " - Cópia",
+                    ResponsavelId = (uint)Id,
+                    MsgEmail = formOrig.MsgEmail,
+                    DerivadoDeId = formOrig.DerivadoDeId
+                };
+                ProjetoDbContext.Formularios.Add(newForm);
+                await ProjetoDbContext.SaveChangesAsync();
+                var QuestoesOrig = await ProjetoDbContext.Questoes.Where(s => s.FormId == FormId && s.DerivadaDeId == null).ToListAsync();
+                foreach (var item in QuestoesOrig)
+                {
+                    var novaQuestao = new Questoes()
+                    {
+                        FormId = newForm.Id,
+                        Numero = item.Numero,
+                        Type = item.Type,
+                        Enunciado = item.Enunciado,
+                        Obrigatoria = item.Obrigatoria,
+                        Opcao1 = item.Opcao1,
+                        Opcao2 = item.Opcao2,
+                        Opcao3 = item.Opcao3,
+                        Opcao4 = item.Opcao4,
+                        Opcao5 = item.Opcao5,
+                        Opcao6 = item.Opcao6,
+                        Opcao7 = item.Opcao7,
+                        Opcao8 = item.Opcao8,
+                        Opcao9 = item.Opcao9,
+                        Opcao10 = item.Opcao10
+                    };
+                    ProjetoDbContext.Questoes.Add(novaQuestao);
+                    await ProjetoDbContext.SaveChangesAsync();
+                    foreach (var derivada in await ProjetoDbContext.Questoes.Where(s => s.FormId == FormId && s.DerivadaDeId == item.Id).ToListAsync())
+                    {
+
+                        var novaQuestaoDerivada = new Questoes()
+                        {
+                            FormId = newForm.Id,
+                            Numero = derivada.Numero,
+                            Type = derivada.Type,
+                            Enunciado = derivada.Enunciado,
+                            Obrigatoria = derivada.Obrigatoria,
+                            Opcao1 = derivada.Opcao1,
+                            Opcao2 = derivada.Opcao2,
+                            Opcao3 = derivada.Opcao3,
+                            Opcao4 = derivada.Opcao4,
+                            Opcao5 = derivada.Opcao5,
+                            Opcao6 = derivada.Opcao6,
+                            Opcao7 = derivada.Opcao7,
+                            Opcao8 = derivada.Opcao8,
+                            Opcao9 = derivada.Opcao9,
+                            Opcao10 = derivada.Opcao10,
+                            DerivadaDeId = novaQuestao.Id,
+                            DerivadaDeOpcao = derivada.DerivadaDeOpcao
+                        };
+                        ProjetoDbContext.Questoes.Add(novaQuestaoDerivada);
+                    }
+                }
+                await ProjetoDbContext.SaveChangesAsync();
+                return StatusCode(204);
             }
             catch (Exception ex)
             {
@@ -139,6 +217,7 @@ namespace backendcsharp.Controllers
                             Id = s.Id,
                             ResponsavelId = s.ResponsavelId,
                             MsgEmail = s.MsgEmail,
+                            Notificacao = s.Notificacao,
                             DataEnviado = s.DataEnviado,
                             Titulo = s.Titulo,
                         }
@@ -171,6 +250,7 @@ namespace backendcsharp.Controllers
                         Titulo = s.Titulo,
                         DerivadoDeId = s.DerivadoDeId,
                         MsgEmail = s.MsgEmail,
+                        Notificacao = s.Notificacao,
                         DataEnviado = s.DataEnviado,
                         ResponsavelId = s.ResponsavelId
                     })
@@ -185,6 +265,7 @@ namespace backendcsharp.Controllers
                             Titulo = s.Titulo,
                             DerivadoDeId = s.DerivadoDeId,
                             MsgEmail = s.MsgEmail,
+                            Notificacao = s.Notificacao,
                             DataEnviado = s.DataEnviado,
                             ResponsavelId = s.ResponsavelId
                         })

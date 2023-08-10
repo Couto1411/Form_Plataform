@@ -7,8 +7,7 @@ a:hover{color: rgb(21, 21, 21)}
 .trashcan{color: rgb(255, 34, 34);}
 .trashcan:hover{color: rgb(180, 0, 0);}
 
-.formsDuplicates{
-    color: rgb(26, 26, 26);
+.formsDuplicatesBG{
     background-color: #cdcdcd;
 }
 
@@ -20,4 +19,8 @@ a:hover{color: rgb(21, 21, 21)}
 .listitem::before{
     margin-right: 4px;
     color: #969696;
+}
+
+.configitem{
+    padding-right: 5px;
 }

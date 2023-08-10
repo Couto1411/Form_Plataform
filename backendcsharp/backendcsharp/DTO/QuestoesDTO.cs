@@ -13,6 +13,7 @@ public partial class QuestoesDTO
     public uint? FormId { get; set; } = null!;
 
     public string? Enunciado { get; set; } = null!;
+    public short? Obrigatoria { get; set; } = null!;
 
     public string? Opcao1 { get; set; } = null!;
 

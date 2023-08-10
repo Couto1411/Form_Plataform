@@ -90,7 +90,7 @@ namespace backendcsharp.Controllers
                     if (entity != null)
                     {
                         entity.Curso = Curso.Curso is null?"": Curso.Curso;
-                        entity.ResponsavelId = Curso.ResponsavelId;
+                        entity.ResponsavelId = Curso.ResponsavelId ?? throw new Exception("Responsavel id não existe");
                         await ProjetoDbContext.SaveChangesAsync();
                         return StatusCode(204);
                     }
@@ -124,7 +124,7 @@ namespace backendcsharp.Controllers
                     if (entity != null)
                     {
                         entity.Modalidade = Curso.Modalidade is null ? "" : Curso.Modalidade;
-                        entity.ResponsavelId = Curso.ResponsavelId;
+                        entity.ResponsavelId = Curso.ResponsavelId ?? throw new Exception("Responsavel id não existe");
                         await ProjetoDbContext.SaveChangesAsync();
                         return StatusCode(204);
                     }

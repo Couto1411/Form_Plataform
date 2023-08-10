@@ -445,6 +445,31 @@ export default function SecaoDestinatarios({navigate}){
         })
     }
 
+    
+    async function exportEmails(){
+        // A workbook is the name given to an Excel file
+        var wb = XLSX.utils.book_new() // Make Workbook of Excel
+        var dataSheet = []
+        destinatarios?.forEach(destinatario => {
+            console.log(destinatario)
+            dataSheet = dataSheet.concat({
+                'nome'             : destinatario.nome,
+                'cpf'              : destinatario.cpf,
+                'telefone'         : destinatario.telefone1,
+                'email'            : destinatario.email,
+                'matricula'        : destinatario.matricula,
+                'sexo'             : destinatario.sexo,
+                'curso'            : destinatario.curso,
+                'modalidade'       : destinatario.modalidade,
+                'data_colacao_grau': destinatario.dataColacao
+            })
+        });
+        var sheet = XLSX.utils.json_to_sheet(dataSheet)                   // Create Sheet from JSON 
+        XLSX.utils.book_append_sheet(wb, sheet, `Destinatários`)  // Add Worksheet to Workbook
+        // Export Excel file
+        XLSX.writeFile(wb, `Destinatários - ${location?location.nomePesquisa:'Nome'}.xlsx`) // name of the file is 'book.xlsx'
+    }
+
     async function importEmails(){
         let selectedFiles = document.getElementById('formFile').files;
         if (selectedFiles.length>0) { 
@@ -513,15 +538,16 @@ export default function SecaoDestinatarios({navigate}){
 
             {/* Botões de adição e envio de destinatarios */}
             <div className='d-flex mt-3'>
-                <MDBBtn outline color='dark' className='border-1 bg-light destinatarioBotoes' onClick={e=>{handleNewDestinatario()}}><i title='Adicionar novo email a enviar' className="edit fas fa-regular fa-plus fa-2x"></i></MDBBtn>
+                <MDBBtn outline color='dark' className='border-1 bg-light destinatarioBotoes' onClick={e=>{handleNewDestinatario()}}><i title='Adicionar novo email a enviar' className="edit fas fa-regular fa-plus fa-2x"/></MDBBtn>
                 <div className='mx-1'><input value={qtdPPag} onChange={e=>{
                     if(e.target.value!=='' && Number(e.target.value>=1)){
                         setQtdPPag(Number(e.target.value))
                     }else setQtdPPag('')
                     setDestinatariosPage(1)
                 }} className="inputnumero form-control form-control-3 p-2" id="typeNumber" size='3' maxLength="3"/></div>
-                <MDBBtn outline color='dark' className='border-1 bg-light destinatarioBotoes ms-auto mx-2' onClick={e=>{setImportModal(true)}} ><i title='Importar emails de modelo CEFET-MG' className="edit fas fa-regular fa-file-import"></i></MDBBtn>
-                <MDBBtn outline color='dark' className='border-1 bg-light destinatarioBotoes' onClick={e=>{sendEmails()}}><i title='Enviar à todos os emails da lista' className="edit fas fa-light fa-paper-plane"></i></MDBBtn>
+                <MDBBtn outline color='dark' className='border-1 bg-light destinatarioBotoes ms-auto' onClick={e=>{setImportModal(true)}}><i title='Exportar emails no modelo CEFET-MG' className="edit fas fa-regular fa-file-import"/></MDBBtn>
+                <MDBBtn outline color='dark' className='border-1 bg-light destinatarioBotoes mx-2'    onClick={e=>{exportEmails()}}>      <i title='Importar emails de modelo CEFET-MG' className="edit fas fa-regular fa-download"/></MDBBtn>
+                <MDBBtn outline color='dark' className='border-1 bg-light destinatarioBotoes'         onClick={e=>{sendEmails()}}>        <i title='Enviar à todos os emails da lista'  className="edit fas fa-light fa-paper-plane"/></MDBBtn>
             </div>
             
             {/* Modal para adicionar destinatarios no modelo Cefet */}

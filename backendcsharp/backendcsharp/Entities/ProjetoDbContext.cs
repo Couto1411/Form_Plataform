@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
-using backendcsharp.DTO;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace backendcsharp.Entities;
 
@@ -129,8 +126,8 @@ public partial class ProjetoDbContext : DbContext
                 .HasColumnName("tipodecurso");
             entity.Property(e => e.DataColacao).HasColumnName("datacolacao");
             entity.Property(e => e.FormId).HasColumnName("formId");
-            entity.Property(e => e.Respondido).HasColumnName("respondido");
-
+            entity.Property(e => e.Respondido).HasColumnName("respondido")
+                .HasDefaultValue(0);
             entity.HasOne(d => d.Form).WithMany(p => p.Enviados)
                 .HasForeignKey(d => d.FormId)
                 .HasConstraintName("enviados_formid_foreign");
@@ -154,6 +151,10 @@ public partial class ProjetoDbContext : DbContext
             entity.Property(e => e.MsgEmail)
                 .HasColumnType("longtext")
                 .HasColumnName("msgEmail");
+            entity.Property(e => e.Notificacao)
+                .HasColumnType("smallint")
+                .HasColumnName("notificacao")
+                .HasDefaultValue(0);
 
             entity.HasOne(d => d.Responsavel).WithMany(p => p.Formularios)
                 .HasForeignKey(d => d.ResponsavelId)
@@ -177,6 +178,8 @@ public partial class ProjetoDbContext : DbContext
             entity.Property(e => e.Enunciado)
                 .HasColumnType("longtext")
                 .HasColumnName("enunciado");
+            entity.Property(e => e.Obrigatoria).HasColumnName("obrigatoria")
+                .HasDefaultValue(1);
             entity.Property(e => e.FormId).HasColumnName("formId");
             entity.Property(e => e.DerivadaDeOpcao).HasColumnName("derivadaDeOpcao");
             entity.Property(e => e.Numero).HasColumnName("numero");
@@ -303,7 +306,8 @@ public partial class ProjetoDbContext : DbContext
             entity.HasIndex(e => e.Email, "users_email_unique").IsUnique();
 
             entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.Admin).HasColumnName("admin");
+            entity.Property(e => e.Admin).HasColumnName("admin")
+                .HasDefaultValue(0);
             entity.Property(e => e.AppPassword)
                 .HasMaxLength(255)
                 .HasColumnName("apppassword");
@@ -323,6 +327,4 @@ public partial class ProjetoDbContext : DbContext
     }
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
-
-    public DbSet<backendcsharp.DTO.UsersDTO> UsersDTO { get; set; }
 }

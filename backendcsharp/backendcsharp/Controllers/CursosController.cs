@@ -4,7 +4,6 @@ using backendcsharp.DTO;
 using Microsoft.AspNetCore.Authorization;
 using backendcsharp.Handles;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
 
 namespace backendcsharp.Controllers
 {
@@ -27,7 +26,7 @@ namespace backendcsharp.Controllers
         // Adicionar Cursos e suas modalidades a ser enviado
         [HttpPost("users/{Id}/cursos")]
         [Authorize("Bearer")]
-        public async Task<ActionResult> InsertCursos([FromBody] ObjetoCursos ListaCurso, [FromRoute] int Id)
+        public async Task<ActionResult<uint>> InsertCurso([FromBody] CursosDTO Curso, [FromRoute] int Id)
         {
             try
             {
@@ -35,34 +34,50 @@ namespace backendcsharp.Controllers
                 Handlers.IdNegative(Id, "Id do usuário inválido");
 
                 HashSet<string> cursosDB = new (await ProjetoDbContext.Cursos.Where(s=>s.ResponsavelId==Id).Select(c=>c.Curso).ToListAsync());
-                HashSet<string> modalidadeDB = new (await ProjetoDbContext.Modalidades.Where(s => s.ResponsavelId == Id).Select(c => c.Modalidade).ToListAsync());
 
-                foreach (var item in ListaCurso.ListaCursos)
+                var entity = new Cursos()
                 {
-                    var entity = new Cursos()
-                    {
-                        Curso = item.Curso is not null ? item.Curso: throw new Exception("Um dos itens não possui nome do curso"),
-                        ResponsavelId = (uint)Id
-                    };
-                    if (!cursosDB.Contains(entity.Curso))
-                    {
-                        ProjetoDbContext.Cursos.Add(entity);
-                    }
-                }
-                foreach (var item in ListaCurso.ListaModalidades)
+                    Curso = Curso.Curso is not null ? Curso.Curso: throw new Exception("Não possui nome do curso"),
+                    ResponsavelId = (uint)Id
+                };
+                if (!cursosDB.Contains(entity.Curso))
                 {
-                    var entity = new Modalidades()
-                    {
-                        Modalidade = item.Modalidade is not null ? item.Modalidade : throw new Exception("Um dos itens não possui nome da modalidade"),
-                        ResponsavelId = (uint)Id
-                    };
-                    if (!modalidadeDB.Contains(entity.Modalidade))
-                    {
-                        ProjetoDbContext.Modalidades.Add(entity);
-                    }
+                    ProjetoDbContext.Cursos.Add(entity);
+                    await ProjetoDbContext.SaveChangesAsync();
+                    return entity.Id;
                 }
-                await ProjetoDbContext.SaveChangesAsync();
-                return StatusCode(204);
+                else return StatusCode(204);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        // Adicionar Cursos e suas modalidades a ser enviado
+        [HttpPost("users/{Id}/modalidades")]
+        [Authorize("Bearer")]
+        public async Task<ActionResult<uint>> InsertModalidade([FromBody] ModalidadesDTO Modalidade, [FromRoute] int Id)
+        {
+            try
+            {
+                Handlers.ExistsOrError(Id.ToString(), "Id do usuário não informado");
+                Handlers.IdNegative(Id, "Id do usuário inválido");
+
+                HashSet<string> modalidadesDB = new(await ProjetoDbContext.Modalidades.Where(s => s.ResponsavelId == Id).Select(c => c.Modalidade).ToListAsync());
+
+                var entity = new Modalidades()
+                {
+                    Modalidade = Modalidade.Modalidade is not null ? Modalidade.Modalidade : throw new Exception("Não possui nome da modalidade"),
+                    ResponsavelId = (uint)Id
+                };
+                if (!modalidadesDB.Contains(entity.Modalidade))
+                {
+                    ProjetoDbContext.Modalidades.Add(entity);
+                    await ProjetoDbContext.SaveChangesAsync();
+                    return entity.Id;
+                }
+                else return StatusCode(204);
             }
             catch (Exception ex)
             {
@@ -86,15 +101,11 @@ namespace backendcsharp.Controllers
                 Curso.ResponsavelId = ((uint)Id);
                 if (Curso.Id is not null)
                 {
-                    var entity = await ProjetoDbContext.Cursos.FirstOrDefaultAsync(s => s.Id == CursoId);
-                    if (entity != null)
-                    {
-                        entity.Curso = Curso.Curso is null?"": Curso.Curso;
-                        entity.ResponsavelId = Curso.ResponsavelId ?? throw new Exception("Responsavel id não existe");
-                        await ProjetoDbContext.SaveChangesAsync();
-                        return StatusCode(204);
-                    }
-                    else throw new Exception("Id não encontrado (UpdateCurso)");
+                    var entity = await ProjetoDbContext.Cursos.FirstOrDefaultAsync(s => s.Id == CursoId) ?? throw new Exception("Id não encontrado (UpdateCurso)");
+                    entity.Curso = Curso.Curso is null?"": Curso.Curso;
+                    entity.ResponsavelId = Curso.ResponsavelId ?? throw new Exception("Responsavel id não existe");
+                    await ProjetoDbContext.SaveChangesAsync();
+                    return StatusCode(204);
                 }
                 else throw new Exception("Curso não informado");
             }
@@ -120,15 +131,11 @@ namespace backendcsharp.Controllers
                 Curso.ResponsavelId = ((uint)Id);
                 if (Curso.Id is not null)
                 {
-                    var entity = await ProjetoDbContext.Modalidades.FirstOrDefaultAsync(s => s.Id == CursoId);
-                    if (entity != null)
-                    {
-                        entity.Modalidade = Curso.Modalidade is null ? "" : Curso.Modalidade;
-                        entity.ResponsavelId = Curso.ResponsavelId ?? throw new Exception("Responsavel id não existe");
-                        await ProjetoDbContext.SaveChangesAsync();
-                        return StatusCode(204);
-                    }
-                    else throw new Exception("Id não encontrado (UpdateModalidade)");
+                    var entity = await ProjetoDbContext.Modalidades.FirstOrDefaultAsync(s => s.Id == CursoId) ?? throw new Exception("Id não encontrado (UpdateModalidade)");
+                    entity.Modalidade = Curso.Modalidade is null ? "" : Curso.Modalidade;
+                    entity.ResponsavelId = Curso.ResponsavelId ?? throw new Exception("Responsavel id não existe");
+                    await ProjetoDbContext.SaveChangesAsync();
+                    return StatusCode(204);
                 }
                 else throw new Exception("Modalidade não informada");
             }

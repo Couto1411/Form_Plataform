@@ -26,8 +26,8 @@ export default function SecaoRespostas({respostas,navigate}){
                 <MDBListGroupItem className='shadow mt-3 rounded-3'>
                     <div className='porcentagem'>
                         {element.type===1?
-                        <MDBRadio disabled defaultChecked={true}  value='' inline/>:
-                        <MDBCheckbox disabled defaultChecked={true} className='mt-1' value='' inline/>}
+                        <MDBRadio disabled defaultChecked={true} className='me-0' value='' inline/>:
+                        <MDBCheckbox disabled defaultChecked={true} className='me-0 mt-1' value='' inline/>}
                         {element.numero}) {element.enunciado}
                     </div>
                     <hr className='mt-0 mb-2'></hr>
@@ -47,7 +47,12 @@ export default function SecaoRespostas({respostas,navigate}){
                 <MDBListGroup key={questaoOrig.id+'respostasopcao'+opcao} className='mt-1 rounded-3' >
                     {derivadas?.filter(s=>s.derivadaDeOpcao===opcao)?.map(element=>{
                         return (<MDBListGroupItem key={element.id} className={'shadow mt-1 rounded-3 opcao'+opcao}>
-                                    <div className='d-flex porcentagem'>{element.numero}) {element.enunciado}<div className='ms-auto'>{element.type===1?<MDBRadio disabled defaultChecked={true} className='mt-1' value='' inline/>:<MDBCheckbox disabled defaultChecked={true} className='mt-1' value='' inline/>}</div></div>
+                                    <div className='porcentagem'>
+                                        {element.type===1?
+                                        <MDBRadio disabled defaultChecked={true} className='me-0' value='' inline/>:
+                                        <MDBCheckbox disabled defaultChecked={true} className='me-0 mt-1' value='' inline/>}
+                                        {questaoOrig.numero+'.'+element.numero}) {element.enunciado}
+                                    </div>
                                     <hr className='mt-0 mb-2'></hr>
                                     <div id={"resposta"+element.id} className='mx-2'>
                                         {makeBar(element,false)}

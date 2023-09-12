@@ -1,71 +1,61 @@
-# Form_Plataform
-# Getting Started with Create React App
+# RAEG
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Proposta
 
-## Available Scripts
+O acompanhamento de egressos da Educação Profissional e Tecnológica (EPT) é uma importante ferramenta que pode, através de seus vários aspectos, auxiliar no planejamento das atividades das instituições, propiciando-lhes informações com potencial diagnóstico e importantes elementos para o planejamento e a tomadas de decisões dos profissionais responsáveis por coordenações de cursos e os gestores de unidades, dentre outros. Além desta perspectiva, voltada a aperfeiçoar o planejamento das atividades educacionais, o acompanhamento de egressos permite fortalecer os laços entre as instituições e seus egressos. 
 
-In the project directory, you can run:
+Mesmo com esses diferenciais, na EPT, este acompanhamento ainda encontra percalços e dificuldades diversas. Pensando nisto, o RAEG foi criado e se apresenta como uma plataforma que tem como finalidade auxiliar, nesta ação, os gestores da EPT. Foi projetada e desenvolvida no âmbito da Rede de Educação Profissional e Tecnológica (Rede EPT), a partir das demandas e dificuldades encontradas por gestores.
 
-### `npm start`
+## Diferencial
+Ao trazer o uso de sistemas de informação para o acompanhamento de egressos, a  plataforma RAEG se propõe como ferramenta de coleta de dados, voltada a auxiliar os  gestores da Educação Profissional e Tecnológica, facilitando a verificação de informações de alunos, a importação direta de informações a partir de modelos, e o acompanhamento rápido das respostas. 
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+O RAEG também proporciona diversas formas de relatórios, podendo armazenar os dados das pesquisas fora da plataforma, além de seus relatórios internos com melhor interface e amostragem gráfica.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Requisitos
+O RAEG foi desenvolvido e testado sob os ambientes do [Firebase Hosting](https://firebase.google.com/docs/hosting?hl=pt-br) para o "frontend" e do [Amazon EC2](https://aws.amazon.com/pt/ec2/) para o "backend", com banco de dados no sistema [Amazon RDS](https://aws.amazon.com/pt/rds/). O "backend" foi feito em ASP.NET Core 6, e testado no [IIS](https://www.iis.net/), portanto foi feito apenas em ambientes que possuem [Windows Server](https://www.microsoft.com/en-us/windows-server).
 
-### `npm test`
+O "backend" funcionou com respostas em menos de 1s às requisições mais comuns do "frontend" no sistema EC2 t2.micro, com sistema operacional Microsoft Windows Server 2022 Base, com 1 GiB de memória RAM, 30 GiB de Armazenamento em gp2(SSD de uso geral) e alocação compartilhada.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Lembra-se também que o ambiente que irá hospedar o "backend" deve possuir os seguintes pacotes:
+- [.NET 6.0.20 - Windows Server Hosting](https://community.chocolatey.org/packages/dotnet-6.0-windowshosting)
+- [.NET Runtime - 6.0.20](https://dotnet.microsoft.com/en-us/download/dotnet/6.0)
+- [.NET SDK - 6.0.412](https://dotnet.microsoft.com/en-us/download/dotnet/6.0)
+- [ASP.NET Core - 6.0.20](https://dotnet.microsoft.com/en-us/download/dotnet/6.0)
 
-### `npm run build`
+E o ambiente que irá hospedar o "frontend" deve possuir o Node.js com a versão testada 18.16.0.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Compilar e Rodar
+Antes da compilação é necessário criar um arquivo na pasta ***backendcsharp\backendcsharp*** chamado "appsettings.json" com a seguinte estrutura:
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+    {
+      "TokenConfigurations": {
+        "Audience": "Frontend APP",
+        "Issuer": "Backend API",
+        "Seconds": 3600,
+        "SecretJwtKey": "SUA-CHAVE -DE-ENCRIPTACAO"
+      },
+      "ConnectionStrings": {
+        "DefaultConnection": "SUA-CONNECTION -STRING"
+      },
+      "AppAdminInfo": {
+        "email": "SEU-EMAIL -DE-PROPRIETARIO",
+        "senha": "SUA-SENHA -DE-PROPRIETARIO"
+      }
+    }
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Também é importante que no arquivo ***frontend\src\config\api.jsx***, "sua-urlbackend" deve ser substituída pela url em que seu "backend" está hospedado.
 
-### `npm run eject`
+Para obter os arquivos de produção, basta compilar ambos os projetos nas pastas ***backendcsharp\backendcsharp*** e frontend, para isso deve-se rodar os comandos `dotnet build`, os arquivos de compilação estarão na pasta ***backendcsharp\backendcsharp\bin\Debug\net6.0\publish*** e npm run build, os arquivos de compilação estarão na pasta ***frontend\build***, respectivamente.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+Para rodar localmente basta utilizar o comando dotnet run na pasta ***backendcsharp\backendcsharp*** e o comando `npm serve` na pasta ***frontend***. Para rodá-los em outros serviços basta utilizar os arquivos de compilação nos mesmos seguindo os devidos passos para produção.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Equipe
+O RAEG é um Produto Educacional oriundo das atividades do Programa de Mestrado em Educação Profissional e Tecnológica (PROFEPT), foi desenvolvido no Campus Divinópolis do CEFET-MG em parceria com Projeto de Iniciação Científica (PIBIC) da própria instituição e com fomento da Fundação de Amparo à Pesquisa do Estado de Minas Gerais (FAPEMIG).
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+Equipe de produção:<br/>
+Desenvolvimento - [Gabriel Couto](http://lattes.cnpq.br/4555794230183109) (PIBIC) gabriel.couto14@hotmail.com<br/>
+Pesquisa - [Oscar Praga de Souza](http://lattes.cnpq.br/9265442500973824) (PROFEPT) oscarsouza.cap@gmail.com
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Orientação:<br/>
+Orientador - Prof. Dr. [Emerson Sousa Costa](http://lattes.cnpq.br/9306302347633373) (PROFEPT/CEFET-MG)<br/>
+Coorientador - Prof. Dr. [Thiago Magela Rodrigues Dias](http://lattes.cnpq.br/4687858846001290)http://lattes.cnpq.br/4687858846001290 (PROFEPT/CEFET-MG)

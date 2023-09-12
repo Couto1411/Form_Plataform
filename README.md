@@ -58,4 +58,4 @@ Pesquisa - [Oscar Praga de Souza](http://lattes.cnpq.br/9265442500973824) (PROFE
 
 Orientação:<br/>
 Orientador - Prof. Dr. [Emerson Sousa Costa](http://lattes.cnpq.br/9306302347633373) (PROFEPT/CEFET-MG)<br/>
-Coorientador - Prof. Dr. [Thiago Magela Rodrigues Dias](http://lattes.cnpq.br/4687858846001290)http://lattes.cnpq.br/4687858846001290 (PROFEPT/CEFET-MG)
+Coorientador - Prof. Dr. [Thiago Magela Rodrigues Dias](http://lattes.cnpq.br/4687858846001290) (PROFEPT/CEFET-MG)

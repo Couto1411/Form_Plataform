@@ -1,5 +1,5 @@
 import React, {useEffect,useState}from 'react'
-import { limit, CarregaQuestoes, CarregaRespostas, RemoveSessao } from '../../config/utils';
+import { CarregaQuestoes, CarregaRespostas, RemoveSessao } from '../../config/utils';
 import './Forms.css'
 import Questoes from './QuestoesDerivadas'
 import axios from "axios";
@@ -53,7 +53,7 @@ export default function Forms({navigate}){
                         <MDBBtn outline color='dark' onClick={e=>{toggleShowExcluiSalva(element.id)}} className='numQuestao'>{element.numero}</MDBBtn>
                         <textarea className='form-control textAreaEnunciado' id={'questao'+element.id} 
                             defaultValue={element.enunciado} disabled 
-                            onChange={e=>{limit(e.target);questoes[questoes.map(object => object.id).indexOf(element.id)].enunciado=e.target.value}}/>
+                            onChange={e=>{questoes[questoes.map(object => object.id).indexOf(element.id)].enunciado=e.target.value}}/>
                     </MDBInputGroup>
                     :null}
 
@@ -124,7 +124,7 @@ export default function Forms({navigate}){
                 return(
                     <div>
                         <MDBTextArea disabled id={'questao'+element.id} 
-                                        onChange={e=>{limit(e.target);questoes[questoes.map(object => object.id).indexOf(element.id)].enunciado=e.target.value}}
+                                        onChange={e=>{questoes[questoes.map(object => object.id).indexOf(element.id)].enunciado=e.target.value}}
                                         defaultValue={element.enunciado} rows={3} label='Descrição' className='mb-2'/>
                         <MDBBtn outline color='dark' onClick={e=>{toggleShowExcluiSalva(element.id,true)}} className='numQuestao mb-1'><i className='p-1 fas fa-regular fa-pen'/></MDBBtn>
                     </div>
@@ -231,7 +231,7 @@ export default function Forms({navigate}){
         setInput({
             id:id,
             content: <div className='my-2'>
-                <MDBTextArea onKeyDown={e=>{limit(e.target)}} onKeyUp={e=>{limit(e.target)}} id={"questao"+id+"novaopcao"} rows={3} label='Nova Opção' className='mb-2'/>
+                <MDBTextArea id={"questao"+id+"novaopcao"} rows={3} label='Nova Opção' className='mb-2'/>
                 <MDBBtn className='border border-secondary' color='light' onClick={e=>{
                     for (let item of v) item.style.display = "inline-block"
                     for (let item of opcoes) item.style.display = "inline-block"
@@ -264,7 +264,7 @@ export default function Forms({navigate}){
         setInput({
             id:id,
             content:<div className='my-2'>
-                <MDBTextArea defaultValue={document.getElementsByClassName(id+"-"+opcao)[0].innerHTML} onChange={e=>{limit(e.target)}} id={"questao"+id+"novaopcao"} rows={3} label={'Opcão '+opcao} className='mb-2'/>
+                <MDBTextArea defaultValue={document.getElementsByClassName(id+"-"+opcao)[0].innerHTML} id={"questao"+id+"novaopcao"} rows={3} label={'Opcão '+opcao} className='mb-2'/>
                 <MDBBtn className='border border-secondary' color='light' onClick={e=>{
                     for (let item of v) item.style.display = "inline-block"
                     for (let item of opcoes) item.style.display = "inline-block"
@@ -332,20 +332,20 @@ export default function Forms({navigate}){
                         <div className='enunciado mt-1'>
                             <MDBInputGroup className='mb-2'>
                                 <MDBBtn color='secondary' className='numQuestao'>{novaQuestao.numero}</MDBBtn>
-                                <input onKeyDown={e=>{limit(e.target)}} onKeyUp={e=>{limit(e.target)}} className='form-control' type='text' id={'novaQuestaoEnunciado'} defaultValue=''/>
+                                <input className='form-control' type='text' id={'novaQuestaoEnunciado'} defaultValue=''/>
                             </MDBInputGroup>
                         </div>
                         <div id={"novaQuestaoOpcoes"} className='mx-2'>
-                            {<div className='d-flex align-items-center mb-2'><MDBInputGroup onKeyDown={e=>{limit(e.target)}} onKeyUp={e=>{limit(e.target)}} textBefore='Opção 1'><input id='option1' className='form-control' onInput={e=>{document.getElementById("option2").disabled=false}} type='text'/></MDBInputGroup></div>}
-                            {<div className='d-flex align-items-center mb-2'><MDBInputGroup onKeyDown={e=>{limit(e.target)}} onKeyUp={e=>{limit(e.target)}} textBefore='Opção 2'><input id='option2' className='form-control' onInput={e=>{document.getElementById("option3").disabled=false}} type='text' disabled/></MDBInputGroup></div>}
-                            {<div className='d-flex align-items-center mb-2'><MDBInputGroup onKeyDown={e=>{limit(e.target)}} onKeyUp={e=>{limit(e.target)}} textBefore='Opção 3'><input id='option3' className='form-control' onInput={e=>{document.getElementById("option4").disabled=false}} type='text' disabled/></MDBInputGroup></div>}
-                            {<div className='d-flex align-items-center mb-2'><MDBInputGroup onKeyDown={e=>{limit(e.target)}} onKeyUp={e=>{limit(e.target)}} textBefore='Opção 4'><input id='option4' className='form-control' onInput={e=>{document.getElementById("option5").disabled=false}} type='text' disabled/></MDBInputGroup></div>}
-                            {<div className='d-flex align-items-center mb-2'><MDBInputGroup onKeyDown={e=>{limit(e.target)}} onKeyUp={e=>{limit(e.target)}} textBefore='Opção 5'><input id='option5' className='form-control' onInput={e=>{document.getElementById("option6").disabled=false}} type='text' disabled/></MDBInputGroup></div>}
-                            {<div className='d-flex align-items-center mb-2'><MDBInputGroup onKeyDown={e=>{limit(e.target)}} onKeyUp={e=>{limit(e.target)}} textBefore='Opção 6'><input id='option6' className='form-control' onInput={e=>{document.getElementById("option7").disabled=false}} type='text' disabled/></MDBInputGroup></div>}
-                            {<div className='d-flex align-items-center mb-2'><MDBInputGroup onKeyDown={e=>{limit(e.target)}} onKeyUp={e=>{limit(e.target)}} textBefore='Opção 7'><input id='option7' className='form-control' onInput={e=>{document.getElementById("option8").disabled=false}} type='text' disabled/></MDBInputGroup></div>}
-                            {<div className='d-flex align-items-center mb-2'><MDBInputGroup onKeyDown={e=>{limit(e.target)}} onKeyUp={e=>{limit(e.target)}} textBefore='Opção 8'><input id='option8' className='form-control' onInput={e=>{document.getElementById("option9").disabled=false}} type='text' disabled/></MDBInputGroup></div>}
-                            {<div className='d-flex align-items-center mb-2'><MDBInputGroup onKeyDown={e=>{limit(e.target)}} onKeyUp={e=>{limit(e.target)}} textBefore='Opção 9'><input id='option9' className='form-control' onInput={e=>{document.getElementById("option10").disabled=false}} type='text' disabled/></MDBInputGroup></div>}
-                            {<div className='d-flex align-items-center mb-2'><MDBInputGroup onKeyDown={e=>{limit(e.target)}} onKeyUp={e=>{limit(e.target)}} textBefore='Opção 10'><input id='option10' className='form-control' type='text' disabled/></MDBInputGroup></div>}
+                            {<div className='d-flex align-items-center mb-2'><MDBInputGroup textBefore='Opção 1'><input id='option1' className='form-control' onInput={e=>{document.getElementById("option2").disabled=false}} type='text'/></MDBInputGroup></div>}
+                            {<div className='d-flex align-items-center mb-2'><MDBInputGroup textBefore='Opção 2'><input id='option2' className='form-control' onInput={e=>{document.getElementById("option3").disabled=false}} type='text' disabled/></MDBInputGroup></div>}
+                            {<div className='d-flex align-items-center mb-2'><MDBInputGroup textBefore='Opção 3'><input id='option3' className='form-control' onInput={e=>{document.getElementById("option4").disabled=false}} type='text' disabled/></MDBInputGroup></div>}
+                            {<div className='d-flex align-items-center mb-2'><MDBInputGroup textBefore='Opção 4'><input id='option4' className='form-control' onInput={e=>{document.getElementById("option5").disabled=false}} type='text' disabled/></MDBInputGroup></div>}
+                            {<div className='d-flex align-items-center mb-2'><MDBInputGroup textBefore='Opção 5'><input id='option5' className='form-control' onInput={e=>{document.getElementById("option6").disabled=false}} type='text' disabled/></MDBInputGroup></div>}
+                            {<div className='d-flex align-items-center mb-2'><MDBInputGroup textBefore='Opção 6'><input id='option6' className='form-control' onInput={e=>{document.getElementById("option7").disabled=false}} type='text' disabled/></MDBInputGroup></div>}
+                            {<div className='d-flex align-items-center mb-2'><MDBInputGroup textBefore='Opção 7'><input id='option7' className='form-control' onInput={e=>{document.getElementById("option8").disabled=false}} type='text' disabled/></MDBInputGroup></div>}
+                            {<div className='d-flex align-items-center mb-2'><MDBInputGroup textBefore='Opção 8'><input id='option8' className='form-control' onInput={e=>{document.getElementById("option9").disabled=false}} type='text' disabled/></MDBInputGroup></div>}
+                            {<div className='d-flex align-items-center mb-2'><MDBInputGroup textBefore='Opção 9'><input id='option9' className='form-control' onInput={e=>{document.getElementById("option10").disabled=false}} type='text' disabled/></MDBInputGroup></div>}
+                            {<div className='d-flex align-items-center mb-2'><MDBInputGroup textBefore='Opção 10'><input id='option10' className='form-control' type='text' disabled/></MDBInputGroup></div>}
                         </div>
                         <div className='d-flex align-items-center'>
                             <MDBCheckbox label="Obrigatória" defaultChecked id='newObrigatoria'/>

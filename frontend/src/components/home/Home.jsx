@@ -8,7 +8,7 @@ import { Parallax,ParallaxLayer } from "@react-spring/parallax";
 import ManualGeral from './../manuais/Manuais.pdf'
 import ManualAdm from './../manuais/Manual_Adm.pdf'
 import ManualDestinatario from './../manuais/Manual_Dest.pdf'
-import ManualInstituicao from './../manuais/Manual_Inst.pdf'
+// import ManualInstituicao from './../manuais/Manual_Inst.pdf'
 import ManualUsuario from './../manuais/Manual_Usu.pdf'
 
 
@@ -98,14 +98,14 @@ export default function Home({navigate}){
                     rel="noreferrer"
                 ><i className="me-2 fa-regular fa-file-pdf"/> Manual do destinatário</Link>
             </MDBListGroupItem>
-            <MDBListGroupItem>
+            {/* <MDBListGroupItem>
                 <Link
                     to={ManualInstituicao}
                     download="Manual da Instituição RAEG"
                     target="_blank"
                     rel="noreferrer"
                 ><i className="me-2 fa-regular fa-file-pdf"/> Manual da Instituição</Link>
-            </MDBListGroupItem>
+            </MDBListGroupItem> */}
         </MDBListGroup>
         </MDBContainer>
     </main>
@@ -115,33 +115,50 @@ export default function Home({navigate}){
         <MDBContainer className='rounded bg-light shadow p-3 mt-3 mt-lg-5'>
             <h5>Proposta</h5>
             <hr className='mt-0 mb-3'></hr>
-            O <span className='title_shadowless'>RAEG</span> é a plataforma criada no CEFET-MG Campus V, com o objetivo de auxiliar as
-            instituições de ensino brasileiras na questão de acompanhamento de egressos.<br/>
-            Nos estudos de <a className='linkRef' rel="noreferrer" href='https://periodicos.ufrn.br/casoseconsultoria/article/view/26052' target='_blank'>Oliveira (2021)</a> e de <a className='linkRef' rel="noreferrer" href='https://rsdjournal.org/index.php/rsd/article/view/26281' target='_blank'>Silva (2022)</a> vemos
-            a como o acompanhamento de egressos nas IES é importante para melhorar a qualidade do ensino e fortalecer o relacionamento 
-            entre as instituições e seus egressos.<br/>
-            Além disso o uso de sistemas de informação no acompanhamento de egressos é relevante para melhorar a qualidade dos 
-            cursos e fortalecer o relacionamento entre as IES e seus egressos, facilitando o contato com os mesmos através do meio digital.
+            O acompanhamento de egressos da Educação Profissional e Tecnológica (EPT) é uma importante ferramenta que pode, através de 
+            seus vários aspectos, auxiliar no planejamento das atividades das instituições, propiciando-lhes informações com potencial 
+            diagnóstico e importantes elementos para o planejamento e a tomadas de decisões dos profissionais responsáveis por coordenações 
+            de cursos e os gestores de unidades, dentre outros. Além desta perspectiva, voltada a aperfeiçoar o planejamento das atividades 
+            educacionais, o acompanhamento de egressos permite fortalecer os laços entre as instituições e seus egressos. 
+            <br/><br/>
+            Mesmo com esses diferenciais, na EPT, este acompanhamento ainda encontra percalços e dificuldades diversas. Pensando nisto, 
+            o <span className='title_shadowless'>RAEG</span> foi criado e se apresenta como uma plataforma que tem como finalidade auxiliar, 
+            nesta ação, os gestores da EPT. Foi projetada e desenvolvida no âmbito da Rede de Educação Profissional e Tecnológica (Rede EPT), a 
+            partir das demandas e dificuldades encontradas por gestores.
         </MDBContainer>
         <MDBContainer className='rounded bg-light shadow p-3 mt-3 mt-lg-5'>
             <h5>Diferencial</h5>
             <hr className='mt-0 mb-3'></hr>
-            O <span className='title_shadowless'>RAEG</span> foi feito para agilizar o dia a dia dos funcionários das IES brasileiras,
-            trazendo facilidade ao verificar informações de alunos, importação direta de informações a partir de modelos, e acompanhamento
-            rápido das respostas.<br/>
-            O <span className='title_shadowless'>RAEG</span> também proporciona diversas formas de relatórios, podendo armazenar os dados
-            das pesquisas por fora da plataforma, além também de seus relatórios internos com melhor interface e amostragem de gráficos.
+            Ao trazer o uso de sistemas de informação para o acompanhamento de egressos, a 
+            plataforma <span className='title_shadowless'>RAEG</span> se propõe como ferramenta de coleta de dados, voltada a auxiliar os 
+            gestores da Educação Profissional e Tecnológica, facilitando a verificação de informações de alunos, a importação direta de 
+            informações a partir de modelos, e o acompanhamento rápido das respostas. 
+            <br/><br/>
+            O <span className='title_shadowless'>RAEG</span> também proporciona diversas formas de relatórios, podendo armazenar os dados 
+            das pesquisas fora da plataforma, além de seus relatórios internos com melhor interface e amostragem gráfica.
         </MDBContainer>
         <MDBContainer className='rounded bg-light shadow p-3 mt-3 mt-lg-5' style={{wordBreak:'break-word'}}>
             <h5>Equipe</h5>
             <hr className='mt-0 mb-3'></hr>
-            O <span className='title_shadowless'>RAEG</span> foi desenvolvido como parte do Projeto de Iniciação Científica 
-            do Prof. Dr. <a className='linkRef' rel="noreferrer" href='http://lattes.cnpq.br/9306302347633373' target='_blank'>Emerson Sousa</a>, com co-orientação
-            do Prof. Dr. <a className='linkRef' rel="noreferrer" href='http://lattes.cnpq.br/4687858846001290' target='_blank'>Thiago Magela</a> com o objetivo de
-            auxiliar o mestrado de <a className='linkRef' rel="noreferrer" href='http://lattes.cnpq.br/9265442500973824'>Oscar Praga</a> focado justamente no acompanhamento
-            de egressos do CEFET.<br/>
-            A plataforma foi desenvolvida inteiramente pelo aluno do curso de Engenharia da Computação do CEFET-MG Campus 
-            V, <a className='linkRef' rel="noreferrer" href='http://lattes.cnpq.br/4555794230183109' target='_blank'>Gabriel Couto</a> <a className='linkRef' rel="noreferrer" href='https://github.com/Couto1411' target='_blank'><i className="fa-brands fa-github"/></a>.
+            O <span className='title_shadowless'>RAEG</span> é um Produto Educacional oriundo das atividades do Programa de Mestrado em 
+            Educação Profissional e Tecnológica (PROFEPT), foi desenvolvido no Campus Divinópolis do CEFET-MG em parceria com 
+            Projeto de Iniciação Científica (PIBIC) da própria instituição e com fomento da Fundação de Amparo à Pesquisa do Estado de Minas 
+            Gerais (FAPEMIG).
+            <br/> <br/>
+            Equipe de produção:<br/>
+            Desenvolvimento - <a className='linkRef' rel="noreferrer" href='http://lattes.cnpq.br/4555794230183109' target='_blank'>Gabriel Couto</a> (PIBIC) gabriel.couto14@hotmail.com <a className='linkRef' rel="noreferrer" href='https://github.com/Couto1411' target='_blank'><i className="fa-brands fa-github"/></a><br/>
+            Pesquisa - <a className='linkRef' rel="noreferrer" href='http://lattes.cnpq.br/9265442500973824'>Oscar Praga de Souza</a> (PROFEPT) oscarsouza.cap@gmail.com
+            <br/><br/>
+            Orientação:<br/>
+            Orientador - Prof. Dr. <a className='linkRef' rel="noreferrer" href='http://lattes.cnpq.br/9306302347633373' target='_blank'>Emerson Sousa Costa</a> (PROFEPT/CEFET-MG)<br/>
+            Coorientador - Prof. Dr. <a className='linkRef' rel="noreferrer" href='http://lattes.cnpq.br/4687858846001290' target='_blank'>Thiago Magela Rodrigues Dias</a> (PROFEPT/CEFET-MG)
+        </MDBContainer>
+        <MDBContainer className='rounded bg-light shadow p-3 mt-3 mt-lg-5 d-flex align-items-center justify-content-center' style={{wordBreak:'break-word'}}>
+            <MDBListGroup horizontal horizontalSize='lg'>
+                <MDBListGroupItem className='d-flex align-items-center justify-content-center'><img className='img-fluid' src={require('./../imgs/PROFEPT_CEFET_HORIZONTAL.png')} alt='profept_logo'/></MDBListGroupItem>
+                <MDBListGroupItem className='d-flex align-items-center justify-content-center'><img className='img-fluid' src={require('./../imgs/CEFET_LOGO.png')}               alt='cefet_logo'  /></MDBListGroupItem>
+                <MDBListGroupItem className='d-flex align-items-center justify-content-center'><img className='img-fluid' src={require('./../imgs/FAPEMIG_LOGO.jpg')}             alt='fapemig_logo'/></MDBListGroupItem>
+            </MDBListGroup>
         </MDBContainer>
     </main>
 

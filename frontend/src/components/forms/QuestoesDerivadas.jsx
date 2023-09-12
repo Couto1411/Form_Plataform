@@ -1,6 +1,6 @@
 import React, {useEffect,useState}from 'react'
 import axios from "axios";
-import { limit, RemoveSessao } from '../../config/utils';
+import { RemoveSessao } from '../../config/utils';
 import baseUrl from "../../config/api";
 import {
     MDBInputGroup, MDBTextArea, MDBRadio, MDBCheckbox,
@@ -42,7 +42,7 @@ export default function QuestoesDerivadas({navigate,questao}){
                     <MDBBtn outline color='dark' onClick={e=>{toggleShowExcluiSalva(element.id)}} className='numQuestao'>{questao.numero+'.'+element.numero}</MDBBtn>
                     <textarea id={'questao'+element.id} className='form-control textAreaEnunciado'
                         defaultValue={element.enunciado} disabled
-                        onChange={e=>{limit(e.target);questoes[questoes.map(object => object.id).indexOf(element.id)].enunciado=e.target.value}}/>
+                        onChange={e=>{questoes[questoes.map(object => object.id).indexOf(element.id)].enunciado=e.target.value}}/>
                 </MDBInputGroup>
                 :null}
 
@@ -104,7 +104,7 @@ export default function QuestoesDerivadas({navigate,questao}){
             case 4:
                 return(
                     <div>
-                        <MDBTextArea disabled onKeyDown={e=>{limit(e.target)}} onKeyUp={e=>{limit(e.target)}} id={'questao'+element.id}
+                        <MDBTextArea disabled id={'questao'+element.id}
                                         onChange={e=>{questoes[questoes.map(object => object.id).indexOf(element.id)].enunciado=e.target.value}}
                                         defaultValue={element.enunciado} rows={3} label='Descrição' className='mb-2'/>
                         <MDBBtn outline color='dark' onClick={e=>{toggleShowExcluiSalva(element.id,true)}} className='numQuestao'><i className='p-1 fas fa-regular fa-pen'></i></MDBBtn>
@@ -193,7 +193,7 @@ export default function QuestoesDerivadas({navigate,questao}){
         setInput({
             id:id,
             content: <div className='my-2'>
-                <MDBTextArea onKeyDown={e=>{limit(e.target)}} onKeyUp={e=>{limit(e.target)}} id={"questao"+id+"novaopcao"} rows={3} label='Nova Opção' className='mb-2'/>
+                <MDBTextArea id={"questao"+id+"novaopcao"} rows={3} label='Nova Opção' className='mb-2'/>
                 <MDBBtn className='border border-secondary' color='light' onClick={e=>{
                     for (let item of v) item.style.display = "inline-block"
                     for (let item of opcoes) item.style.display = "inline-block"
@@ -228,7 +228,7 @@ export default function QuestoesDerivadas({navigate,questao}){
         setInput({
             id:id,
             content:<div className='my-2'>
-                <MDBTextArea defaultValue={document.getElementsByClassName(id+"-"+opcao)[0].innerHTML} onChange={e=>{limit(e.target)}} id={"questao"+id+"novaopcao"} label={'Opcão '+opcao} rows={3} className='mb-2'/>
+                <MDBTextArea defaultValue={document.getElementsByClassName(id+"-"+opcao)[0].innerHTML} id={"questao"+id+"novaopcao"} label={'Opcão '+opcao} rows={3} className='mb-2'/>
                 <MDBBtn className='border border-secondary' color='light' onClick={e=>{
                     for (let item of v) item.style.display = "inline-block"
                     for (let item of opcoes) item.style.display = "inline-block"
@@ -299,15 +299,15 @@ export default function QuestoesDerivadas({navigate,questao}){
                         <div className='enunciado mt-1'>
                             <MDBInputGroup className='mb-2'>
                                 <MDBBtn color='secondary' className='numQuestao'>{questao.numero+'.'+novaQuestao.numero}</MDBBtn>
-                                <input onKeyDown={e=>{limit(e.target)}} onKeyUp={e=>{limit(e.target)}} className='form-control' type='text' id={'novaQuestaoEnunciado'} defaultValue=''/>
+                                <input className='form-control' type='text' id={'novaQuestaoEnunciado'} defaultValue=''/>
                             </MDBInputGroup>
                         </div>
                         <div id={"novaQuestaoOpcoes"} className='mx-2'>
-                            {<div className='d-flex align-items-center mb-2'><MDBInputGroup onChange={e=>{limit(e.target)}} textBefore='Opção 1' ><input id='option1'  className='form-control' onInput={e=>{document.getElementById("option2").disabled=false }} type='text'/></MDBInputGroup></div>}
+                            {<div className='d-flex align-items-center mb-2'><MDBInputGroup textBefore='Opção 1' ><input id='option1'  className='form-control' onInput={e=>{document.getElementById("option2").disabled=false }} type='text'/></MDBInputGroup></div>}
                             {[2,3,4,5,6,7,8,9].map(el=>{
-                                return <div className='d-flex align-items-center mb-2'><MDBInputGroup onChange={e=>{limit(e.target)}} textBefore={"Opção "+el}><input id={'option'+el}  className='form-control' onInput={e=>{document.getElementById("option"+(el+1)).disabled=false }} type='text' disabled/></MDBInputGroup></div>
+                                return <div className='d-flex align-items-center mb-2'><MDBInputGroup textBefore={"Opção "+el}><input id={'option'+el}  className='form-control' onInput={e=>{document.getElementById("option"+(el+1)).disabled=false }} type='text' disabled/></MDBInputGroup></div>
                             })}
-                            {<div className='d-flex align-items-center mb-2'><MDBInputGroup onChange={e=>{limit(e.target)}} textBefore='Opção 10'><input id='option10' className='form-control' type='text' disabled/></MDBInputGroup></div>}
+                            {<div className='d-flex align-items-center mb-2'><MDBInputGroup textBefore='Opção 10'><input id='option10' className='form-control' type='text' disabled/></MDBInputGroup></div>}
                         </div>
                         <div className='d-flex align-items-center'>
                             <MDBCheckbox label="Obrigatória" defaultChecked id='newObrigatoria'/>

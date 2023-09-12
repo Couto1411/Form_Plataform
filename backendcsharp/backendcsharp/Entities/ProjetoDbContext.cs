@@ -184,34 +184,34 @@ public partial class ProjetoDbContext : DbContext
             entity.Property(e => e.DerivadaDeOpcao).HasColumnName("derivadaDeOpcao");
             entity.Property(e => e.Numero).HasColumnName("numero");
             entity.Property(e => e.Opcao1)
-                .HasMaxLength(255)
+                .HasColumnType("mediumtext")
                 .HasColumnName("opcao1");
             entity.Property(e => e.Opcao10)
-                .HasMaxLength(255)
+                .HasColumnType("mediumtext")
                 .HasColumnName("opcao10");
             entity.Property(e => e.Opcao2)
-                .HasMaxLength(255)
+                .HasColumnType("mediumtext")
                 .HasColumnName("opcao2");
             entity.Property(e => e.Opcao3)
-                .HasMaxLength(255)
+                .HasColumnType("mediumtext")
                 .HasColumnName("opcao3");
             entity.Property(e => e.Opcao4)
-                .HasMaxLength(255)
+                .HasColumnType("mediumtext")
                 .HasColumnName("opcao4");
             entity.Property(e => e.Opcao5)
-                .HasMaxLength(255)
+                .HasColumnType("mediumtext")
                 .HasColumnName("opcao5");
             entity.Property(e => e.Opcao6)
-                .HasMaxLength(255)
+                .HasColumnType("mediumtext")
                 .HasColumnName("opcao6");
             entity.Property(e => e.Opcao7)
-                .HasMaxLength(255)
+                .HasColumnType("mediumtext")
                 .HasColumnName("opcao7");
             entity.Property(e => e.Opcao8)
-                .HasMaxLength(255)
+                .HasColumnType("mediumtext")
                 .HasColumnName("opcao8");
             entity.Property(e => e.Opcao9)
-                .HasMaxLength(255)
+                .HasColumnType("mediumtext")
                 .HasColumnName("opcao9");
             entity.Property(e => e.Type).HasColumnName("type");
 
@@ -264,7 +264,7 @@ public partial class ProjetoDbContext : DbContext
             entity.Property(e => e.QuestaoId).HasColumnName("questaoId");
             entity.Property(e => e.RespostaId).HasColumnName("respostaId");
             entity.Property(e => e.Texto)
-                .HasMaxLength(255)
+                .HasColumnType("longtext")
                 .HasColumnName("texto");
 
             entity.HasOne(d => d.Questao).WithMany(p => p.Texts)
